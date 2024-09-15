@@ -1,17 +1,15 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class Player : MonoBehaviour{
   const int playerLayer = 8;
-  private Vector3 euler = new Vector3();
+  private Vector3 euler;
   private Quaternion cameraRotation;
   private Vector3 cameraPosition;
-  private long lastPressedSpace = 0;
+  private long lastPressedSpace;
   public State state = State.Creative_Walking;
-  private bool running = false;
-  private float wobble = 0;
-  private float wobbleIntensity = 0;
+  private bool running;
+  private float wobble;
+  private float wobbleIntensity;
   public Setup setup;
 
   public enum State{
@@ -97,8 +95,8 @@ public class Player : MonoBehaviour{
     cam.transform.Rotate(Vector3.forward, Mathf.Sin(wobble) * 0.2f * wobbleIntensity);
     cam.transform.Rotate(Vector3.right, Mathf.Sin(wobble * 2f) * 0.3f * wobbleIntensity);
     cam.transform.Rotate(Vector3.up, -Mathf.Sin(wobble) * 0.2f * wobbleIntensity);
-    cam.transform.position += (cam.transform.up * Mathf.Sin(wobble * 2f) * 0.05f * wobbleIntensity);
-    cam.transform.position += (cam.transform.right * Mathf.Sin(wobble) * 0.05f * wobbleIntensity);
+    cam.transform.position += (cam.transform.up * (Mathf.Sin(wobble * 2f) * 0.05f * wobbleIntensity));
+    cam.transform.position += (cam.transform.right * (Mathf.Sin(wobble) * 0.05f * wobbleIntensity));
 
     float fov = setup.fieldOfView + (running ? 10 : 0);
     //if (movement == Vector2.zero) fov = Input.GetKey(KeyCode.Tab) ? 10 : fov;
@@ -107,9 +105,9 @@ public class Player : MonoBehaviour{
     if (Input.GetKeyUp(KeyCode.Tab)) cam.fieldOfView = fov;
   }
 
-  private void Movement(Vector2 movement, bool running){
-    float moveForce = running ? setup.runForce : setup.walkForce;
-    float moveSpeed = running ? setup.runSpeed : setup.walkSpeed;
+  private void Movement(Vector2 movement, bool isRunning){
+    float moveForce = isRunning ? setup.runForce : setup.walkForce;
+    float moveSpeed = isRunning ? setup.runSpeed : setup.walkSpeed;
 
 
     Vector3 forward = setup.mainCamera.transform.forward;
@@ -125,10 +123,10 @@ public class Player : MonoBehaviour{
     stillVelocity.z = 0;
     setup.myRigidbody.velocity = Vector3.Lerp(setup.myRigidbody.velocity, stillVelocity, Time.deltaTime * 8f);
 
-    setup.myRigidbody.AddForce(forward * movement.y * (moveForce * Time.deltaTime));
-    setup.myRigidbody.AddForce(right * movement.x * (moveForce * Time.deltaTime));
+    setup.myRigidbody.AddForce(forward * (movement.y * (moveForce * Time.deltaTime)));
+    setup.myRigidbody.AddForce(right * (movement.x * (moveForce * Time.deltaTime)));
     if (state < (State)2){
-      setup.myRigidbody.AddForce(Vector3.down * setup.fallForce * Time.deltaTime);
+      setup.myRigidbody.AddForce(Vector3.down * (setup.fallForce * Time.deltaTime));
     }
 
     Vector3 velocityWalk = setup.myRigidbody.velocity;
@@ -180,10 +178,8 @@ public class Player : MonoBehaviour{
   }
 
   private void BlockPlacement(){
-    int layerMask = ~(1 << playerLayer);
-    RaycastHit hitInfo;
-    if (Physics.Raycast(setup.mainCamera.transform.position, setup.mainCamera.transform.forward, out hitInfo, 5,
-            layerMask)){
+    const int layerMask = ~(1 << playerLayer);
+    if (Physics.Raycast(setup.mainCamera.transform.position, setup.mainCamera.transform.forward, out var hitInfo, 5, layerMask)){
       //Debug.Log(hitInfo.collider.gameObject.name);
       Vector3 inCube = hitInfo.point - (hitInfo.normal * 0.5f);
       Vector3Int removeBlock = new Vector3Int(
@@ -228,8 +224,8 @@ public class Player : MonoBehaviour{
     }
   }
 
-  private void SpectatorMovement(Vector2 movement, bool running){
-    float moveSpeed = running ? 16 : 8;
+  private void SpectatorMovement(Vector2 movement, bool isRunning){
+    float moveSpeed = isRunning ? 16 : 8;
 
     Vector3 forward = setup.mainCamera.transform.forward;
     forward.y = 0;
@@ -249,8 +245,10 @@ public class Player : MonoBehaviour{
       altitude -= 8;
     }
 
-    transform.position += movement.y * forward * Time.deltaTime * moveSpeed;
-    transform.position += movement.x * right * Time.deltaTime * moveSpeed;
-    transform.position += Vector3.up * altitude * Time.deltaTime;
+    Vector3 position = transform.position;
+    position += forward * (movement.y * Time.deltaTime * moveSpeed);
+    position += right * (movement.x * Time.deltaTime * moveSpeed);
+    position += Vector3.up * (altitude * Time.deltaTime);
+    transform.position = position;
   }
 }

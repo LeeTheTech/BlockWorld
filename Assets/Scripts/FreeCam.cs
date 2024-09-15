@@ -1,9 +1,7 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class FreeCam : MonoBehaviour{
-  Vector3 euler = new Vector3();
+  public Vector3 euler;
   public World world;
   public GameObject highlightPrefab;
 
@@ -31,12 +29,14 @@ public class FreeCam : MonoBehaviour{
 
     float speed = Input.GetKey(KeyCode.LeftShift) ? 4 : 1;
 
-    transform.position += transform.forward * movement.y * speed;
-    transform.position += transform.right * movement.x * speed;
+    Transform camTransform = transform;
+    Vector3 position = camTransform.position;
+    position += camTransform.forward * (movement.y * speed);
+    position += camTransform.right * (movement.x * speed);
+    camTransform.position = position;
 
 
-    RaycastHit hitInfo;
-    if (Physics.Raycast(transform.position, transform.forward, out hitInfo)){
+    if (Physics.Raycast(transform.position, transform.forward, out var hitInfo)){
       //Debug.Log(hitInfo.point);
       Vector3 inCube = hitInfo.point - (hitInfo.normal * 0.5f);
       Vector3Int removeBlock = new Vector3Int(

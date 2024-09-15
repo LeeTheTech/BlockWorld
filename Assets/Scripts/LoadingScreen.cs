@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
@@ -14,8 +12,9 @@ public class LoadingScreen : MonoBehaviour{
 
   public void Initialize(){
     renderDistance = GameManager.instance.gameSettings.RenderDistance;
-    loadingTexture = new Texture2D(renderDistance, renderDistance, TextureFormat.ARGB32, false);
-    loadingTexture.filterMode = FilterMode.Point;
+    loadingTexture = new Texture2D(renderDistance, renderDistance, TextureFormat.ARGB32, false){
+        filterMode = FilterMode.Point
+    };
     loadingGraphic.texture = loadingTexture;
     colors = new Color[renderDistance * renderDistance];
     for (int i = 0; i < colors.Length; ++i){

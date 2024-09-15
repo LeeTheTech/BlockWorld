@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using System.Threading;
 using System.Linq;
@@ -25,16 +24,16 @@ public class ChunkManager : MonoBehaviour{
 
   //ShouldRender thread
   private Thread shouldRenderThread;
-  private System.Object shouldRenderLock = new System.Object();
-  private bool shouldRenderWaitForUpdate = false;
+  private readonly System.Object shouldRenderLock = new();
+  private bool shouldRenderWaitForUpdate;
   private volatile List<Vector2Int> loadQueue;
   private volatile Queue<Vector2Int> unloadQueue;
   private volatile List<Vector2Int> activeChunks;
 
-  private readonly Vector2Int nFront = new Vector2Int(0, 1);
-  private readonly Vector2Int nBack = new Vector2Int(0, -1);
-  private readonly Vector2Int nLeft = new Vector2Int(-1, 0);
-  private readonly Vector2Int nRight = new Vector2Int(1, 0);
+  private readonly Vector2Int nFront = new(0, 1);
+  private readonly Vector2Int nBack = new(0, -1);
+  private readonly Vector2Int nLeft = new(-1, 0);
+  private readonly Vector2Int nRight = new(1, 0);
 
   public void Initialize(){
     renderDistance = GameManager.instance.gameSettings.RenderDistance;
@@ -52,15 +51,16 @@ public class ChunkManager : MonoBehaviour{
     int chunkPoolSize = renderDistance * renderDistance * 4;
     Debug.Log("Chunk pool size: " + chunkPoolSize);
     for (int i = 0; i < chunkPoolSize; ++i){
-      Chunk c = Instantiate(chunkPrefab);
-      c.gameObject.SetActive(false);
-      c.gameObject.name = "Chunk " + i.ToString();
+      Chunk c = Instantiate(chunkPrefab, chunkPrefab.transform.parent, true);
+      GameObject cObject = c.gameObject;
+      cObject.SetActive(false);
+      cObject.name = "Chunk " + i;
       chunkPool.Enqueue(c);
-      c.transform.SetParent(chunkPrefab.transform.parent);
     }
 
-    shouldRenderThread = new Thread(ShouldRenderThread);
-    shouldRenderThread.IsBackground = true;
+    shouldRenderThread = new Thread(ShouldRenderThread){
+        IsBackground = true
+    };
     shouldRenderThread.Start();
   }
 
@@ -69,8 +69,9 @@ public class ChunkManager : MonoBehaviour{
     //Debug.Log("Active chunks: " + activeChunks.Count);
     chunkDataManager.Update();
 
-    cameraPosition = mainCamera.transform.position;
-    cameraForward = mainCamera.transform.forward;
+    Transform cameraTransform = mainCamera.transform;
+    cameraPosition = cameraTransform.position;
+    cameraForward = cameraTransform.forward;
 
     int loadQueueCount = 0;
 
@@ -132,9 +133,8 @@ public class ChunkManager : MonoBehaviour{
 
           if (buildChunk){
             loadQueue.Remove(chunkToBuild);
-            Chunk chunk = null;
             if (!chunkMap.ContainsKey(chunkToBuild)){
-              chunk = chunkPool.Dequeue();
+              Chunk chunk = chunkPool.Dequeue();
               chunk.Initialize(chunkToBuild);
               chunkMap.Add(chunkToBuild, chunk);
               chunk.Build(chunkDataManager);
@@ -152,26 +152,23 @@ public class ChunkManager : MonoBehaviour{
     int activeChunksCount = activeChunks.Count;
     int rebuildQueueCount = modifiedRebuildQueue.Count;
     int chunksInMemoryCount = chunkDataManager.GetChunksInMemoryCount();
-    World.activeWorld.debugText.text +=
-        $" / Chunks (Q:{loadQueueCount} R:{rebuildQueueCount} A:{activeChunksCount} M:{chunksInMemoryCount})";
+    World.activeWorld.debugText.text += $" / Chunks (Q:{loadQueueCount} R:{rebuildQueueCount} A:{activeChunksCount} M:{chunksInMemoryCount})";
     UnityEngine.Profiling.Profiler.EndSample();
   }
 
   public bool StartupFinished(){
-    bool ready = false;
+    bool ready;
     lock (shouldRenderLock){
       ready = activeChunks.Count >= renderDistance * renderDistance;
     }
-
     return ready;
   }
 
   public Vector2Int[] GetActiveChunkPositions(){
-    Vector2Int[] positions = null;
+    Vector2Int[] positions;
     lock (shouldRenderLock){
       positions = activeChunks.ToArray();
     }
-
     return positions;
   }
 
@@ -185,8 +182,7 @@ public class ChunkManager : MonoBehaviour{
       visiblePoints.Clear();
       inRangePoints.Clear();
       copyOfActiveChunks.Clear();
-      Vector2Int cameraChunkPos;
-      cameraChunkPos = new Vector2Int((int)cameraPosition.x / 16, (int)cameraPosition.z / 16);
+      Vector2Int cameraChunkPos = new Vector2Int((int)cameraPosition.x / 16, (int)cameraPosition.z / 16);
       Vector3 cameraPositionFloor = new Vector3(cameraPosition.x, 0, cameraPosition.z);
       Vector3 cameraForwardFloor = cameraForward;
       cameraForwardFloor.y = 0;
@@ -262,8 +258,8 @@ public class ChunkManager : MonoBehaviour{
   }
 
   public void RenderAllChunksAroundCamera(){
-    Vector3 cameraPosition = World.activeWorld.mainCamera.transform.position;
-    Vector2Int cameraChunkPos = new Vector2Int((int)cameraPosition.x / 16, (int)cameraPosition.z / 16);
+    Vector3 cameraPos = World.activeWorld.mainCamera.transform.position;
+    Vector2Int cameraChunkPos = new Vector2Int((int)cameraPos.x / 16, (int)cameraPos.z / 16);
     lock (shouldRenderLock){
       for (int y = cameraChunkPos.y - renderDistance + 1; y < renderDistance - 1; ++y){
         for (int x = cameraChunkPos.x - renderDistance + 1; x < renderDistance - 1; ++x){

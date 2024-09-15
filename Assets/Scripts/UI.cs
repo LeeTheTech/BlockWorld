@@ -1,11 +1,9 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class UI : MonoBehaviour{
   public static UI instance{ get; private set; }
   public GameObject playingUI;
-  private bool hideUI = false;
+  private bool hideUI;
   public Hotbar hotbar;
   public LoadingScreen loadingScreen;
 

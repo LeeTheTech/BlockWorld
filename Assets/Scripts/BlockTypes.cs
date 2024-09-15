@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-public class BlockTypes{
+public static class BlockTypes{
   //SOLID
   public const byte BEDROCK = 0;
   public const byte GRASS = 1;
@@ -27,61 +27,64 @@ public class BlockTypes{
   public static Dictionary<byte, AudioManager.Dig.Type> digSound;
 
   public static void Initialize(){
-    lightLevel = new Dictionary<byte, byte>();
-    lightLevel.Add(BEDROCK, 0);
-    lightLevel.Add(GRASS, 0);
-    lightLevel.Add(DIRT, 0);
-    lightLevel.Add(STONE, 0);
-    lightLevel.Add(COAL, 0);
-    lightLevel.Add(IRON, 0);
-    lightLevel.Add(GOLD, 0);
-    lightLevel.Add(DIAMOND, 0);
-    lightLevel.Add(LOG_OAK, 0);
-    lightLevel.Add(PLANKS_OAK, 0);
-    lightLevel.Add(GLOWSTONE, 14);
-    lightLevel.Add(LEAVES_OAK, 0);
-    lightLevel.Add(AIR, 0);
-    lightLevel.Add(ANDESITE, 0);
-    lightLevel.Add(DIORITE, 0);
-    lightLevel.Add(GRANITE, 0);
-    lightLevel.Add(COBBLESTONE, 0);
+    lightLevel = new Dictionary<byte, byte>{
+        { BEDROCK, 0 },
+        { GRASS, 0 },
+        { DIRT, 0 },
+        { STONE, 0 },
+        { COAL, 0 },
+        { IRON, 0 },
+        { GOLD, 0 },
+        { DIAMOND, 0 },
+        { LOG_OAK, 0 },
+        { PLANKS_OAK, 0 },
+        { GLOWSTONE, 14 },
+        { LEAVES_OAK, 0 },
+        { AIR, 0 },
+        { ANDESITE, 0 },
+        { DIORITE, 0 },
+        { GRANITE, 0 },
+        { COBBLESTONE, 0 }
+    };
 
-    density = new Dictionary<byte, byte>();
-    density.Add(BEDROCK, 255);
-    density.Add(GRASS, 255);
-    density.Add(DIRT, 255);
-    density.Add(STONE, 255);
-    density.Add(COAL, 255);
-    density.Add(IRON, 255);
-    density.Add(GOLD, 255);
-    density.Add(DIAMOND, 255);
-    density.Add(LOG_OAK, 255);
-    density.Add(PLANKS_OAK, 255);
-    density.Add(GLOWSTONE, 255);
-    density.Add(LEAVES_OAK, 63);
-    density.Add(AIR, 0);
-    density.Add(ANDESITE, 255);
-    density.Add(DIORITE, 255);
-    density.Add(GRANITE, 255);
-    density.Add(COBBLESTONE, 255);
+    density = new Dictionary<byte, byte>{
+        { BEDROCK, 255 },
+        { GRASS, 255 },
+        { DIRT, 255 },
+        { STONE, 255 },
+        { COAL, 255 },
+        { IRON, 255 },
+        { GOLD, 255 },
+        { DIAMOND, 255 },
+        { LOG_OAK, 255 },
+        { PLANKS_OAK, 255 },
+        { GLOWSTONE, 255 },
+        { LEAVES_OAK, 63 },
+        { AIR, 0 },
+        { ANDESITE, 255 },
+        { DIORITE, 255 },
+        { GRANITE, 255 },
+        { COBBLESTONE, 255 }
+    };
 
-    digSound = new Dictionary<byte, AudioManager.Dig.Type>();
-    digSound.Add(BEDROCK, AudioManager.Dig.Type.Stone);
-    digSound.Add(GRASS, AudioManager.Dig.Type.Grass);
-    digSound.Add(DIRT, AudioManager.Dig.Type.Gravel);
-    digSound.Add(STONE, AudioManager.Dig.Type.Stone);
-    digSound.Add(COAL, AudioManager.Dig.Type.Stone);
-    digSound.Add(IRON, AudioManager.Dig.Type.Stone);
-    digSound.Add(GOLD, AudioManager.Dig.Type.Stone);
-    digSound.Add(DIAMOND, AudioManager.Dig.Type.Stone);
-    digSound.Add(LOG_OAK, AudioManager.Dig.Type.Wood);
-    digSound.Add(PLANKS_OAK, AudioManager.Dig.Type.Wood);
-    digSound.Add(GLOWSTONE, AudioManager.Dig.Type.Stone);
-    digSound.Add(LEAVES_OAK, AudioManager.Dig.Type.Grass);
-    digSound.Add(AIR, AudioManager.Dig.Type.Silent);
-    digSound.Add(ANDESITE, AudioManager.Dig.Type.Stone);
-    digSound.Add(DIORITE, AudioManager.Dig.Type.Stone);
-    digSound.Add(GRANITE, AudioManager.Dig.Type.Stone);
-    digSound.Add(COBBLESTONE, AudioManager.Dig.Type.Stone);
+    digSound = new Dictionary<byte, AudioManager.Dig.Type>{
+        { BEDROCK, AudioManager.Dig.Type.Stone },
+        { GRASS, AudioManager.Dig.Type.Grass },
+        { DIRT, AudioManager.Dig.Type.Gravel },
+        { STONE, AudioManager.Dig.Type.Stone },
+        { COAL, AudioManager.Dig.Type.Stone },
+        { IRON, AudioManager.Dig.Type.Stone },
+        { GOLD, AudioManager.Dig.Type.Stone },
+        { DIAMOND, AudioManager.Dig.Type.Stone },
+        { LOG_OAK, AudioManager.Dig.Type.Wood },
+        { PLANKS_OAK, AudioManager.Dig.Type.Wood },
+        { GLOWSTONE, AudioManager.Dig.Type.Stone },
+        { LEAVES_OAK, AudioManager.Dig.Type.Grass },
+        { AIR, AudioManager.Dig.Type.Silent },
+        { ANDESITE, AudioManager.Dig.Type.Stone },
+        { DIORITE, AudioManager.Dig.Type.Stone },
+        { GRANITE, AudioManager.Dig.Type.Stone },
+        { COBBLESTONE, AudioManager.Dig.Type.Stone }
+    };
   }
 }

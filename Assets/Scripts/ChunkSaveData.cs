@@ -4,11 +4,11 @@ using UnityEngine;
 [System.Serializable]
 public class ChunkSaveData{
   public Vector2Int position;
-  public List<C> changes = new List<C>();
+  public List<C> changes;
 
   public ChunkSaveData(Vector2Int position){
     this.position = position;
-    changes = new List<C>();
+    this.changes = new List<C>();
   }
 
   [System.Serializable]

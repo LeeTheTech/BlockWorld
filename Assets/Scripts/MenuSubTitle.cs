@@ -1,12 +1,10 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using TMPro;
 
 public class MenuSubTitle : MonoBehaviour{
   public TextMeshProUGUI text1, text2;
 
-  private readonly string[] titles = new string[]{
+  private readonly string[] titles ={
       "Pre-Alpha",
       "Woah, new block game?",
       "We love blocks!"

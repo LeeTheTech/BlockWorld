@@ -8,7 +8,6 @@ public class ChunkData{
   public bool terrainReady{ get; private set; }
   public bool startedLoadingDetails{ get; private set; }
   public bool chunkReady{ get; private set; }
-
   public bool isDirty;
 
   //devide by chance ( 1 in X )
@@ -21,15 +20,10 @@ public class ChunkData{
   private Thread loadDetailsThread;
 
   public HashSet<Vector2Int> references;
-
   public List<StructureInfo> structures;
-
   public Dictionary<Vector3Int, byte> lightSources;
-
   public byte[,] highestNonAirBlock;
-
   public ChunkSaveData saveData;
-
   private ChunkData front, left, back, right; //neighbours (only exist while loading structures)
 
   public struct StructureInfo{
@@ -219,7 +213,6 @@ public class ChunkData{
                 structures.Add(new StructureInfo(new Vector3Int(x, height + 1, y), Structure.Type.OAK_TREE, rnd.Next()));
                 break;
               }
-
               height--;
             }
           }

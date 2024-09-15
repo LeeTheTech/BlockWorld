@@ -1,12 +1,10 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using System.IO;
 
 public class SaveDataManager{
   public static SaveDataManager instance{ get; private set; }
   public bool busy{ get; private set; }
-  private DirectoryInfo saveDirectory;
+  private readonly DirectoryInfo saveDirectory;
   private FileInfo worldInfoFile;
   private DirectoryInfo worldDirectory;
 
@@ -46,8 +44,6 @@ public class SaveDataManager{
       ReadChunk(fileInfo, saveData);
       //Debug.Log("SaveManager loaded changes to chunk " + saveData.position);
     }
-    else{
-    }
 
     return saveData;
   }
@@ -60,10 +56,8 @@ public class SaveDataManager{
     //while (busy) System.Threading.Thread.Sleep(4);
     busy = true;
     byte[] buffer = new byte[4];
-    using (FileStream stream = new FileStream(file.FullName, FileMode.Open))
-    {
-      while (stream.Position < stream.Length)
-      {
+    using (FileStream stream = new FileStream(file.FullName, FileMode.Open)){
+      while (stream.Position < stream.Length){
         stream.Read(buffer, 0, 4);
         saveData.changes.Add(new ChunkSaveData.C(buffer[0], buffer[1], buffer[2], buffer[3]));
       }
@@ -84,9 +78,7 @@ public class SaveDataManager{
         stream.Write(buffer, 0, 4);
       }
     }
-
     Debug.Log("SaveManager saved changes to chunk " + saveData.position);
-
     busy = false;
   }
 }

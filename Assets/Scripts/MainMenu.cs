@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class MainMenu : MonoBehaviour{
   public AudioManager audioManager;
@@ -10,7 +8,6 @@ public class MainMenu : MonoBehaviour{
     if (AudioManager.instance == null){
       audioManager.Initialize();
     }
-
     audioManager = AudioManager.instance;
   }
 

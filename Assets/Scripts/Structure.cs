@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 
-public class Structure{
+public static class Structure{
   public enum Type{
     OAK_TREE,
     WELL,
@@ -36,7 +36,6 @@ public class Structure{
       case Type.WELL: return true;
       case Type.CAVE_ENTRANCE: return true;
     }
-
     return false;
   }
 
@@ -126,11 +125,10 @@ public class Structure{
           ));
         }
 
-        Vector3Int currentPos = Vector3Int.zero;
         Vector3Int nextPos = path.Dequeue();
         float d = 0;
         while (path.Count > 0){
-          currentPos = nextPos;
+          Vector3Int currentPos = nextPos;
           nextPos = path.Dequeue();
           float size = Mathf.Lerp(2, 0.75f, d / depth);
 
@@ -152,7 +150,6 @@ public class Structure{
               }
             }
           }
-
           d++;
         }
 
@@ -165,11 +162,9 @@ public class Structure{
             }
           }
         }
-
         //Debug.Log("Cave size: " + result.Count);
         break;
     }
-
     return result;
   }
 
@@ -220,7 +215,6 @@ public class Structure{
 
         break;
     }
-
     templates.Add(type, result);
     //Debug.Log("added to template " + type);
   }

@@ -1,21 +1,19 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class World : MonoBehaviour{
   public static World activeWorld;
   public WorldInfo info;
   public Camera mainCamera;
   public ChunkManager chunkManager;
-  private bool initialized = false;
+  private bool initialized;
   public TMPro.TextMeshProUGUI debugText;
 
-  public void Initialize(WorldInfo info){
-    this.info = info;
-    if (info.seed == 0) info.seed = GenerateSeed();
+  public void Initialize(WorldInfo worldInfo){
+    this.info = worldInfo;
+    if (worldInfo.seed == 0) worldInfo.seed = GenerateSeed();
     activeWorld = this;
     chunkManager.Initialize();
-    SimplexNoise.Noise.Seed = info.seed;
+    SimplexNoise.Noise.Seed = worldInfo.seed;
     System.GC.Collect();
     initialized = true;
   }
@@ -57,7 +55,7 @@ public class World : MonoBehaviour{
     return chunkManager.GetBlock(new Vector2Int(chunkX, chunkY), relativeX, y, relativeZ);
   }
 
-  private int GenerateSeed(){
+  private static int GenerateSeed(){
     int tickCount = System.Environment.TickCount;
     int processId = System.Diagnostics.Process.GetCurrentProcess().Id;
     return new System.Random(tickCount + processId).Next();

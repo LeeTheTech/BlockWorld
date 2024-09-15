@@ -6,8 +6,8 @@ using System.Linq;
 public class AudioManager : MonoBehaviour{
   public static AudioManager instance{ get; private set; }
 
-  public Music music = new Music();
-  public Dig dig = new Dig();
+  public Music music = new();
+  public Dig dig = new();
 
   private AudioSource musicAudioSource, digAudioSource;
   public AudioClip[] musicPlaylist;
@@ -17,7 +17,6 @@ public class AudioManager : MonoBehaviour{
   private void Awake(){
     if (instance != null){
       gameObject.SetActive(false);
-      return;
     }
   }
 
@@ -47,7 +46,7 @@ public class AudioManager : MonoBehaviour{
       if (forceMusicRestart){
         if (musicAudioSource.clip != null){
           if (musicAudioSource.isPlaying){
-            musicAudioSource.volume = musicAudioSource.volume - Time.deltaTime;
+            musicAudioSource.volume -= Time.deltaTime;
             if (musicAudioSource.volume > 0) continue;
             musicAudioSource.Stop();
           }
@@ -137,8 +136,8 @@ public class AudioManager : MonoBehaviour{
 
   [System.Serializable]
   public class Music{
-    public Game game = new Game();
-    public Menu menu = new Menu();
+    public Game game = new();
+    public Menu menu = new();
 
     [System.Serializable]
     public class Game{
@@ -189,9 +188,8 @@ public class AudioManager : MonoBehaviour{
 
     public AudioClip[] stone, wood, gravel, grass;
   }
-
-  //https://stackoverflow.com/questions/273313/randomize-a-listt
-  private System.Random rnd = new System.Random();
+  
+  private readonly System.Random rnd = new();
 
   private IList<T> Shuffle<T>(IList<T> list){
     int n = list.Count;
@@ -200,7 +198,6 @@ public class AudioManager : MonoBehaviour{
       int k = rnd.Next(n + 1);
       (list[k], list[n]) = (list[n], list[k]);
     }
-
     return list;
   }
 }

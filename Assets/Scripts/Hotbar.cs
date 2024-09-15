@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 
 public class Hotbar : MonoBehaviour{
@@ -8,14 +6,12 @@ public class Hotbar : MonoBehaviour{
   public RawImage elementPrefab;
   public int[] elements = new int[9];
   public RawImage[] elementGraphics = new RawImage[9];
-  public int currentHighlighted = 0;
+  public int currentHighlighted;
   public RectTransform currentSelectedGraphic;
 
   public void Initialize(){
     for (int i = 0; i < 9; ++i){
-      RawImage elementGraphic = Instantiate(elementPrefab);
-      elementGraphic.transform.SetParent(elementPrefab.transform.parent);
-
+      RawImage elementGraphic = Instantiate(elementPrefab, elementPrefab.transform.parent, true);
       elementGraphic.rectTransform.localScale = Vector3.one;
       Vector2 anchoredPosition = elementGraphic.rectTransform.anchoredPosition;
       anchoredPosition.x = -80 + (20 * i);
@@ -23,7 +19,6 @@ public class Hotbar : MonoBehaviour{
       elementGraphic.rectTransform.anchoredPosition = anchoredPosition;
       elementGraphics[i] = elementGraphic;
     }
-
     elementPrefab.gameObject.SetActive(false);
     Rebuild();
   }
@@ -38,7 +33,7 @@ public class Hotbar : MonoBehaviour{
       Rebuild();
     }
 
-    int alpha1 = (int)KeyCode.Alpha1;
+    const int alpha1 = (int)KeyCode.Alpha1;
     for (int i = 0; i < 9; ++i){
       if (Input.GetKeyDown((KeyCode)(alpha1 + i))){
         currentHighlighted = i;
