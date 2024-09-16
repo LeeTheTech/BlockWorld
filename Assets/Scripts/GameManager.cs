@@ -120,7 +120,7 @@ public class GameManager : MonoBehaviour{
     }
   }
 
-  private long TimeStamp(){
+  private static long TimeStamp(){
     return System.DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
   }
 }

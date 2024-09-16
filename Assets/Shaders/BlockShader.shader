@@ -39,7 +39,7 @@
             uv.y = 1 - uv.y;
             fixed4 c = tex2D(_BlockTextures, uv);
             clip(c.a - 0.1);
-            float fade = pow(distance(_WorldSpaceCameraPos.xz, IN.worldPos.xz) / (16.0 - 1.0) / 16.0, 12);
+            const float fade = pow(distance(_WorldSpaceCameraPos.xz, IN.worldPos.xz) / (16.0 - 1.0) / 16.0, 2);
             o.Albedo = c.rgb * IN.color.rgb;
             o.Emission = fade;
             o.Gloss = 0;

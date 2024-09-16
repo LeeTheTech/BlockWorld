@@ -76,8 +76,7 @@ Shader "Unlit/Block"
                 float3 normalDirection = normalize(vs.normal);
                 half3 specular;
                 half specularMonochrome;
-                half3 diffuseColor =
-                    DiffuseAndSpecularFromMetallic(_Color.rgb, _Metallic, specular, specularMonochrome);
+                half3 diffuseColor = DiffuseAndSpecularFromMetallic(_Color.rgb, _Metallic, specular, specularMonochrome);
 
                 fixed4 c = tex2D(_BlockTextures, vs.uv);
                 //c.rgb = 1;
