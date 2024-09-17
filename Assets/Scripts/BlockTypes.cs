@@ -20,6 +20,7 @@ public static class BlockTypes{
 
   //TRANSPARENT
   public const byte LEAVES_OAK = 128;
+  public const byte GLASS = 129;
   public const byte AIR = 255;
 
   public static Dictionary<byte, byte> lightLevel;
@@ -40,6 +41,7 @@ public static class BlockTypes{
         { PLANKS_OAK, 0 },
         { GLOWSTONE, 14 },
         { LEAVES_OAK, 0 },
+        { GLASS, 0 },
         { AIR, 0 },
         { ANDESITE, 0 },
         { DIORITE, 0 },
@@ -60,6 +62,7 @@ public static class BlockTypes{
         { PLANKS_OAK, 255 },
         { GLOWSTONE, 255 },
         { LEAVES_OAK, 63 },
+        { GLASS, 0 },
         { AIR, 0 },
         { ANDESITE, 255 },
         { DIORITE, 255 },
@@ -80,6 +83,7 @@ public static class BlockTypes{
         { PLANKS_OAK, AudioManager.Dig.Type.Wood },
         { GLOWSTONE, AudioManager.Dig.Type.Stone },
         { LEAVES_OAK, AudioManager.Dig.Type.Grass },
+        { GLASS, AudioManager.Dig.Type.Grass },
         { AIR, AudioManager.Dig.Type.Silent },
         { ANDESITE, AudioManager.Dig.Type.Stone },
         { DIORITE, AudioManager.Dig.Type.Stone },

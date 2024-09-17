@@ -8,6 +8,18 @@ public class Hotbar : MonoBehaviour{
   public RawImage[] elementGraphics = new RawImage[9];
   public int currentHighlighted;
   public RectTransform currentSelectedGraphic;
+  
+  private int[] hotbarBlocks = {
+      BlockTypes.GRASS,
+      BlockTypes.DIRT,
+      BlockTypes.STONE,
+      BlockTypes.LOG_OAK,
+      BlockTypes.PLANKS_OAK,
+      BlockTypes.COBBLESTONE,
+      BlockTypes.DIAMOND,
+      BlockTypes.GLOWSTONE,
+      BlockTypes.GLASS
+  };
 
   public void Initialize(){
     for (int i = 0; i < 9; ++i){
@@ -21,6 +33,7 @@ public class Hotbar : MonoBehaviour{
     }
     elementPrefab.gameObject.SetActive(false);
     Rebuild();
+    SetHotbarElements(hotbarBlocks);
   }
 
   public void UpdateHotbar(){
@@ -40,6 +53,18 @@ public class Hotbar : MonoBehaviour{
         Rebuild();
       }
     }
+  }
+  
+  // Method to set the block types for the hotbar
+  public void SetHotbarElements(int[] blockTypes){
+    for (int i = 0; i < elements.Length; i++){
+      if (i < blockTypes.Length){
+        elements[i] = blockTypes[i];
+      } else {
+        elements[i] = -1;  // Set to -1 if no block type is assigned (empty slot)
+      }
+    }
+    Rebuild();
   }
 
   private void Rebuild(){

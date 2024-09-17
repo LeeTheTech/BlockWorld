@@ -3,167 +3,177 @@ using UnityEngine;
 
 public class TextureMapper{
   public Dictionary<byte, TextureMap> map = new(){
-          {
-                  BlockTypes.GRASS, new TextureMap(
-                          new TextureMap.Face(new Vector2(0, 1)),
-                          new TextureMap.Face(new Vector2(0, 1)),
-                          new TextureMap.Face(new Vector2(0, 1)),
-                          new TextureMap.Face(new Vector2(0, 1)),
-                          new TextureMap.Face(new Vector2(0, 0)),
-                          new TextureMap.Face(new Vector2(0, 2)),
-                          new Color32(255, 255, 255, 255)
-                  )
-          },{
-                  BlockTypes.DIRT, new TextureMap(
-                          new TextureMap.Face(new Vector2(0, 2)),
-                          new TextureMap.Face(new Vector2(0, 2)),
-                          new TextureMap.Face(new Vector2(0, 2)),
-                          new TextureMap.Face(new Vector2(0, 2)),
-                          new TextureMap.Face(new Vector2(0, 2)),
-                          new TextureMap.Face(new Vector2(0, 2)),
-                          new Color32(255, 255, 255, 255)
-                  )
-          },{
-                  BlockTypes.STONE, new TextureMap(
-                          new TextureMap.Face(new Vector2(1, 0)),
-                          new TextureMap.Face(new Vector2(1, 0)),
-                          new TextureMap.Face(new Vector2(1, 0)),
-                          new TextureMap.Face(new Vector2(1, 0)),
-                          new TextureMap.Face(new Vector2(1, 0)),
-                          new TextureMap.Face(new Vector2(1, 0)),
-                          new Color32(255, 255, 255, 255)
-                  )
-          },{
-                  BlockTypes.BEDROCK, new TextureMap(
-                          new TextureMap.Face(new Vector2(2, 0)),
-                          new TextureMap.Face(new Vector2(2, 0)),
-                          new TextureMap.Face(new Vector2(2, 0)),
-                          new TextureMap.Face(new Vector2(2, 0)),
-                          new TextureMap.Face(new Vector2(2, 0)),
-                          new TextureMap.Face(new Vector2(2, 0)),
-                          new Color32(255, 255, 255, 255)
-                  )
-          },{
-                  BlockTypes.COAL, new TextureMap(
-                          new TextureMap.Face(new Vector2(1, 1)),
-                          new TextureMap.Face(new Vector2(1, 1)),
-                          new TextureMap.Face(new Vector2(1, 1)),
-                          new TextureMap.Face(new Vector2(1, 1)),
-                          new TextureMap.Face(new Vector2(1, 1)),
-                          new TextureMap.Face(new Vector2(1, 1)),
-                          new Color32(255, 255, 255, 255)
-                  )
-          },{
-                  BlockTypes.IRON, new TextureMap(
-                          new TextureMap.Face(new Vector2(1, 2)),
-                          new TextureMap.Face(new Vector2(1, 2)),
-                          new TextureMap.Face(new Vector2(1, 2)),
-                          new TextureMap.Face(new Vector2(1, 2)),
-                          new TextureMap.Face(new Vector2(1, 2)),
-                          new TextureMap.Face(new Vector2(1, 2)),
-                          new Color32(255, 255, 255, 255)
-                  )
-          },{
-                  BlockTypes.GOLD, new TextureMap(
-                          new TextureMap.Face(new Vector2(1, 3)),
-                          new TextureMap.Face(new Vector2(1, 3)),
-                          new TextureMap.Face(new Vector2(1, 3)),
-                          new TextureMap.Face(new Vector2(1, 3)),
-                          new TextureMap.Face(new Vector2(1, 3)),
-                          new TextureMap.Face(new Vector2(1, 3)),
-                          new Color32(255, 255, 255, 255)
-                  )
-          },{
-                  BlockTypes.DIAMOND, new TextureMap(
-                          new TextureMap.Face(new Vector2(1, 4)),
-                          new TextureMap.Face(new Vector2(1, 4)),
-                          new TextureMap.Face(new Vector2(1, 4)),
-                          new TextureMap.Face(new Vector2(1, 4)),
-                          new TextureMap.Face(new Vector2(1, 4)),
-                          new TextureMap.Face(new Vector2(1, 4)),
-                          new Color32(255, 255, 255, 255)
-                  )
-          },{
-                  BlockTypes.LOG_OAK, new TextureMap(
-                          new TextureMap.Face(new Vector2(3, 3)),
-                          new TextureMap.Face(new Vector2(3, 3)),
-                          new TextureMap.Face(new Vector2(3, 3)),
-                          new TextureMap.Face(new Vector2(3, 3)),
-                          new TextureMap.Face(new Vector2(3, 2)),
-                          new TextureMap.Face(new Vector2(3, 2)),
-                          new Color32(255, 255, 255, 255)
-                  )
-          },{
-                  BlockTypes.PLANKS_OAK, new TextureMap(
-                          new TextureMap.Face(new Vector2(3, 1)),
-                          new TextureMap.Face(new Vector2(3, 1)),
-                          new TextureMap.Face(new Vector2(3, 1)),
-                          new TextureMap.Face(new Vector2(3, 1)),
-                          new TextureMap.Face(new Vector2(3, 1)),
-                          new TextureMap.Face(new Vector2(3, 1)),
-                          new Color32(255, 255, 255, 255)
-                  )
-          },{
-                  BlockTypes.LEAVES_OAK, new TextureMap(
-                          new TextureMap.Face(new Vector2(3, 4)),
-                          new TextureMap.Face(new Vector2(3, 4)),
-                          new TextureMap.Face(new Vector2(3, 4)),
-                          new TextureMap.Face(new Vector2(3, 4)),
-                          new TextureMap.Face(new Vector2(3, 4)),
-                          new TextureMap.Face(new Vector2(3, 4)),
-                          new Color32(168, 255, 68, 255)
-                  )
-          },{
-                  BlockTypes.GLOWSTONE, new TextureMap(
-                          new TextureMap.Face(new Vector2(3, 0)),
-                          new TextureMap.Face(new Vector2(3, 0)),
-                          new TextureMap.Face(new Vector2(3, 0)),
-                          new TextureMap.Face(new Vector2(3, 0)),
-                          new TextureMap.Face(new Vector2(3, 0)),
-                          new TextureMap.Face(new Vector2(3, 0)),
-                          new Color32(255, 255, 255, 255)
-                  )
-          },{
-                  BlockTypes.ANDESITE, new TextureMap(
-                          new TextureMap.Face(new Vector2(2, 3)),
-                          new TextureMap.Face(new Vector2(2, 3)),
-                          new TextureMap.Face(new Vector2(2, 3)),
-                          new TextureMap.Face(new Vector2(2, 3)),
-                          new TextureMap.Face(new Vector2(2, 3)),
-                          new TextureMap.Face(new Vector2(2, 3)),
-                          new Color32(255, 255, 255, 255)
-                  )
-          },{
-                  BlockTypes.DIORITE, new TextureMap(
-                          new TextureMap.Face(new Vector2(2, 1)),
-                          new TextureMap.Face(new Vector2(2, 1)),
-                          new TextureMap.Face(new Vector2(2, 1)),
-                          new TextureMap.Face(new Vector2(2, 1)),
-                          new TextureMap.Face(new Vector2(2, 1)),
-                          new TextureMap.Face(new Vector2(2, 1)),
-                          new Color32(255, 255, 255, 255)
-                  )
-          },{
-                  BlockTypes.GRANITE, new TextureMap(
-                          new TextureMap.Face(new Vector2(2, 2)),
-                          new TextureMap.Face(new Vector2(2, 2)),
-                          new TextureMap.Face(new Vector2(2, 2)),
-                          new TextureMap.Face(new Vector2(2, 2)),
-                          new TextureMap.Face(new Vector2(2, 2)),
-                          new TextureMap.Face(new Vector2(2, 2)),
-                          new Color32(255, 255, 255, 255)
-                  )
-          },{
-                  BlockTypes.COBBLESTONE, new TextureMap(
-                          new TextureMap.Face(new Vector2(2, 4)),
-                          new TextureMap.Face(new Vector2(2, 4)),
-                          new TextureMap.Face(new Vector2(2, 4)),
-                          new TextureMap.Face(new Vector2(2, 4)),
-                          new TextureMap.Face(new Vector2(2, 4)),
-                          new TextureMap.Face(new Vector2(2, 4)),
-                          new Color32(255, 255, 255, 255)
-                  )
-          }
+      {
+          BlockTypes.GRASS, new TextureMap(
+              new TextureMap.Face(new Vector2(0, 1)),
+              new TextureMap.Face(new Vector2(0, 1)),
+              new TextureMap.Face(new Vector2(0, 1)),
+              new TextureMap.Face(new Vector2(0, 1)),
+              new TextureMap.Face(new Vector2(0, 0)),
+              new TextureMap.Face(new Vector2(0, 2)),
+              new Color32(255, 255, 255, 255)
+          )
+      },{
+          BlockTypes.DIRT, new TextureMap(
+              new TextureMap.Face(new Vector2(0, 2)),
+              new TextureMap.Face(new Vector2(0, 2)),
+              new TextureMap.Face(new Vector2(0, 2)),
+              new TextureMap.Face(new Vector2(0, 2)),
+              new TextureMap.Face(new Vector2(0, 2)),
+              new TextureMap.Face(new Vector2(0, 2)),
+              new Color32(255, 255, 255, 255)
+          )
+      },{
+          BlockTypes.STONE, new TextureMap(
+              new TextureMap.Face(new Vector2(1, 0)),
+              new TextureMap.Face(new Vector2(1, 0)),
+              new TextureMap.Face(new Vector2(1, 0)),
+              new TextureMap.Face(new Vector2(1, 0)),
+              new TextureMap.Face(new Vector2(1, 0)),
+              new TextureMap.Face(new Vector2(1, 0)),
+              new Color32(255, 255, 255, 255)
+          )
+      },{
+          BlockTypes.BEDROCK, new TextureMap(
+              new TextureMap.Face(new Vector2(2, 0)),
+              new TextureMap.Face(new Vector2(2, 0)),
+              new TextureMap.Face(new Vector2(2, 0)),
+              new TextureMap.Face(new Vector2(2, 0)),
+              new TextureMap.Face(new Vector2(2, 0)),
+              new TextureMap.Face(new Vector2(2, 0)),
+              new Color32(255, 255, 255, 255)
+          )
+      },{
+          BlockTypes.COAL, new TextureMap(
+              new TextureMap.Face(new Vector2(1, 1)),
+              new TextureMap.Face(new Vector2(1, 1)),
+              new TextureMap.Face(new Vector2(1, 1)),
+              new TextureMap.Face(new Vector2(1, 1)),
+              new TextureMap.Face(new Vector2(1, 1)),
+              new TextureMap.Face(new Vector2(1, 1)),
+              new Color32(255, 255, 255, 255)
+          )
+      },{
+          BlockTypes.IRON, new TextureMap(
+              new TextureMap.Face(new Vector2(1, 2)),
+              new TextureMap.Face(new Vector2(1, 2)),
+              new TextureMap.Face(new Vector2(1, 2)),
+              new TextureMap.Face(new Vector2(1, 2)),
+              new TextureMap.Face(new Vector2(1, 2)),
+              new TextureMap.Face(new Vector2(1, 2)),
+              new Color32(255, 255, 255, 255)
+          )
+      },{
+          BlockTypes.GOLD, new TextureMap(
+              new TextureMap.Face(new Vector2(1, 3)),
+              new TextureMap.Face(new Vector2(1, 3)),
+              new TextureMap.Face(new Vector2(1, 3)),
+              new TextureMap.Face(new Vector2(1, 3)),
+              new TextureMap.Face(new Vector2(1, 3)),
+              new TextureMap.Face(new Vector2(1, 3)),
+              new Color32(255, 255, 255, 255)
+          )
+      },{
+          BlockTypes.DIAMOND, new TextureMap(
+              new TextureMap.Face(new Vector2(1, 4)),
+              new TextureMap.Face(new Vector2(1, 4)),
+              new TextureMap.Face(new Vector2(1, 4)),
+              new TextureMap.Face(new Vector2(1, 4)),
+              new TextureMap.Face(new Vector2(1, 4)),
+              new TextureMap.Face(new Vector2(1, 4)),
+              new Color32(255, 255, 255, 255)
+          )
+      },{
+          BlockTypes.LOG_OAK, new TextureMap(
+              new TextureMap.Face(new Vector2(3, 3)),
+              new TextureMap.Face(new Vector2(3, 3)),
+              new TextureMap.Face(new Vector2(3, 3)),
+              new TextureMap.Face(new Vector2(3, 3)),
+              new TextureMap.Face(new Vector2(3, 2)),
+              new TextureMap.Face(new Vector2(3, 2)),
+              new Color32(255, 255, 255, 255)
+          )
+      },{
+          BlockTypes.PLANKS_OAK, new TextureMap(
+              new TextureMap.Face(new Vector2(3, 1)),
+              new TextureMap.Face(new Vector2(3, 1)),
+              new TextureMap.Face(new Vector2(3, 1)),
+              new TextureMap.Face(new Vector2(3, 1)),
+              new TextureMap.Face(new Vector2(3, 1)),
+              new TextureMap.Face(new Vector2(3, 1)),
+              new Color32(255, 255, 255, 255)
+          )
+      },{
+          BlockTypes.LEAVES_OAK, new TextureMap(
+              new TextureMap.Face(new Vector2(3, 4)),
+              new TextureMap.Face(new Vector2(3, 4)),
+              new TextureMap.Face(new Vector2(3, 4)),
+              new TextureMap.Face(new Vector2(3, 4)),
+              new TextureMap.Face(new Vector2(3, 4)),
+              new TextureMap.Face(new Vector2(3, 4)),
+              new Color32(168, 255, 68, 255)
+          )
+      },{
+          BlockTypes.GLASS, new TextureMap(
+              new TextureMap.Face(new Vector2(0, 3)),
+              new TextureMap.Face(new Vector2(0, 3)),
+              new TextureMap.Face(new Vector2(0, 3)),
+              new TextureMap.Face(new Vector2(0, 3)),
+              new TextureMap.Face(new Vector2(0, 3)),
+              new TextureMap.Face(new Vector2(0, 3)),
+              new Color32(255, 255, 255, 255)
+          )
+      },{
+          BlockTypes.GLOWSTONE, new TextureMap(
+              new TextureMap.Face(new Vector2(3, 0)),
+              new TextureMap.Face(new Vector2(3, 0)),
+              new TextureMap.Face(new Vector2(3, 0)),
+              new TextureMap.Face(new Vector2(3, 0)),
+              new TextureMap.Face(new Vector2(3, 0)),
+              new TextureMap.Face(new Vector2(3, 0)),
+              new Color32(255, 255, 255, 255)
+          )
+      },{
+          BlockTypes.ANDESITE, new TextureMap(
+              new TextureMap.Face(new Vector2(2, 3)),
+              new TextureMap.Face(new Vector2(2, 3)),
+              new TextureMap.Face(new Vector2(2, 3)),
+              new TextureMap.Face(new Vector2(2, 3)),
+              new TextureMap.Face(new Vector2(2, 3)),
+              new TextureMap.Face(new Vector2(2, 3)),
+              new Color32(255, 255, 255, 255)
+          )
+      },{
+          BlockTypes.DIORITE, new TextureMap(
+              new TextureMap.Face(new Vector2(2, 1)),
+              new TextureMap.Face(new Vector2(2, 1)),
+              new TextureMap.Face(new Vector2(2, 1)),
+              new TextureMap.Face(new Vector2(2, 1)),
+              new TextureMap.Face(new Vector2(2, 1)),
+              new TextureMap.Face(new Vector2(2, 1)),
+              new Color32(255, 255, 255, 255)
+          )
+      },{
+          BlockTypes.GRANITE, new TextureMap(
+              new TextureMap.Face(new Vector2(2, 2)),
+              new TextureMap.Face(new Vector2(2, 2)),
+              new TextureMap.Face(new Vector2(2, 2)),
+              new TextureMap.Face(new Vector2(2, 2)),
+              new TextureMap.Face(new Vector2(2, 2)),
+              new TextureMap.Face(new Vector2(2, 2)),
+              new Color32(255, 255, 255, 255)
+          )
+      },{
+          BlockTypes.COBBLESTONE, new TextureMap(
+              new TextureMap.Face(new Vector2(2, 4)),
+              new TextureMap.Face(new Vector2(2, 4)),
+              new TextureMap.Face(new Vector2(2, 4)),
+              new TextureMap.Face(new Vector2(2, 4)),
+              new TextureMap.Face(new Vector2(2, 4)),
+              new TextureMap.Face(new Vector2(2, 4)),
+              new Color32(255, 255, 255, 255)
+          )
+      }
   };
 
   public class TextureMap{
@@ -187,6 +197,7 @@ public class TextureMapper{
         bl = tl + new Vector2(0, 1);
         br = tl + new Vector2(1, 1);
       }
+
       public Vector2 tl, tr, bl, br;
     }
   }
