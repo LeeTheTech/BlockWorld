@@ -5,7 +5,8 @@ public static class Structure{
   public enum Type{
     OAK_TREE,
     WELL,
-    CAVE_ENTRANCE
+    CAVE_ENTRANCE,
+    CACTUS
   }
 
   private static Dictionary<Type, List<Change>> templates;
@@ -213,6 +214,12 @@ public static class Structure{
         break;
       case Type.CAVE_ENTRANCE:
 
+        break;
+      case Type.CACTUS:
+        // Cactus is usually a 3-block-high column
+        result.Add(new Change(0, 0, 0, BlockTypes.CACTUS));  // Bottom block
+        result.Add(new Change(0, 1, 0, BlockTypes.CACTUS));  // Middle block
+        result.Add(new Change(0, 2, 0, BlockTypes.CACTUS));  // Top block
         break;
     }
     templates.Add(type, result);

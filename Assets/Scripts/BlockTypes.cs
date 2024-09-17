@@ -17,6 +17,9 @@ public static class BlockTypes{
   public const byte DIORITE = 12;
   public const byte GRANITE = 13;
   public const byte ANDESITE = 14;
+  public const byte SAND = 15;
+  public const byte WATER = 16;
+  public const byte CACTUS = 17;
 
   //TRANSPARENT
   public const byte LEAVES_OAK = 128;
@@ -42,11 +45,14 @@ public static class BlockTypes{
         { GLOWSTONE, 14 },
         { LEAVES_OAK, 0 },
         { GLASS, 0 },
+        { WATER, 0 },
+        { CACTUS, 0 },
         { AIR, 0 },
         { ANDESITE, 0 },
         { DIORITE, 0 },
         { GRANITE, 0 },
-        { COBBLESTONE, 0 }
+        { COBBLESTONE, 0 },
+        { SAND, 0 }
     };
 
     density = new Dictionary<byte, byte>{
@@ -63,11 +69,14 @@ public static class BlockTypes{
         { GLOWSTONE, 255 },
         { LEAVES_OAK, 63 },
         { GLASS, 0 },
+        { WATER, 255 },
+        { CACTUS, 255 },
         { AIR, 0 },
         { ANDESITE, 255 },
         { DIORITE, 255 },
         { GRANITE, 255 },
-        { COBBLESTONE, 255 }
+        { COBBLESTONE, 255 },
+        { SAND, 255 }
     };
 
     digSound = new Dictionary<byte, AudioManager.Dig.Type>{
@@ -84,11 +93,14 @@ public static class BlockTypes{
         { GLOWSTONE, AudioManager.Dig.Type.Stone },
         { LEAVES_OAK, AudioManager.Dig.Type.Grass },
         { GLASS, AudioManager.Dig.Type.Grass },
+        { WATER, AudioManager.Dig.Type.Grass },
+        { CACTUS, AudioManager.Dig.Type.Grass },
         { AIR, AudioManager.Dig.Type.Silent },
         { ANDESITE, AudioManager.Dig.Type.Stone },
         { DIORITE, AudioManager.Dig.Type.Stone },
         { GRANITE, AudioManager.Dig.Type.Stone },
-        { COBBLESTONE, AudioManager.Dig.Type.Stone }
+        { COBBLESTONE, AudioManager.Dig.Type.Stone },
+        { SAND, AudioManager.Dig.Type.Stone }
     };
   }
 }

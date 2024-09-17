@@ -14,6 +14,7 @@ public class ChunkData{
   const int STRUCTURE_CHANCE_TREE = (int.MaxValue / 100);
   const int STRUCTURE_CHANCE_WELL = (int.MaxValue / 512);
   const int STRUCTURE_CHANCE_CAVE_ENTRANCE = (int.MaxValue / 50);
+  const int STRUCTURE_CHANCE_CACTUS = (int.MaxValue / 100);
 
 
   private Thread loadTerrainThread;
@@ -68,119 +69,48 @@ public class ChunkData{
 
   public void StartTerrainLoading(){
     //Debug.Log($"Chunk {position} start terrain loading");
-    loadTerrainThread = new Thread(LoadTerrain);
-    loadTerrainThread.IsBackground = true;
+    loadTerrainThread = new Thread(LoadTerrain){
+        IsBackground = true
+    };
     loadTerrainThread.Start();
   }
 
-  public void StartDetailsLoading(ChunkData front, ChunkData left, ChunkData back, ChunkData right){
+  public void StartDetailsLoading(ChunkData f, ChunkData l, ChunkData b, ChunkData r){
     //Debug.Log($"Chunk {position} start structure loading");
     //need to temporarily cache chunkdata of neighbors since generation is on another thread
-    this.front = front;
-    this.left = left;
-    this.right = right;
-    this.back = back;
+    this.front = f;
+    this.left = l;
+    this.back = b;
+    this.right = r;
 
-    loadDetailsThread = new Thread(LoadDetails);
-    loadDetailsThread.IsBackground = true;
+    loadDetailsThread = new Thread(LoadDetails){
+        IsBackground = true
+    };
     loadDetailsThread.Start();
     startedLoadingDetails = true;
   }
 
-  public void LoadTerrain() //also loads structures INFO
-  {
+  public void LoadTerrain(){
     blocks = new byte[16, 256, 16];
     light = new byte[16, 256, 16];
     Vector2Int worldPos = position * 16;
 
+    // Terrain
     for (int z = 0; z < 16; ++z){
       for (int x = 0; x < 16; ++x){
         int noiseX = worldPos.x + x;
         int noiseZ = worldPos.y + z;
-        float height = SimplexNoise.Noise.CalcPixel2D(noiseX, noiseZ + 50000, 0.01f);
-        height = height * 16 + 64;
-        int heightInt = (int)height;
 
-        float bedrock = SimplexNoise.Noise.CalcPixel2D(noiseX, noiseZ + 50000, 1f);
-        bedrock = bedrock * 3 + 1;
-        int bedrockInt = (int)bedrock;
+        float biomeNoise = BiomeManager.GenerateTerrainHeight(noiseX, noiseZ);
+        int heightGen = Mathf.Clamp(Mathf.RoundToInt(BiomeManager.seaLevel + biomeNoise), 0, 256);
 
         for (int y = 0; y < 256; ++y){
-          //bedrock
-          if (y < bedrockInt){
-            blocks[x, y, z] = BlockTypes.BEDROCK;
-            continue;
-          }
-
-          //air
-          if (y > heightInt){
-            blocks[x, y, z] = BlockTypes.AIR;
-            continue;
-          }
-
-          //ores
-          float o1 = SimplexNoise.Noise.CalcPixel3D(noiseX + 50000, y, noiseZ, 0.1f);
-          float o2 = SimplexNoise.Noise.CalcPixel3D(noiseX + 40000, y, noiseZ, 0.1f);
-          float o3 = SimplexNoise.Noise.CalcPixel3D(noiseX + 30000, y, noiseZ, 0.04f);
-          float o4 = SimplexNoise.Noise.CalcPixel3D(noiseX + 60000, y, noiseZ, 0.1f);
-          float o5 = SimplexNoise.Noise.CalcPixel3D(noiseX + 70000, y, noiseZ, 0.1f);
-          float o6 = SimplexNoise.Noise.CalcPixel3D(noiseX + 80000, y, noiseZ, 0.03f);
-
-          float heightGradient = Mathf.Pow(Mathf.Clamp01(y / 128f), 2f);
-
-          //caves
-          float c1 = SimplexNoise.Noise.CalcPixel3D(noiseX, y, noiseZ, 0.1f);
-          float c2 = SimplexNoise.Noise.CalcPixel3D(noiseX, y, noiseZ, 0.04f);
-          float c3 = SimplexNoise.Noise.CalcPixel3D(noiseX, y, noiseZ, 0.02f);
-          float c4 = SimplexNoise.Noise.CalcPixel3D(noiseX, y, noiseZ, 0.01f);
-
-          c1 += (heightGradient);
-          if (c1 < .5 && c2 < .5 && c3 < .5 && c4 < .5){
-            blocks[x, y, z] = BlockTypes.AIR;
-            continue;
-          }
-
-          //grass level
-          if (y == heightInt){
-            blocks[x, y, z] = BlockTypes.GRASS;
-            continue;
-          }
-
-          //dirt
-          if (y >= heightInt - 4){
-            blocks[x, y, z] = BlockTypes.DIRT;
-            continue;
-          }
-
-
-          o5 += (heightGradient);
-          if (y < 64 && o5 < .04){
-            blocks[x, y, z] = BlockTypes.GOLD;
-            continue;
-          }
-
-          if (y < 16 && Mathf.Pow(o2, 4f) > .7 && o3 < .1){
-            blocks[x, y, z] = BlockTypes.DIAMOND;
-            continue;
-          }
-
-          if (o4 < .1 && o6 > .8){
-            blocks[x, y, z] = BlockTypes.IRON;
-            continue;
-          }
-
-          if (o1 < .08){
-            blocks[x, y, z] = BlockTypes.COAL;
-            continue;
-          }
-
-          //remaining is stone
-          blocks[x, y, z] = BlockTypes.STONE;
-          continue;
+          blocks[x, y, z] = BiomeManager.DetermineBlockType(heightGen, noiseX, y, noiseZ);
         }
       }
     }
 
+    // Structures
     string hash = World.activeWorld.info.seed.ToString() + position.x.ToString() + position.y.ToString();
     int structuresSeed = hash.GetHashCode();
     //Debug.Log("Chunk structures seed is " + structuresSeed);
@@ -188,38 +118,70 @@ public class ChunkData{
     structures = new List<StructureInfo>();
     bool[,] spotsTaken = new bool[16, 16];
 
-    //cave entrances
-    if (rnd.Next() < STRUCTURE_CHANCE_CAVE_ENTRANCE){
+    // Cave Entrances
+    if (rnd.Next() < STRUCTURE_CHANCE_CAVE_ENTRANCE) {
       int h = 255;
-      while (h > 0){
-        if (blocks[8, h, 8] != BlockTypes.AIR){
+      while (h > 0) {
+        if (blocks[8, h, 8] != BlockTypes.AIR) {
           structures.Add(new StructureInfo(new Vector3Int(0, h + 6, 0), Structure.Type.CAVE_ENTRANCE, rnd.Next()));
-          //Debug.Log($"Adding cave entrance at {position.x} {position.y}");
+            
+          // Mark the area above the cave entrance as taken (radius of 2)
+          for (int z = 6; z <= 10; ++z) {
+            for (int x = 6; x <= 10; ++x) {
+              spotsTaken[x, z] = true;
+            }
+          }
           break;
         }
         h--;
       }
     }
 
-    //trees
+    // Trees
     for (int y = 2; y < 14; ++y){
       for (int x = 2; x < 14; ++x){
-        if (rnd.Next() < STRUCTURE_CHANCE_TREE){
-          if (IsSpotFree(spotsTaken, new Vector2Int(x, y), 2)){
-            spotsTaken[x, y] = true;
-            int height = 255;
-            while (height > 0){
-              if (blocks[x, height, y] == BlockTypes.GRASS){
-                structures.Add(new StructureInfo(new Vector3Int(x, height + 1, y), Structure.Type.OAK_TREE, rnd.Next()));
-                break;
+        BiomeType biomeType = BiomeManager.GetBiomeType(worldPos.x + x, worldPos.y + y);
+        switch (biomeType){
+          case BiomeType.MOUNTAIN:
+          case BiomeType.GRASSLAND:
+          case BiomeType.SNOW:
+            if (rnd.Next() < STRUCTURE_CHANCE_TREE){
+              if (IsSpotFree(spotsTaken, new Vector2Int(x, y), 2)){
+                spotsTaken[x, y] = true;
+                int height = 255;
+                while (height > 0){
+                  if (blocks[x, height, y] != BlockTypes.AIR){
+                    if (blocks[x, height, y] != BlockTypes.GRASS) break;
+                    structures.Add(new StructureInfo(new Vector3Int(x, height + 1, y), Structure.Type.OAK_TREE, rnd.Next()));
+                    break;
+                  }
+                  height--;
+                }
               }
-              height--;
             }
-          }
+            break;
+
+          case BiomeType.DESERT:
+            if (rnd.Next() < STRUCTURE_CHANCE_CACTUS){
+              if (IsSpotFree(spotsTaken, new Vector2Int(x, y), 2)){
+                spotsTaken[x, y] = true;
+                int height = 255;
+                while (height > 0){
+                  if (blocks[x, height, y] != BlockTypes.AIR){
+                    if (blocks[x, height, y] != BlockTypes.SAND) break;
+                    structures.Add(new StructureInfo(new Vector3Int(x, height + 1, y), Structure.Type.CACTUS, rnd.Next()));
+                    break;
+                  }
+                  height--;
+                }
+              }
+            }
+            break;
         }
       }
     }
 
+    // Wells
     if (rnd.Next() < STRUCTURE_CHANCE_WELL){
       if (IsSpotFree(spotsTaken, new Vector2Int(7, 7), 3)){
         //Debug.Log("Spot is free");
@@ -244,13 +206,12 @@ public class ChunkData{
 
         canPlace &= Mathf.Abs(minH - maxH) < 2;
         if (canPlace){
-          Debug.Log("spawning well structure");
+          //Debug.Log("spawning well structure");
           for (int y = 5; y < 11; ++y){
             for (int x = 5; x < 11; ++x){
               spotsTaken[x, y] = true;
             }
           }
-
           int h = 255;
           while (h > 0){
             if (blocks[7, h, 7] != BlockTypes.AIR){
@@ -271,11 +232,11 @@ public class ChunkData{
     //Debug.Log($"Chunk {position} terrain ready");
   }
 
-  private bool IsSpotFree(bool[,] spotsTaken, Vector2Int position, int size) //x area is for example size + 1 + size
+  private bool IsSpotFree(bool[,] spotsTaken, Vector2Int pos, int size) //x area is for example size + 1 + size
   {
     bool spotTaken = false;
-    for (int y = Mathf.Max(0, position.y - size); y < Mathf.Min(15, position.y + size + 1); ++y){
-      for (int x = Mathf.Max(0, position.x - size); x < Mathf.Min(15, position.x + size + 1); ++x){
+    for (int y = Mathf.Max(0, pos.y - size); y < Mathf.Min(15, pos.y + size + 1); ++y){
+      for (int x = Mathf.Max(0, pos.x - size); x < Mathf.Min(15, pos.x + size + 1); ++x){
         spotTaken |= spotsTaken[x, y];
       }
     }

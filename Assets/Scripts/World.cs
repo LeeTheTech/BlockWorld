@@ -13,7 +13,8 @@ public class World : MonoBehaviour{
     if (worldInfo.seed == 0) worldInfo.seed = GenerateSeed();
     activeWorld = this;
     chunkManager.Initialize();
-    SimplexNoise.Noise.Seed = worldInfo.seed;
+    BiomeManager.Initialize(worldInfo.seed);
+    //SimplexNoise.Noise.Seed = worldInfo.seed;
     System.GC.Collect();
     initialized = true;
   }

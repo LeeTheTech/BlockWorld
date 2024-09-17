@@ -4,12 +4,12 @@ using UnityEngine;
 public class ChunkDataManager{
   public Dictionary<Vector2Int, ChunkData> data;
   private TextureMapper textureMapper;
-  private List<Vector2Int> loadQueue;
-  private List<Vector2Int> dirtyChunks;
-  private readonly Vector2Int nFront = new Vector2Int(0, 1);
-  private readonly Vector2Int nBack = new Vector2Int(0, -1);
-  private readonly Vector2Int nLeft = new Vector2Int(-1, 0);
-  private readonly Vector2Int nRight = new Vector2Int(1, 0);
+  private readonly List<Vector2Int> loadQueue;
+  private readonly List<Vector2Int> dirtyChunks;
+  private readonly Vector2Int nFront = new(0, 1);
+  private readonly Vector2Int nBack = new(0, -1);
+  private readonly Vector2Int nLeft = new(-1, 0);
+  private readonly Vector2Int nRight = new(1, 0);
 
 
   public ChunkDataManager(){

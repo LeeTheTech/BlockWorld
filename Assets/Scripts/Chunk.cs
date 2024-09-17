@@ -72,7 +72,6 @@ public class Chunk : MonoBehaviour{
 
     UnityEngine.Profiling.Profiler.BeginSample("SIMULATING LIGHT");
 
-
     Queue<Vector3Int> simulateQueue = new Queue<Vector3Int>();
     //sunray tracing needs to start above the highest non-air block to increase performance
     //all blocks above that block need to be set to 15
@@ -210,12 +209,12 @@ public class Chunk : MonoBehaviour{
             byte bU = (y == 255 ? BlockTypes.AIR : chunkData.GetBlocks()[x, y + 1, z]);
             byte bD = (y == 0 ? BlockTypes.AIR : chunkData.GetBlocks()[x, y - 1, z]);
 
-            byte lightR = lightMap[lx + 1, ly, lz];
-            byte lightL = lightMap[lx - 1, ly, lz];
-            byte lightF = lightMap[lx, ly, lz + 1];
-            byte lightB = lightMap[lx, ly, lz - 1];
-            byte lightU = (y == 255 ? (byte)15 : lightMap[lx, ly + 1, lz]);
-            byte lightD = (y == 0 ? (byte)15 : lightMap[lx, ly - 1, lz]);
+            // byte lightR = lightMap[lx + 1, ly, lz];
+            // byte lightL = lightMap[lx - 1, ly, lz];
+            // byte lightF = lightMap[lx, ly, lz + 1];
+            // byte lightB = lightMap[lx, ly, lz - 1];
+            // byte lightU = (y == 255 ? (byte)15 : lightMap[lx, ly + 1, lz]);
+            // byte lightD = (y == 0 ? (byte)15 : lightMap[lx, ly - 1, lz]);
 
             TextureMapper.TextureMap textureMap = textureMapper.map[c];
 
@@ -347,7 +346,7 @@ public class Chunk : MonoBehaviour{
     normals.Clear();
     meshCollider.sharedMesh = mesh;
     UnityEngine.Profiling.Profiler.EndSample();
-    UnityEngine.Profiling.Profiler.EndSample();
+    //UnityEngine.Profiling.Profiler.EndSample();
   }
 
   private static byte GetHighestNonAir(ChunkData[,] chunkData, int x, int z){

@@ -124,6 +124,16 @@ public class TextureMapper{
               new Color32(255, 255, 255, 255)
           )
       },{
+          BlockTypes.WATER, new TextureMap(
+              new TextureMap.Face(new Vector2(0, 5)),
+              new TextureMap.Face(new Vector2(0, 5)),
+              new TextureMap.Face(new Vector2(0, 5)),
+              new TextureMap.Face(new Vector2(0, 5)),
+              new TextureMap.Face(new Vector2(0, 5)),
+              new TextureMap.Face(new Vector2(0, 5)),
+              new Color32(12, 152, 232, 255)
+          )
+      },{
           BlockTypes.GLOWSTONE, new TextureMap(
               new TextureMap.Face(new Vector2(3, 0)),
               new TextureMap.Face(new Vector2(3, 0)),
@@ -171,6 +181,26 @@ public class TextureMapper{
               new TextureMap.Face(new Vector2(2, 4)),
               new TextureMap.Face(new Vector2(2, 4)),
               new TextureMap.Face(new Vector2(2, 4)),
+              new Color32(255, 255, 255, 255)
+          )
+      },{
+          BlockTypes.SAND, new TextureMap(
+              new TextureMap.Face(new Vector2(0, 4)),
+              new TextureMap.Face(new Vector2(0, 4)),
+              new TextureMap.Face(new Vector2(0, 4)),
+              new TextureMap.Face(new Vector2(0, 4)),
+              new TextureMap.Face(new Vector2(0, 4)),
+              new TextureMap.Face(new Vector2(0, 4)),
+              new Color32(255, 255, 255, 255)
+          )
+      },{
+          BlockTypes.CACTUS, new TextureMap(
+              new TextureMap.Face(new Vector2(0, 6)),
+              new TextureMap.Face(new Vector2(0, 6)),
+              new TextureMap.Face(new Vector2(0, 6)),
+              new TextureMap.Face(new Vector2(0, 6)),
+              new TextureMap.Face(new Vector2(0, 6)),
+              new TextureMap.Face(new Vector2(0, 6)),
               new Color32(255, 255, 255, 255)
           )
       }
