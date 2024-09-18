@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.IO;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -23,12 +24,12 @@ public class MenuWorld : MonoBehaviour{
 
   private void LoadData(){
     worldInfoList = SavedDataUtil.GetAllWorlds();
-    if (worldInfoList.Count < 1) return;
     foreach (Transform child in savedWorldGrid.transform) Destroy(child.gameObject);
+    if (worldInfoList.Count < 1) return;
     foreach (WorldInfo worldInfo in worldInfoList){
       CreateSaveWorldObject(worldInfo.name, worldInfo.seed);
     }
-    AdjustGridHeight();
+    if (worldInfoList.Count > 3) AdjustGridHeight();
   }
 
   private void CreateSaveWorldObject(string worldName, int seed){
@@ -39,6 +40,33 @@ public class MenuWorld : MonoBehaviour{
     // Text
     TextMeshProUGUI txt = savedWorldPanel.GetComponentInChildren<TextMeshProUGUI>();
     txt.text = worldName;
+    
+    // World Preview
+    foreach (RawImage rawImg in savedWorldPanel.GetComponentsInChildren<RawImage>()){
+      if (rawImg.gameObject.name != "PreviewImage") continue;
+      Texture2D worldPreviewImage = GetWorldPreviewImage(worldName);
+      if (worldPreviewImage == null) break;
+      rawImg.texture = worldPreviewImage;
+      break;
+    }
+  }
+
+  private static Texture2D GetWorldPreviewImage(string worldName){
+    // Path to the screenshot
+    string imagePath = Application.persistentDataPath + "/Worlds/" + worldName + "/WorldPreview.png";
+    // Check if the file exists
+    if (File.Exists(imagePath)) {
+      // Read the image data into a byte array
+      byte[] imageData = File.ReadAllBytes(imagePath);
+
+      // Create a new Texture2D
+      Texture2D texture = new Texture2D(2, 2);
+
+      // Load the image data into the Texture2D
+      texture.LoadImage(imageData);
+      return texture;
+    }
+    return null;
   }
 
   private static void LoadSavedWorld(string worldName, int seed){

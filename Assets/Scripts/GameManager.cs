@@ -10,7 +10,6 @@ public class GameManager : MonoBehaviour{
   public TextureMapper textureMapper;
   public AudioManager audioManager;
   public bool isInStartup;
-  //public WorldInfo worldInfo;
   public Texture2D textures;
   public Camera screenshotCamera;
   public Texture2D latestScreenshot;
@@ -26,7 +25,6 @@ public class GameManager : MonoBehaviour{
     }
 
     audioManager = AudioManager.instance;
-
 
     CreateTextures();
     Structure.Initialize();
@@ -46,6 +44,8 @@ public class GameManager : MonoBehaviour{
       world.chunkManager.isInStartup = true;
       ui.loadingScreen.gameObject.SetActive(true);
     }
+    
+    InvokeRepeating(nameof(TakeWorldPreviewScreenshot), 10f, 300f);
   }
 
   private void Update(){
@@ -76,6 +76,7 @@ public class GameManager : MonoBehaviour{
     }
 
     ui.UpdateUI();
+    TakeScreenshot();
     DebugStuff();
   }
 
@@ -118,6 +119,64 @@ public class GameManager : MonoBehaviour{
       System.IO.FileInfo file = new System.IO.FileInfo(Application.persistentDataPath + "/" + TimeStamp().ToString() + ".png");
       System.IO.File.WriteAllBytes(file.FullName, texture.EncodeToPNG());
     }
+  }
+
+  private void TakeScreenshot(){
+    if (Input.GetKeyDown(KeyCode.F2)){
+      // Define the path to the "Screenshots" folder
+      string screenshotsFolder = Application.persistentDataPath + "/Screenshots/";
+
+      // Check if the "Screenshots" folder exists, and create it if it doesn't
+      if (!System.IO.Directory.Exists(screenshotsFolder)) {
+        System.IO.Directory.CreateDirectory(screenshotsFolder);
+      }
+
+      // Create the file path for the screenshot
+      System.IO.FileInfo file = new System.IO.FileInfo(screenshotsFolder + TimeStamp() + ".png");
+
+      // Call your method to take and save the screenshot
+      TakeScreenshot(file);
+    }
+  }
+
+  private void TakeWorldPreviewScreenshot(){
+    //TODO maybe make async
+    System.IO.FileInfo file = new System.IO.FileInfo(Application.persistentDataPath + "/Worlds/" + world.info.name + "/WorldPreview.png");
+    TakeScreenshot(file);
+  }
+
+  private void TakeScreenshot(System.IO.FileInfo file) {
+    // Create a RenderTexture with 1920x1080 resolution
+    RenderTexture renderTexture = new RenderTexture(1920, 1080, 24);
+    
+    // Assign the render texture to the camera's target texture
+    screenshotCamera.targetTexture = renderTexture;
+
+    // Position the screenshot camera to match the main camera if needed
+    screenshotCamera.transform.position = world.mainCamera.transform.position;
+
+    // Render the screenshot camera to the render texture
+    screenshotCamera.Render();
+
+    // Create a new Texture2D to hold the screenshot data
+    Texture2D screenshot = new Texture2D(1920, 1080, TextureFormat.ARGB32, false);
+
+    // Set the active render texture (so that we can read the pixels from it)
+    RenderTexture.active = renderTexture;
+
+    // Read the pixels from the render texture and store them in the Texture2D
+    screenshot.ReadPixels(new Rect(0, 0, 1920, 1080), 0, 0);
+    screenshot.Apply();
+
+    // Save the Texture2D to a PNG file
+    System.IO.File.WriteAllBytes(file.FullName, screenshot.EncodeToPNG());
+
+    // Clean up: set the camera's target texture to null and reset the active render texture
+    screenshotCamera.targetTexture = null;
+    RenderTexture.active = null;
+
+    // Destroy the render texture to free up memory
+    Destroy(renderTexture);
   }
 
   private static long TimeStamp(){
