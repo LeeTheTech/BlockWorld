@@ -12,6 +12,7 @@ public class ChunkManager : MonoBehaviour{
   private int[,] surroundingArea;
 
   public bool isInStartup; //start of the game loads faster and all around you
+  public bool isShuttingDown;
 
   private Queue<Chunk> chunkPool;
   private Queue<Vector2Int> modifiedRebuildQueue;
@@ -65,6 +66,7 @@ public class ChunkManager : MonoBehaviour{
   }
 
   public void UpdateChunks(Camera mainCamera){
+    if (isShuttingDown) return;
     UnityEngine.Profiling.Profiler.BeginSample("UPDATING CHUNKS");
     //Debug.Log("Active chunks: " + activeChunks.Count);
     chunkDataManager.Update();
@@ -330,9 +332,18 @@ public class ChunkManager : MonoBehaviour{
     return true;
   }
 
-  private void OnDestroy(){
+  void OnDestroy(){
     shouldRenderThread.Abort();
     Thread.Sleep(30);
+  }
+  
+  public void SaveAndShutDown(){
+    isShuttingDown = true;
+    shouldRenderThread.Abort();
+    Thread.Sleep(30);
+    foreach (Vector2Int chunkPos in chunkMap.Keys){
+      chunkDataManager.UnloadChunk(chunkPos);
+    }
   }
 
   private long TimeStamp(){

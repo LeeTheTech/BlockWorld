@@ -14,7 +14,6 @@ public class World : MonoBehaviour{
     activeWorld = this;
     chunkManager.Initialize();
     BiomeManager.Initialize(worldInfo.seed);
-    //SimplexNoise.Noise.Seed = worldInfo.seed;
     System.GC.Collect();
     initialized = true;
   }

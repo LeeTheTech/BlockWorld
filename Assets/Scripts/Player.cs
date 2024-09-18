@@ -38,12 +38,8 @@ public class Player : MonoBehaviour{
 
   void Update(){
     setup.myRigidbody.isKinematic = (GameManager.instance.isInStartup || state == State.Spectator);
-
-    if (Input.GetKeyDown(KeyCode.Escape)){
-      Cursor.lockState = Cursor.lockState == CursorLockMode.Locked ? CursorLockMode.None : CursorLockMode.Locked;
-      Cursor.visible = (Cursor.lockState == CursorLockMode.None);
-    }
-
+    
+    if (Cursor.lockState == CursorLockMode.None) return;
 
     Vector2 movement = new Vector2();
     movement.x += Input.GetKey(KeyCode.D) ? 1 : 0;

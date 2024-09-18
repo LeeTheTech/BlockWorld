@@ -10,7 +10,7 @@ public class GameManager : MonoBehaviour{
   public TextureMapper textureMapper;
   public AudioManager audioManager;
   public bool isInStartup;
-  public WorldInfo testWorld;
+  //public WorldInfo worldInfo;
   public Texture2D textures;
   public Camera screenshotCamera;
   public Texture2D latestScreenshot;
@@ -30,7 +30,7 @@ public class GameManager : MonoBehaviour{
 
     CreateTextures();
     Structure.Initialize();
-    InitializeWorld(testWorld);
+    InitializeWorld(WorldInfoStorage.worldInfo);
     ui.Initialize();
 
     //_ColorHorizon, _ColorTop, _ColorBottom;

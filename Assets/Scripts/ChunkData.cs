@@ -16,7 +16,6 @@ public class ChunkData{
   const int STRUCTURE_CHANCE_CAVE_ENTRANCE = (int.MaxValue / 50);
   const int STRUCTURE_CHANCE_CACTUS = (int.MaxValue / 100);
 
-
   private Thread loadTerrainThread;
   private Thread loadDetailsThread;
 
