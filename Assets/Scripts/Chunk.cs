@@ -6,11 +6,7 @@ public class Chunk : MonoBehaviour{
   public MeshCollider meshCollider;
   public Vector2Int position;
   private Mesh mesh;
-  private List<Vector3> vertices;
-  private List<int> triangles;
-  private List<Vector3> normals;
-  private List<Vector2> uvs;
-  private List<Color32> colors;
+  private ChunkMeshData chunkMeshData;
 
   //for generating
   private ChunkData[,] chunkMap;
@@ -26,11 +22,7 @@ public class Chunk : MonoBehaviour{
     mesh.indexFormat = UnityEngine.Rendering.IndexFormat.UInt32;
     mesh.MarkDynamic();
     meshCollider.sharedMesh = mesh;
-    vertices = new List<Vector3>();
-    normals = new List<Vector3>();
-    uvs = new List<Vector2>();
-    triangles = new List<int>();
-    colors = new List<Color32>();
+    chunkMeshData = new ChunkMeshData();
     chunkMap = new ChunkData[3, 3]; //start at backleft
   }
 
@@ -218,112 +210,114 @@ public class Chunk : MonoBehaviour{
 
             TextureMapper.TextureMap textureMap = textureMapper.map[c];
 
-            if (bR > 127){
-              AddFace(
+            ChunkMeshData meshData = GetCorrectMeshData(c);
+
+            if (ShouldRenderFace(c, bR)){
+              meshData.AddFace(
                   new Vector3(x + 1, y, z),
                   new Vector3(x + 1, y + 1, z),
                   new Vector3(x + 1, y + 1, z + 1),
                   new Vector3(x + 1, y, z + 1),
                   Vector3.right
               );
-              AddTextureFace(textureMap.right);
+              meshData.AddTextureFace(textureMap.right);
               int b = (y == 0 ? 0 : 1);
               int t = (y == 255 ? 0 : 1);
               byte bl = (byte)((lightMap[lx + 1, ly, lz] + lightMap[lx + 1, ly, lz - 1] + lightMap[lx + 1, ly - b, lz] + lightMap[lx + 1, ly - b, lz - 1]) / 4);
               byte tl = (byte)((lightMap[lx + 1, ly, lz] + lightMap[lx + 1, ly, lz - 1] + lightMap[lx + 1, ly + t, lz] + lightMap[lx + 1, ly + t, lz - 1]) / 4);
               byte tr = (byte)((lightMap[lx + 1, ly, lz] + lightMap[lx + 1, ly, lz + 1] + lightMap[lx + 1, ly + t, lz] + lightMap[lx + 1, ly + t, lz + 1]) / 4);
               byte br = (byte)((lightMap[lx + 1, ly, lz] + lightMap[lx + 1, ly, lz + 1] + lightMap[lx + 1, ly - b, lz] + lightMap[lx + 1, ly - b, lz + 1]) / 4);
-              AddColors(textureMap, bl, tl, tr, br);
+              meshData.AddColors(textureMap, bl, tl, tr, br);
             }
 
-            if (bL > 127){
-              AddFace(
+            if (ShouldRenderFace(c, bL)){
+              meshData.AddFace(
                   new Vector3(x, y, z + 1),
                   new Vector3(x, y + 1, z + 1),
                   new Vector3(x, y + 1, z),
                   new Vector3(x, y, z),
                   -Vector3.right
               );
-              AddTextureFace(textureMap.left);
+              meshData.AddTextureFace(textureMap.left);
               int b = (y == 0 ? 0 : 1);
               int t = (y == 255 ? 0 : 1);
               byte br = (byte)((lightMap[lx - 1, ly, lz] + lightMap[lx - 1, ly, lz - 1] + lightMap[lx - 1, ly - b, lz] + lightMap[lx - 1, ly - b, lz - 1]) / 4);
               byte tr = (byte)((lightMap[lx - 1, ly, lz] + lightMap[lx - 1, ly, lz - 1] + lightMap[lx - 1, ly + t, lz] + lightMap[lx - 1, ly + t, lz - 1]) / 4);
               byte tl = (byte)((lightMap[lx - 1, ly, lz] + lightMap[lx - 1, ly, lz + 1] + lightMap[lx - 1, ly + t, lz] + lightMap[lx - 1, ly + t, lz + 1]) / 4);
               byte bl = (byte)((lightMap[lx - 1, ly, lz] + lightMap[lx - 1, ly, lz + 1] + lightMap[lx - 1, ly - b, lz] + lightMap[lx - 1, ly - b, lz + 1]) / 4);
-              AddColors(textureMap, bl, tl, tr, br);
+              meshData.AddColors(textureMap, bl, tl, tr, br);
             }
 
-            if (bU > 127){
-              AddFace(
+            if (ShouldRenderFace(c, bU)){
+              meshData.AddFace(
                   new Vector3(x, y + 1, z),
                   new Vector3(x, y + 1, z + 1),
                   new Vector3(x + 1, y + 1, z + 1),
                   new Vector3(x + 1, y + 1, z),
                   Vector3.up
               );
-              AddTextureFace(textureMap.top);
+              meshData.AddTextureFace(textureMap.top);
               int b = (y == 0 ? 0 : 1);
               int t = (y == 255 ? 0 : 1);
               byte bl = (byte)((lightMap[lx, ly + t, lz] + lightMap[lx - 1, ly + t, lz] + lightMap[lx, ly + t, lz - 1] + lightMap[lx - 1, ly + t, lz - 1]) / 4);
               byte tl = (byte)((lightMap[lx, ly + t, lz] + lightMap[lx - 1, ly + t, lz] + lightMap[lx, ly + t, lz + 1] + lightMap[lx - 1, ly + t, lz + 1]) / 4);
               byte tr = (byte)((lightMap[lx, ly + t, lz] + lightMap[lx + 1, ly + t, lz] + lightMap[lx, ly + t, lz + 1] + lightMap[lx + 1, ly + t, lz + 1]) / 4);
               byte br = (byte)((lightMap[lx, ly + t, lz] + lightMap[lx + 1, ly + t, lz] + lightMap[lx, ly + t, lz - 1] + lightMap[lx + 1, ly + t, lz - 1]) / 4);
-              AddColors(textureMap, bl, tl, tr, br);
+              meshData.AddColors(textureMap, bl, tl, tr, br);
             }
 
-            if (bD > 127){
-              AddFace(
+            if (ShouldRenderFace(c, bD)){
+              meshData.AddFace(
                   new Vector3(x, y, z + 1),
                   new Vector3(x, y, z),
                   new Vector3(x + 1, y, z),
                   new Vector3(x + 1, y, z + 1),
                   -Vector3.up
               );
-              AddTextureFace(textureMap.bottom);
+              meshData.AddTextureFace(textureMap.bottom);
               int b = (y == 0 ? 0 : 1);
               int t = (y == 255 ? 0 : 1);
               byte tl = (byte)((lightMap[lx, ly - b, lz] + lightMap[lx - 1, ly - b, lz] + lightMap[lx, ly - b, lz - 1] + lightMap[lx - 1, ly - b, lz - 1]) / 4);
               byte bl = (byte)((lightMap[lx, ly - b, lz] + lightMap[lx - 1, ly - b, lz] + lightMap[lx, ly - b, lz + 1] + lightMap[lx - 1, ly - b, lz + 1]) / 4);
               byte br = (byte)((lightMap[lx, ly - b, lz] + lightMap[lx + 1, ly - b, lz] + lightMap[lx, ly - b, lz + 1] + lightMap[lx + 1, ly - b, lz + 1]) / 4);
               byte tr = (byte)((lightMap[lx, ly - b, lz] + lightMap[lx + 1, ly - b, lz] + lightMap[lx, ly - b, lz - 1] + lightMap[lx + 1, ly - b, lz - 1]) / 4);
-              AddColors(textureMap, bl, tl, tr, br);
+              meshData.AddColors(textureMap, bl, tl, tr, br);
             }
 
-            if (bF > 127){
-              AddFace(
+            if (ShouldRenderFace(c, bF)){
+              meshData.AddFace(
                   new Vector3(x + 1, y, z + 1),
                   new Vector3(x + 1, y + 1, z + 1),
                   new Vector3(x, y + 1, z + 1),
                   new Vector3(x, y, z + 1),
                   Vector3.forward
               );
-              AddTextureFace(textureMap.front);
+              meshData.AddTextureFace(textureMap.front);
               int b = (y == 0 ? 0 : 1);
               int t = (y == 255 ? 0 : 1);
               byte br = (byte)((lightMap[lx, ly, lz + 1] + lightMap[lx - 1, ly, lz + 1] + lightMap[lx, ly - b, lz + 1] + lightMap[lx - 1, ly - b, lz + 1]) / 4);
               byte tr = (byte)((lightMap[lx, ly, lz + 1] + lightMap[lx - 1, ly, lz + 1] + lightMap[lx, ly + t, lz + 1] + lightMap[lx - 1, ly + t, lz + 1]) / 4);
               byte tl = (byte)((lightMap[lx, ly, lz + 1] + lightMap[lx + 1, ly, lz + 1] + lightMap[lx, ly + t, lz + 1] + lightMap[lx + 1, ly + t, lz + 1]) / 4);
               byte bl = (byte)((lightMap[lx, ly, lz + 1] + lightMap[lx + 1, ly, lz + 1] + lightMap[lx, ly - b, lz + 1] + lightMap[lx + 1, ly - b, lz + 1]) / 4);
-              AddColors(textureMap, bl, tl, tr, br);
+              meshData.AddColors(textureMap, bl, tl, tr, br);
             }
 
-            if (bB > 127){
-              AddFace(
+            if (ShouldRenderFace(c, bB)){
+              meshData.AddFace(
                   new Vector3(x, y, z),
                   new Vector3(x, y + 1, z),
                   new Vector3(x + 1, y + 1, z),
                   new Vector3(x + 1, y, z),
                   -Vector3.forward
               );
-              AddTextureFace(textureMap.back);
+              meshData.AddTextureFace(textureMap.back);
               int b = (y == 0 ? 0 : 1);
               int t = (y == 255 ? 0 : 1);
               byte bl = (byte)((lightMap[lx, ly, lz - 1] + lightMap[lx - 1, ly, lz - 1] + lightMap[lx, ly - b, lz - 1] + lightMap[lx - 1, ly - b, lz - 1]) / 4);
               byte tl = (byte)((lightMap[lx, ly, lz - 1] + lightMap[lx - 1, ly, lz - 1] + lightMap[lx, ly + t, lz - 1] + lightMap[lx - 1, ly + t, lz - 1]) / 4);
               byte tr = (byte)((lightMap[lx, ly, lz - 1] + lightMap[lx + 1, ly, lz - 1] + lightMap[lx, ly + t, lz - 1] + lightMap[lx + 1, ly + t, lz - 1]) / 4);
               byte br = (byte)((lightMap[lx, ly, lz - 1] + lightMap[lx + 1, ly, lz - 1] + lightMap[lx, ly - b, lz - 1] + lightMap[lx + 1, ly - b, lz - 1]) / 4);
-              AddColors(textureMap, bl, tl, tr, br);
+              meshData.AddColors(textureMap, bl, tl, tr, br);
             }
           }
         }
@@ -331,22 +325,11 @@ public class Chunk : MonoBehaviour{
     }
 
     UnityEngine.Profiling.Profiler.EndSample();
-
     UnityEngine.Profiling.Profiler.BeginSample("APPLYING MESH DATA");
-    mesh.SetVertices(vertices);
-    mesh.SetTriangles(triangles, 0);
-    mesh.SetUVs(0, uvs);
-    mesh.SetNormals(normals);
-    mesh.SetColors(colors);
+    chunkMeshData.SetupMesh(mesh);
     gameObject.SetActive(true);
-    vertices.Clear();
-    triangles.Clear();
-    colors.Clear();
-    uvs.Clear();
-    normals.Clear();
     meshCollider.sharedMesh = mesh;
     UnityEngine.Profiling.Profiler.EndSample();
-    //UnityEngine.Profiling.Profiler.EndSample();
   }
 
   private static byte GetHighestNonAir(ChunkData[,] chunkData, int x, int z){
@@ -367,38 +350,13 @@ public class Chunk : MonoBehaviour{
     }
   }
 
-  private void AddFace(Vector3 a, Vector3 b, Vector3 c, Vector3 d, Vector3 normal){
-    int index = vertices.Count;
-    vertices.Add(a);
-    vertices.Add(b);
-    vertices.Add(c);
-    vertices.Add(d);
-    normals.Add(normal);
-    normals.Add(normal);
-    normals.Add(normal);
-    normals.Add(normal);
-    triangles.Add(index + 0);
-    triangles.Add(index + 1);
-    triangles.Add(index + 2);
-    triangles.Add(index + 2);
-    triangles.Add(index + 3);
-    triangles.Add(index + 0);
+  private static bool ShouldRenderFace(byte block, byte targetBlock){
+    if (block == BlockTypes.WATER && targetBlock == BlockTypes.WATER) return false;
+    return targetBlock > 127;
   }
 
-  private void AddTextureFace(TextureMapper.TextureMap.Face face){
-    uvs.Add(face.bl);
-    uvs.Add(face.tl);
-    uvs.Add(face.tr);
-    uvs.Add(face.br);
-  }
-
-  private void AddColors(TextureMapper.TextureMap textureMap, byte lBL, byte lTL, byte lTR, byte lBR){
-    Color32 c = textureMap.defaultColor;
-    //c.a = lightLevel;
-    colors.Add(new Color32(c.r, c.g, c.b, lBL));
-    colors.Add(new Color32(c.r, c.g, c.b, lTL));
-    colors.Add(new Color32(c.r, c.g, c.b, lTR));
-    colors.Add(new Color32(c.r, c.g, c.b, lBR));
+  private ChunkMeshData GetCorrectMeshData(byte block){
+    return block == BlockTypes.WATER ? chunkMeshData.transparentMeshData : chunkMeshData;
   }
 
   public void Unload(){

@@ -16,7 +16,7 @@ public class Hotbar : MonoBehaviour{
       BlockTypes.LOG_OAK,
       BlockTypes.PLANKS_OAK,
       BlockTypes.COBBLESTONE,
-      BlockTypes.DIAMOND,
+      BlockTypes.WATER,
       BlockTypes.GLOWSTONE,
       BlockTypes.GLASS
   };

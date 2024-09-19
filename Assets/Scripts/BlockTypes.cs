@@ -18,12 +18,12 @@ public static class BlockTypes{
   public const byte GRANITE = 13;
   public const byte ANDESITE = 14;
   public const byte SAND = 15;
-  public const byte WATER = 16;
   public const byte CACTUS = 17;
 
   //TRANSPARENT
   public const byte LEAVES_OAK = 128;
   public const byte GLASS = 129;
+  public const byte WATER = 130;
   public const byte AIR = 255;
 
   public static Dictionary<byte, byte> lightLevel;
@@ -69,7 +69,7 @@ public static class BlockTypes{
         { GLOWSTONE, 255 },
         { LEAVES_OAK, 63 },
         { GLASS, 0 },
-        { WATER, 255 },
+        { WATER, 63 },
         { CACTUS, 255 },
         { AIR, 0 },
         { ANDESITE, 255 },
