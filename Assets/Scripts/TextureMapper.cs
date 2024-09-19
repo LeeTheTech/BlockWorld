@@ -203,6 +203,16 @@ public class TextureMapper{
               new TextureMap.Face(new Vector2(0, 6)),
               new Color32(255, 255, 255, 255)
           )
+      },{
+          BlockTypes.ICE, new TextureMap(
+              new TextureMap.Face(new Vector2(2, 5)),
+              new TextureMap.Face(new Vector2(2, 5)),
+              new TextureMap.Face(new Vector2(2, 5)),
+              new TextureMap.Face(new Vector2(2, 5)),
+              new TextureMap.Face(new Vector2(2, 5)),
+              new TextureMap.Face(new Vector2(2, 5)),
+              new Color32(255, 255, 255, 255)
+          )
       }
   };
 

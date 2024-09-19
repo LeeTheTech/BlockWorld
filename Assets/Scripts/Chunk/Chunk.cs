@@ -351,12 +351,19 @@ public class Chunk : MonoBehaviour{
   }
 
   private static bool ShouldRenderFace(byte block, byte targetBlock){
-    if (block == BlockTypes.WATER && targetBlock == BlockTypes.WATER) return false;
+    if (BlockTypes.IsTransparentBlock(block) && BlockTypes.IsTransparentBlock(targetBlock)) return false;
+    if (BlockTypes.IsTransparentCutoutBlock(block) && BlockTypes.IsTransparentCutoutBlock(targetBlock)) return false;
     return targetBlock > 127;
   }
 
   private ChunkMeshData GetCorrectMeshData(byte block){
-    return block == BlockTypes.WATER ? chunkMeshData.transparentMeshData : chunkMeshData;
+    switch (block){
+      case BlockTypes.ICE:
+      case BlockTypes.WATER:
+        return chunkMeshData.transparentMeshData;
+      default:
+        return chunkMeshData;
+    }
   }
 
   public void Unload(){

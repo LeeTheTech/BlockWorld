@@ -10,7 +10,7 @@ public class Hotbar : MonoBehaviour{
   public RectTransform currentSelectedGraphic;
   
   private int[] hotbarBlocks = {
-      BlockTypes.GRASS,
+      BlockTypes.GLASS,
       BlockTypes.DIRT,
       BlockTypes.STONE,
       BlockTypes.LOG_OAK,
@@ -18,7 +18,7 @@ public class Hotbar : MonoBehaviour{
       BlockTypes.COBBLESTONE,
       BlockTypes.WATER,
       BlockTypes.GLOWSTONE,
-      BlockTypes.GLASS
+      BlockTypes.ICE
   };
 
   public void Initialize(){

@@ -24,6 +24,7 @@ public static class BlockTypes{
   public const byte LEAVES_OAK = 128;
   public const byte GLASS = 129;
   public const byte WATER = 130;
+  public const byte ICE = 131;
   public const byte AIR = 255;
 
   public static Dictionary<byte, byte> lightLevel;
@@ -46,6 +47,7 @@ public static class BlockTypes{
         { LEAVES_OAK, 0 },
         { GLASS, 0 },
         { WATER, 0 },
+        { ICE, 0 },
         { CACTUS, 0 },
         { AIR, 0 },
         { ANDESITE, 0 },
@@ -67,9 +69,10 @@ public static class BlockTypes{
         { LOG_OAK, 255 },
         { PLANKS_OAK, 255 },
         { GLOWSTONE, 255 },
-        { LEAVES_OAK, 63 },
+        { LEAVES_OAK, 0 },
         { GLASS, 0 },
         { WATER, 63 },
+        { ICE, 63 },
         { CACTUS, 255 },
         { AIR, 0 },
         { ANDESITE, 255 },
@@ -94,6 +97,7 @@ public static class BlockTypes{
         { LEAVES_OAK, AudioManager.Dig.Type.Grass },
         { GLASS, AudioManager.Dig.Type.Grass },
         { WATER, AudioManager.Dig.Type.Grass },
+        { ICE, AudioManager.Dig.Type.Grass },
         { CACTUS, AudioManager.Dig.Type.Grass },
         { AIR, AudioManager.Dig.Type.Silent },
         { ANDESITE, AudioManager.Dig.Type.Stone },
@@ -102,5 +106,25 @@ public static class BlockTypes{
         { COBBLESTONE, AudioManager.Dig.Type.Stone },
         { SAND, AudioManager.Dig.Type.Stone }
     };
+  }
+
+  public static bool IsTransparentBlock(byte blockType){
+    switch (blockType){
+      case WATER:
+      case ICE:
+        return true;
+      default:
+        return false;
+    }
+  }
+  
+  public static bool IsTransparentCutoutBlock(byte blockType){
+    switch (blockType){
+      case GLASS:
+      //case LEAVES_OAK:
+        return true;
+      default:
+        return false;
+    }
   }
 }
