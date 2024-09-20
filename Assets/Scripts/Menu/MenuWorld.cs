@@ -16,6 +16,7 @@ public class MenuWorld : MonoBehaviour{
     LoadData();
     this.mainMenu.CloseMenu();
     this.gameObject.SetActive(true);
+    ResetScrollPosition();
   }
 
   public void CloseMenu(){
@@ -31,7 +32,6 @@ public class MenuWorld : MonoBehaviour{
       CreateSaveWorldObject(worldInfo.name, worldInfo.seed);
     }
     if (worldInfoList.Count > 3) AdjustGridHeight();
-    ResetScrollPosition();
   }
 
   private void CreateSaveWorldObject(string worldName, int seed){
@@ -99,6 +99,6 @@ public class MenuWorld : MonoBehaviour{
   }
   
   private void ResetScrollPosition(){
-    scrollRect.verticalNormalizedPosition = 1; 
+    scrollRect.verticalNormalizedPosition = 1;
   }
 }

@@ -18,7 +18,7 @@ public class MenuCreateWorld : MonoBehaviour{
     
   public void CloseMenu(){
     this.gameObject.SetActive(false);
-    this.worldMenu.gameObject.SetActive(true);
+    this.worldMenu.OpenMenu();
   }
 
   public void CreateWorld(){
