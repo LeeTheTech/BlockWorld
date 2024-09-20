@@ -22,6 +22,8 @@ public static class BlockTypes{
   public const byte PLANKS_OAK_SLAB = 18;
   public const byte PLANKS_OAK_STAIR = 19;
   public const byte TORCH = 20;
+  public const byte SNOW_GRASS = 21;
+  public const byte LAVA = 22;
 
   //TRANSPARENT
   public const byte LEAVES_OAK = 128;
@@ -61,7 +63,9 @@ public static class BlockTypes{
         { SAND, 0 },
         { PLANKS_OAK_SLAB, 0 },
         { PLANKS_OAK_STAIR, 0 },
-        { TORCH, 0 }
+        { TORCH, 0 },
+        { SNOW_GRASS, 0 },
+        { LAVA, 14 }
     };
 
     density = new Dictionary<byte, byte>{
@@ -89,7 +93,9 @@ public static class BlockTypes{
         { SAND, 255 },
         { PLANKS_OAK_SLAB, 255 },
         { PLANKS_OAK_STAIR, 255 },
-        { TORCH, 255 }
+        { TORCH, 255 },
+        { SNOW_GRASS, 255 },
+        { LAVA, 255 }
     };
 
     digSound = new Dictionary<byte, AudioManager.Dig.Type>{
@@ -117,7 +123,9 @@ public static class BlockTypes{
         { SAND, AudioManager.Dig.Type.Stone },
         { PLANKS_OAK_SLAB, AudioManager.Dig.Type.Stone },
         { PLANKS_OAK_STAIR, AudioManager.Dig.Type.Stone },
-        { TORCH, AudioManager.Dig.Type.Stone }
+        { TORCH, AudioManager.Dig.Type.Stone },
+        { SNOW_GRASS, AudioManager.Dig.Type.Grass },
+        { LAVA, AudioManager.Dig.Type.Grass }
     };
 
     blockShape = new Dictionary<byte, BlockShapes.BlockShape>{
@@ -145,7 +153,9 @@ public static class BlockTypes{
         { SAND, BlockShapes.BlockShape.CUBE },
         { PLANKS_OAK_SLAB, BlockShapes.BlockShape.SLAB },
         { PLANKS_OAK_STAIR, BlockShapes.BlockShape.STAIR },
-        { TORCH, BlockShapes.BlockShape.TORCH }
+        { TORCH, BlockShapes.BlockShape.TORCH },
+        { SNOW_GRASS, BlockShapes.BlockShape.CUBE },
+        { LAVA, BlockShapes.BlockShape.CUBE }
     };
   }
 

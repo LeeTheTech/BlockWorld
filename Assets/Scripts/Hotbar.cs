@@ -15,7 +15,7 @@ public class Hotbar : MonoBehaviour{
       BlockTypes.STONE,
       BlockTypes.LOG_OAK,
       BlockTypes.GOLD,
-      BlockTypes.COBBLESTONE,
+      BlockTypes.LAVA,
       BlockTypes.WATER,
       BlockTypes.GLOWSTONE,
       BlockTypes.ICE

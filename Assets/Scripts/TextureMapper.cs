@@ -243,6 +243,26 @@ public class TextureMapper{
               new TextureMap.Face(new Vector2(3, 1)),
               new Color32(255, 255, 255, 255)
           )
+      },{
+          BlockTypes.SNOW_GRASS, new TextureMap(
+              new TextureMap.Face(new Vector2(1, 7)),
+              new TextureMap.Face(new Vector2(1, 7)),
+              new TextureMap.Face(new Vector2(1, 7)),
+              new TextureMap.Face(new Vector2(1, 7)),
+              new TextureMap.Face(new Vector2(2, 7)),
+              new TextureMap.Face(new Vector2(0, 7)),
+              new Color32(255, 255, 255, 255)
+          )
+      },{
+          BlockTypes.LAVA, new TextureMap(
+              new TextureMap.Face(new Vector2(3, 5)),
+              new TextureMap.Face(new Vector2(3, 5)),
+              new TextureMap.Face(new Vector2(3, 5)),
+              new TextureMap.Face(new Vector2(3, 5)),
+              new TextureMap.Face(new Vector2(3, 5)),
+              new TextureMap.Face(new Vector2(3, 5)),
+              new Color32(255, 50, 11, 255)
+          )
       }
   };
 

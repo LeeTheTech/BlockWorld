@@ -21,14 +21,14 @@ public class NoiseManager{
   
   private void CreateCaveNoise(int seed){
     caveNoise.SetNoiseType(FastNoiseLite.NoiseType.OpenSimplex2);
-    caveNoise.SetFrequency(0.06f);
+    caveNoise.SetFrequency(0.02f);
     caveNoise.SetSeed(seed);
   }
   
   private void CreateBiomeNoise(int seed){
     // Use Cellular noise for distinct biome patches
     biomeNoise.SetNoiseType(FastNoiseLite.NoiseType.Cellular);
-    biomeNoise.SetFrequency(0.002f);  // Adjust frequency for biome patch size (higher = smaller patches)
+    biomeNoise.SetFrequency(0.005f);  // Adjust frequency for biome patch size (higher = smaller patches)
 
     // Cellular noise configuration (for biome cell distinctness)
     biomeNoise.SetCellularDistanceFunction(FastNoiseLite.CellularDistanceFunction.Euclidean);
@@ -60,10 +60,13 @@ public class NoiseManager{
     noiseLayerManager.AddLayer(BiomeType.GRASSLAND, new NoiseLayer(FastNoiseLite.NoiseType.Perlin, 0.1f, 5f, NoiseBlendMode.MAX, seed));
 
     // Hill
-    noiseLayerManager.AddLayer(BiomeType.GRASSLAND, new NoiseLayer(FastNoiseLite.NoiseType.Perlin, 0.009f, 50f, NoiseBlendMode.MAX, seed));
+    noiseLayerManager.AddLayer(BiomeType.GRASSLAND, new NoiseLayer(FastNoiseLite.NoiseType.Perlin, 0.008f, 50f, NoiseBlendMode.MAX, seed));
+    
+    // Hill
+    noiseLayerManager.AddLayer(BiomeType.GRASSLAND, new NoiseLayer(FastNoiseLite.NoiseType.Perlin, 0.007f, 20f, NoiseBlendMode.MAX, seed));
 
     // Lake layer
-    noiseLayerManager.AddLayer(BiomeType.GRASSLAND, new NoiseLayer(FastNoiseLite.NoiseType.Perlin, 0.005f, -50f, NoiseBlendMode.MIN, seed));
+    noiseLayerManager.AddLayer(BiomeType.GRASSLAND, new NoiseLayer(FastNoiseLite.NoiseType.Perlin, 0.003f, -50f, NoiseBlendMode.MIN, seed));
   }
 
   private void CreateBiomeDesertNoise(int seed){
@@ -83,7 +86,8 @@ public class NoiseManager{
     // Ground
     noiseLayerManager.AddLayer(BiomeType.MOUNTAIN, new NoiseLayer(FastNoiseLite.NoiseType.Perlin, 0.01f, 10f, NoiseBlendMode.MAX, seed));
     // Mountains
-    noiseLayerManager.AddLayer(BiomeType.MOUNTAIN, new NoiseLayer(FastNoiseLite.NoiseType.Perlin, 0.02f, 100, NoiseBlendMode.MAX, seed));
+    noiseLayerManager.AddLayer(BiomeType.MOUNTAIN, new NoiseLayer(FastNoiseLite.NoiseType.Perlin, 0.005f, 100, NoiseBlendMode.MAX, seed));
+    noiseLayerManager.AddLayer(BiomeType.MOUNTAIN, new NoiseLayer(FastNoiseLite.NoiseType.Perlin, 0.004f, 80, NoiseBlendMode.MAX, seed));
   }
   
   private void CreateBiomeSnowNoise(int seed){
@@ -94,6 +98,12 @@ public class NoiseManager{
     noiseLayerManager.AddLayer(BiomeType.SNOW, new NoiseLayer(FastNoiseLite.NoiseType.Perlin, 0.1f, 5f, NoiseBlendMode.MAX, seed));
 
     // Hill
-    noiseLayerManager.AddLayer(BiomeType.SNOW, new NoiseLayer(FastNoiseLite.NoiseType.Perlin, 0.009f, 50f, NoiseBlendMode.MAX, seed));
+    noiseLayerManager.AddLayer(BiomeType.SNOW, new NoiseLayer(FastNoiseLite.NoiseType.Perlin, 0.009f, 70f, NoiseBlendMode.MAX, seed));
+    
+    // Hill
+    noiseLayerManager.AddLayer(BiomeType.SNOW, new NoiseLayer(FastNoiseLite.NoiseType.Perlin, 0.008f, 100, NoiseBlendMode.ADD, seed));
+    
+    // Lake layer
+    noiseLayerManager.AddLayer(BiomeType.GRASSLAND, new NoiseLayer(FastNoiseLite.NoiseType.Perlin, 0.005f, -20f, NoiseBlendMode.MIN, seed));
   }
 }

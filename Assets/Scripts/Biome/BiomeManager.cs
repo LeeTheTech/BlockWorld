@@ -5,19 +5,45 @@ public static class BiomeManager{
   private static Dictionary<BiomeType, Biome> biomes;
   private static NoiseManager noiseManager;
 
+  private static readonly Dictionary<BiomeType, float> biomeWeights = new();
+  private static readonly List<(BiomeType biome, float minValue, float maxValue)> biomeRanges = new();
+
   public const int seaLevel = 100;
 
   public static void Initialize(int seed){
     biomes = new Dictionary<BiomeType, Biome>();
     noiseManager = new NoiseManager(seed);
     CreateBiomes();
+    AssignBiomeWeights();
+    CalculateBiomeRanges();
   }
 
   private static void CreateBiomes(){
     biomes.Add(BiomeType.GRASSLAND, new Biome(BiomeType.GRASSLAND, new BlockLayers(BlockTypes.GRASS, BlockTypes.DIRT, BlockTypes.STONE)));
     biomes.Add(BiomeType.DESERT, new Biome(BiomeType.DESERT, new BlockLayers(BlockTypes.SAND, BlockTypes.SAND, BlockTypes.STONE)));
     biomes.Add(BiomeType.MOUNTAIN, new Biome(BiomeType.MOUNTAIN, new BlockLayers(BlockTypes.GRASS, BlockTypes.DIRT, BlockTypes.STONE)));
-    biomes.Add(BiomeType.SNOW, new Biome(BiomeType.SNOW, new BlockLayers(BlockTypes.GRASS, BlockTypes.DIRT, BlockTypes.STONE)));
+    biomes.Add(BiomeType.SNOW, new Biome(BiomeType.SNOW, new BlockLayers(BlockTypes.SNOW_GRASS, BlockTypes.DIRT, BlockTypes.STONE)));
+  }
+  
+  private static void AssignBiomeWeights(){
+    // Define weights for each biome - tweak these values for balance
+    biomeWeights.Add(BiomeType.GRASSLAND, 0.25f);  // 25% of the world
+    biomeWeights.Add(BiomeType.DESERT, 0.25f);     // 25% of the world
+    biomeWeights.Add(BiomeType.MOUNTAIN, 0.25f);   // 25% of the world
+    biomeWeights.Add(BiomeType.SNOW, 0.25f);       // 25% of the world
+  }
+  
+  private static void CalculateBiomeRanges(){
+    // This function calculates the min and max values for each biome range
+    float cumulativeWeight = 0f;
+
+    foreach (var biome in biomeWeights){
+      float minValue = cumulativeWeight;
+      cumulativeWeight += biome.Value;  // Increment cumulative weight
+      float maxValue = cumulativeWeight;
+
+      biomeRanges.Add((biome.Key, minValue, maxValue));
+    }
   }
 
   public static float GenerateTerrainHeight(int x, int z){
@@ -44,20 +70,23 @@ public static class BiomeManager{
   }
 
   public static BiomeType GetBiomeType(float x, float z){
+    // Use domain warping to get more scattered and interesting biome borders
     float warpX = noiseManager.domainWarpNoiseX.GetNoise(x, z) * 30.0f;
     float warpZ = noiseManager.domainWarpNoiseZ.GetNoise(x, z) * 30.0f;
 
     float warpedX = x + warpX;
     float warpedZ = z + warpZ;
 
-    float noiseValue = noiseManager.biomeNoise.GetNoise(warpedX, warpedZ);
-    return noiseValue switch {
-        < 0.33f => BiomeType.DESERT,
-        < 0.66f => BiomeType.GRASSLAND,
-        < 0.88f => BiomeType.MOUNTAIN,
-        < 0.99f => BiomeType.SNOW,
-        _ => BiomeType.DESERT
-    };
+    // Get a noise value in the range of [0, 1]
+    float noiseValue = Mathf.Clamp01(noiseManager.biomeNoise.GetNoise(warpedX, warpedZ));
+
+    // Find the corresponding biome based on the noise value and biome ranges
+    foreach (var range in biomeRanges){
+      if (noiseValue >= range.minValue && noiseValue < range.maxValue){
+        return range.biome;
+      }
+    }
+    return BiomeType.GRASSLAND; // Default fallback
   }
 
   public static Biome GetBiome(BiomeType biomeType){
@@ -68,15 +97,18 @@ public static class BiomeManager{
     if (y == 0){
       return BlockTypes.BEDROCK;
     }
+    if (y == 1){
+      return BlockTypes.LAVA;
+    }
 
     // Check for cave generation
-    if (y < seaLevel - 10){
+    if (y < seaLevel - 30){
       float caveNoiseValue = noiseManager.caveNoise.GetNoise(x, y, z);
     
       // If caveNoiseValue is below threshold, this is a cave block
       if (caveNoiseValue < 0.0009f) {
         // Water check
-        if (y <= heightGen){
+        if (y + 2 <= heightGen){
           return BlockTypes.AIR;
         }
       }
@@ -87,14 +119,16 @@ public static class BiomeManager{
       byte oreBlock = noiseManager.oreNoiseManager.GetOreBlock(x, y, z);
       if (oreBlock != BlockTypes.AIR) return oreBlock;
     }
+    
+    Biome biome = GetBiome(GetBiomeType(x, z));
 
-    // Ocean 
-    if (y > heightGen && y <= seaLevel){
-      return BlockTypes.WATER; // Water block
+    // Water 
+    if (y > heightGen && y <= seaLevel - 1){
+      return biome.biomeType == BiomeType.SNOW ? BlockTypes.ICE : BlockTypes.WATER;
     }
 
     // Beach
-    if (y == heightGen && y == seaLevel){
+    if (y == heightGen && y == seaLevel - 1){
       return BlockTypes.SAND; // Sand block
     }
 
@@ -103,7 +137,6 @@ public static class BiomeManager{
       return BlockTypes.AIR; // Air block
     }
     
-    Biome biome = GetBiome(GetBiomeType(x, z));
     if (y == heightGen) return biome.blockLayers.layer1; // Top layer
     if (y < heightGen && y > heightGen - 4) return biome.blockLayers.layer2; // Next layers
     if (y <= heightGen - 4 && y > 0) return biome.blockLayers.layer3; // Deeper layers 
