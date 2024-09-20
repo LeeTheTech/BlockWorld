@@ -213,6 +213,36 @@ public class TextureMapper{
               new TextureMap.Face(new Vector2(2, 5)),
               new Color32(255, 255, 255, 255)
           )
+      },{
+          BlockTypes.PLANKS_OAK_SLAB, new TextureMap(
+              new TextureMap.Face(new Vector2(3, 1)),
+              new TextureMap.Face(new Vector2(3, 1)),
+              new TextureMap.Face(new Vector2(3, 1)),
+              new TextureMap.Face(new Vector2(3, 1)),
+              new TextureMap.Face(new Vector2(3, 1)),
+              new TextureMap.Face(new Vector2(3, 1)),
+              new Color32(255, 255, 255, 255)
+          )
+      },{
+          BlockTypes.PLANKS_OAK_STAIR, new TextureMap(
+              new TextureMap.Face(new Vector2(3, 1)),
+              new TextureMap.Face(new Vector2(3, 1)),
+              new TextureMap.Face(new Vector2(3, 1)),
+              new TextureMap.Face(new Vector2(3, 1)),
+              new TextureMap.Face(new Vector2(3, 1)),
+              new TextureMap.Face(new Vector2(3, 1)),
+              new Color32(255, 255, 255, 255)
+          )
+      },{
+          BlockTypes.TORCH, new TextureMap(
+              new TextureMap.Face(new Vector2(3, 1)),
+              new TextureMap.Face(new Vector2(3, 1)),
+              new TextureMap.Face(new Vector2(3, 1)),
+              new TextureMap.Face(new Vector2(3, 1)),
+              new TextureMap.Face(new Vector2(3, 1)),
+              new TextureMap.Face(new Vector2(3, 1)),
+              new Color32(255, 255, 255, 255)
+          )
       }
   };
 

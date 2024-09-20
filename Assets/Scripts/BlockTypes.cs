@@ -19,6 +19,9 @@ public static class BlockTypes{
   public const byte ANDESITE = 14;
   public const byte SAND = 15;
   public const byte CACTUS = 17;
+  public const byte PLANKS_OAK_SLAB = 18;
+  public const byte PLANKS_OAK_STAIR = 19;
+  public const byte TORCH = 20;
 
   //TRANSPARENT
   public const byte LEAVES_OAK = 128;
@@ -30,6 +33,7 @@ public static class BlockTypes{
   public static Dictionary<byte, byte> lightLevel;
   public static Dictionary<byte, byte> density;
   public static Dictionary<byte, AudioManager.Dig.Type> digSound;
+  public static Dictionary<byte, BlockShapes.BlockShape> blockShape;
 
   public static void Initialize(){
     lightLevel = new Dictionary<byte, byte>{
@@ -54,7 +58,10 @@ public static class BlockTypes{
         { DIORITE, 0 },
         { GRANITE, 0 },
         { COBBLESTONE, 0 },
-        { SAND, 0 }
+        { SAND, 0 },
+        { PLANKS_OAK_SLAB, 0 },
+        { PLANKS_OAK_STAIR, 0 },
+        { TORCH, 0 }
     };
 
     density = new Dictionary<byte, byte>{
@@ -79,7 +86,10 @@ public static class BlockTypes{
         { DIORITE, 255 },
         { GRANITE, 255 },
         { COBBLESTONE, 255 },
-        { SAND, 255 }
+        { SAND, 255 },
+        { PLANKS_OAK_SLAB, 255 },
+        { PLANKS_OAK_STAIR, 255 },
+        { TORCH, 255 }
     };
 
     digSound = new Dictionary<byte, AudioManager.Dig.Type>{
@@ -104,7 +114,38 @@ public static class BlockTypes{
         { DIORITE, AudioManager.Dig.Type.Stone },
         { GRANITE, AudioManager.Dig.Type.Stone },
         { COBBLESTONE, AudioManager.Dig.Type.Stone },
-        { SAND, AudioManager.Dig.Type.Stone }
+        { SAND, AudioManager.Dig.Type.Stone },
+        { PLANKS_OAK_SLAB, AudioManager.Dig.Type.Stone },
+        { PLANKS_OAK_STAIR, AudioManager.Dig.Type.Stone },
+        { TORCH, AudioManager.Dig.Type.Stone }
+    };
+
+    blockShape = new Dictionary<byte, BlockShapes.BlockShape>{
+        { BEDROCK, BlockShapes.BlockShape.CUBE },
+        { GRASS, BlockShapes.BlockShape.CUBE },
+        { DIRT, BlockShapes.BlockShape.CUBE },
+        { STONE, BlockShapes.BlockShape.CUBE },
+        { COAL, BlockShapes.BlockShape.CUBE },
+        { IRON, BlockShapes.BlockShape.CUBE },
+        { GOLD, BlockShapes.BlockShape.CUBE },
+        { DIAMOND, BlockShapes.BlockShape.CUBE },
+        { LOG_OAK, BlockShapes.BlockShape.CUBE },
+        { PLANKS_OAK, BlockShapes.BlockShape.CUBE },
+        { GLOWSTONE, BlockShapes.BlockShape.CUBE },
+        { LEAVES_OAK, BlockShapes.BlockShape.CUBE },
+        { GLASS, BlockShapes.BlockShape.CUBE },
+        { WATER, BlockShapes.BlockShape.CUBE },
+        { ICE, BlockShapes.BlockShape.CUBE },
+        { CACTUS, BlockShapes.BlockShape.CUBE },
+        { AIR, BlockShapes.BlockShape.CUBE },
+        { ANDESITE, BlockShapes.BlockShape.CUBE },
+        { DIORITE, BlockShapes.BlockShape.CUBE },
+        { GRANITE, BlockShapes.BlockShape.CUBE },
+        { COBBLESTONE, BlockShapes.BlockShape.CUBE },
+        { SAND, BlockShapes.BlockShape.CUBE },
+        { PLANKS_OAK_SLAB, BlockShapes.BlockShape.SLAB },
+        { PLANKS_OAK_STAIR, BlockShapes.BlockShape.STAIR },
+        { TORCH, BlockShapes.BlockShape.TORCH }
     };
   }
 
@@ -121,7 +162,15 @@ public static class BlockTypes{
   public static bool IsTransparentCutoutBlock(byte blockType){
     switch (blockType){
       case GLASS:
-      //case LEAVES_OAK:
+        return true;
+      default:
+        return false;
+    }
+  }
+
+  public static bool IsSlab(byte blockType){
+    switch (blockType){
+      case PLANKS_OAK_SLAB:
         return true;
       default:
         return false;

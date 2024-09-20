@@ -55,6 +55,7 @@ public class ChunkMeshData{
   }
 
   public void SetupMesh(Mesh mesh){
+    //TODO double check sub-mesh idea isn't a bad one...
     mesh.subMeshCount = 2;
     mesh.SetVertices(vertices.Concat(transparentMeshData.vertices).ToArray());
     mesh.SetTriangles(triangles, 0);
