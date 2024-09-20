@@ -10,7 +10,6 @@ public class World : MonoBehaviour{
 
   public void Initialize(WorldInfo worldInfo){
     this.info = worldInfo;
-    if (worldInfo.seed == 0) worldInfo.seed = GenerateSeed();
     activeWorld = this;
     chunkManager.Initialize();
     BiomeManager.Initialize(worldInfo.seed);
@@ -53,11 +52,5 @@ public class World : MonoBehaviour{
     int relativeX = x - (chunkX * 16);
     int relativeZ = z - (chunkY * 16);
     return chunkManager.GetBlock(new Vector2Int(chunkX, chunkY), relativeX, y, relativeZ);
-  }
-
-  private static int GenerateSeed(){
-    int tickCount = System.Environment.TickCount;
-    int processId = System.Diagnostics.Process.GetCurrentProcess().Id;
-    return new System.Random(tickCount + processId).Next();
   }
 }

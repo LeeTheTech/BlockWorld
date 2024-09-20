@@ -5,14 +5,16 @@ public static class BiomeManager{
   private static Dictionary<BiomeType, Biome> biomes;
   private static NoiseManager noiseManager;
 
-  private static readonly Dictionary<BiomeType, float> biomeWeights = new();
-  private static readonly List<(BiomeType biome, float minValue, float maxValue)> biomeRanges = new();
+  private static Dictionary<BiomeType, float> biomeWeights;
+  private static List<(BiomeType biome, float minValue, float maxValue)> biomeRanges;
 
   public const int seaLevel = 100;
 
   public static void Initialize(int seed){
     biomes = new Dictionary<BiomeType, Biome>();
     noiseManager = new NoiseManager(seed);
+    biomeWeights = new();
+    biomeRanges = new();
     CreateBiomes();
     AssignBiomeWeights();
     CalculateBiomeRanges();

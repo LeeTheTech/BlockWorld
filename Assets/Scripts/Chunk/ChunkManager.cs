@@ -211,8 +211,7 @@ public class ChunkManager : MonoBehaviour{
         }
       }
 
-      List<Vector2Int> ordered =
-          visiblePoints.OrderBy(vp => Vector2Int.Distance(cameraChunkPos, vp)).ToList<Vector2Int>();
+      List<Vector2Int> ordered = visiblePoints.OrderBy(vp => Vector2Int.Distance(cameraChunkPos, vp)).ToList<Vector2Int>();
 
       while (shouldRenderWaitForUpdate) Thread.Sleep(8);
       shouldRenderWaitForUpdate = true;

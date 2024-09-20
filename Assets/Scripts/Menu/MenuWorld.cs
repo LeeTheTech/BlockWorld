@@ -8,8 +8,9 @@ public class MenuWorld : MonoBehaviour{
   [SerializeField] public MainMenu mainMenu;
   [SerializeField] public GameObject savedWorldPrefab;
   [SerializeField] public GridLayoutGroup savedWorldGrid;
+  [SerializeField] public ScrollRect scrollRect;
   private const int sceneToLoad = 1;
-  private List<WorldInfo> worldInfoList;
+  public List<WorldInfo> worldInfoList;
 
   public void OpenMenu(){
     LoadData();
@@ -30,6 +31,7 @@ public class MenuWorld : MonoBehaviour{
       CreateSaveWorldObject(worldInfo.name, worldInfo.seed);
     }
     if (worldInfoList.Count > 3) AdjustGridHeight();
+    ResetScrollPosition();
   }
 
   private void CreateSaveWorldObject(string worldName, int seed){
@@ -94,5 +96,9 @@ public class MenuWorld : MonoBehaviour{
 
     // Adjust the grid's height
     gridRectTransform.sizeDelta = new Vector2(gridRectTransform.sizeDelta.x, newHeight);
+  }
+  
+  private void ResetScrollPosition(){
+    scrollRect.verticalNormalizedPosition = 1; 
   }
 }

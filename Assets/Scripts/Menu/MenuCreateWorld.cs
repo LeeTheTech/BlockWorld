@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using TMPro;
 using UnityEngine;
@@ -7,8 +8,10 @@ public class MenuCreateWorld : MonoBehaviour{
   [SerializeField] public TextMeshProUGUI nameInputField;
   [SerializeField] public TextMeshProUGUI seedInputField;
   private const int sceneToLoad = 1;
+  private List<WorldInfo> worldInfoList;
 
   public void OpenMenu(){
+    this.worldInfoList = worldMenu.worldInfoList;
     this.worldMenu.gameObject.SetActive(false);
     this.gameObject.SetActive(true);
   }
@@ -27,11 +30,16 @@ public class MenuCreateWorld : MonoBehaviour{
       seedText += match;
     }
 
-    // If empty set to 0 for random seed
-    if (seedText == string.Empty) seedText = "0";
+    // If empty, random seed
+    if (seedText == string.Empty) seedText = "" + GenerateSeed();
 
     // Limit seed text to 10 digits
     if (seedText.Length > 10) seedText = seedText[..10];
+    
+    // Check if world name is taken
+    foreach (WorldInfo worldInfo in worldInfoList){
+      if (nameInputField.text == worldInfo.name) return;
+    }
 
     // Safely parse the seed value and check for overflow
     if (long.TryParse(seedText, out long seedLong) && seedLong <= int.MaxValue){
@@ -43,5 +51,11 @@ public class MenuCreateWorld : MonoBehaviour{
       WorldInfoStorage.worldInfo = new WorldInfo(nameInputField.text, int.MaxValue);
       UnityEngine.SceneManagement.SceneManager.LoadScene(sceneToLoad);
     }
+  }
+  
+  private static int GenerateSeed(){
+    int tickCount = System.Environment.TickCount;
+    int processId = System.Diagnostics.Process.GetCurrentProcess().Id;
+    return new System.Random(tickCount + processId).Next();
   }
 }
