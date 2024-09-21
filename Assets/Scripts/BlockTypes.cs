@@ -65,7 +65,7 @@ public static class BlockTypes{
         { PLANKS_OAK_STAIR, 0 },
         { TORCH, 0 },
         { SNOW_GRASS, 0 },
-        { LAVA, 14 }
+        { LAVA, 20 }
     };
 
     density = new Dictionary<byte, byte>{

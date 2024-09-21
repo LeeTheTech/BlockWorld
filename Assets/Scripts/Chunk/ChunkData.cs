@@ -105,6 +105,9 @@ public class ChunkData{
 
         for (int y = 0; y < 256; ++y){
           blocks[x, y, z] = BiomeManager.DetermineBlockType(heightGen, noiseX, y, noiseZ);
+          if (BlockTypes.lightLevel[blocks[x, y, z]] > 0){
+            lightSources[new Vector3Int(x, y, z)] = BlockTypes.lightLevel[blocks[x, y, z]];
+          }
         }
       }
     }
@@ -277,26 +280,26 @@ public class ChunkData{
     back = null;
 
     //add sky light
-    //for (int z = 0; z < 16; ++z)
-    //{
-    //	for (int x = 0; x < 16; ++x)
-    //	{
-    //		byte ray = 15;
-    //		for (int y = 255; y > -1; --y)
-    //		{
-    //			byte block = blocks[x, y, z];
-    //			if (block == 0)
-    //			{
-    //				light[x, y, z] = ray;
-    //			}
-    //			else
-    //			{
-    //				if (block < 128) break;
-    //				light[x, y, z] = ray;
-    //			}
-    //		}
-    //	}
-    //}
+    // for (int z = 0; z < 16; ++z)
+    // {
+    // 	for (int x = 0; x < 16; ++x)
+    // 	{
+    // 		byte ray = 15;
+    // 		for (int y = 255; y > -1; --y)
+    // 		{
+    // 			byte block = blocks[x, y, z];
+    // 			if (block == 0)
+    // 			{
+    // 				light[x, y, z] = ray;
+    // 			}
+    // 			else
+    // 			{
+    // 				if (block < 128) break;
+    // 				light[x, y, z] = ray;
+    // 			}
+    // 		}
+    // 	}
+    // }
     //Debug.Log($"Chunk {position} structures ready");
     //load changes
     List<ChunkSaveData.C> changes = saveData.changes;
@@ -305,7 +308,7 @@ public class ChunkData{
       blocks[c.x, c.y, c.z] = c.b;
       byte lightLevel = BlockTypes.lightLevel[c.b];
       if (lightLevel > 0){
-        lightSources.Add(new Vector3Int(c.x, c.y, c.z), lightLevel);
+        lightSources[new Vector3Int(c.x, c.y, c.z)] = lightLevel;
       }
     }
 
