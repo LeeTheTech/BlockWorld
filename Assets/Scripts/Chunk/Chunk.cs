@@ -69,13 +69,12 @@ public class Chunk : MonoBehaviour{
     //all blocks above that block need to be set to 15
     for (int z = 0; z < 48; ++z){
       for (int x = 0; x < 48; ++x){
-        if ((x % 47) * (z % 47) == 0) //filters outer edges
-        {
-          //Debug.Log($"these should at least 0 or 47  ->  {x} {z}"); 
+        if ((x % 47) * (z % 47) == 0){
           for (int yy = 0; yy < 256; ++yy) //dont do outer edges
           {
             lightMap[x, yy, z] = 15; //set all edges to 15 to stop tracing at edges
           }
+
           continue;
         }
 
@@ -177,8 +176,6 @@ public class Chunk : MonoBehaviour{
         }
       }
     }
-    //Debug.Log("Did " + simulateCount + " light simulations");
-
     UnityEngine.Profiling.Profiler.EndSample();
 
 
@@ -207,9 +204,17 @@ public class Chunk : MonoBehaviour{
 
     UnityEngine.Profiling.Profiler.EndSample();
     UnityEngine.Profiling.Profiler.BeginSample("APPLYING MESH DATA");
+    
+    Mesh colliderMesh = new Mesh{
+        name = "ChunkColliderMesh",
+        indexFormat = UnityEngine.Rendering.IndexFormat.UInt32
+    };
+    
+    chunkMeshData.SetupColliderMesh(colliderMesh);
     chunkMeshData.SetupMesh(mesh);
+    chunkMeshData.ClearCachedMeshData();
     gameObject.SetActive(true);
-    meshCollider.sharedMesh = mesh;
+    meshCollider.sharedMesh = colliderMesh;
     UnityEngine.Profiling.Profiler.EndSample();
   }
 

@@ -87,7 +87,8 @@ public static class BlockShapes{
           new Vector3(shapeData.x + 1, shapeData.y + 1, shapeData.z),
           new Vector3(shapeData.x + 1, shapeData.y + 1, shapeData.z + 1),
           new Vector3(shapeData.x + 1, shapeData.y, shapeData.z + 1),
-          Vector3.right
+          Vector3.right,
+          BlockTypes.GenerateCollider(shapeData.blockType)
       );
       meshData.AddTextureFace(shapeData.textureMap.right);
       AddLighting(meshData, shapeData, LightFace.RIGHT);
@@ -99,7 +100,8 @@ public static class BlockShapes{
           new Vector3(shapeData.x, shapeData.y + 1, shapeData.z + 1),
           new Vector3(shapeData.x, shapeData.y + 1, shapeData.z),
           new Vector3(shapeData.x, shapeData.y, shapeData.z),
-          -Vector3.right
+          -Vector3.right,
+          BlockTypes.GenerateCollider(shapeData.blockType)
       );
       meshData.AddTextureFace(shapeData.textureMap.left);
       AddLighting(meshData, shapeData, LightFace.LEFT);
@@ -111,7 +113,8 @@ public static class BlockShapes{
           new Vector3(shapeData.x, shapeData.y + 1, shapeData.z + 1),
           new Vector3(shapeData.x + 1, shapeData.y + 1, shapeData.z + 1),
           new Vector3(shapeData.x + 1, shapeData.y + 1, shapeData.z),
-          Vector3.up
+          Vector3.up,
+          BlockTypes.GenerateCollider(shapeData.blockType)
       );
       meshData.AddTextureFace(shapeData.textureMap.top);
       AddLighting(meshData, shapeData, LightFace.TOP);
@@ -123,7 +126,8 @@ public static class BlockShapes{
           new Vector3(shapeData.x, shapeData.y, shapeData.z),
           new Vector3(shapeData.x + 1, shapeData.y, shapeData.z),
           new Vector3(shapeData.x + 1, shapeData.y, shapeData.z + 1),
-          -Vector3.up
+          -Vector3.up,
+          BlockTypes.GenerateCollider(shapeData.blockType)
       );
       meshData.AddTextureFace(shapeData.textureMap.bottom);
       AddLighting(meshData, shapeData, LightFace.BOTTOM);
@@ -135,7 +139,8 @@ public static class BlockShapes{
           new Vector3(shapeData.x + 1, shapeData.y + 1, shapeData.z + 1),
           new Vector3(shapeData.x, shapeData.y + 1, shapeData.z + 1),
           new Vector3(shapeData.x, shapeData.y, shapeData.z + 1),
-          Vector3.forward
+          Vector3.forward,
+          BlockTypes.GenerateCollider(shapeData.blockType)
       );
       meshData.AddTextureFace(shapeData.textureMap.front);
       AddLighting(meshData, shapeData, LightFace.FRONT);
@@ -147,7 +152,8 @@ public static class BlockShapes{
           new Vector3(shapeData.x, shapeData.y + 1, shapeData.z),
           new Vector3(shapeData.x + 1, shapeData.y + 1, shapeData.z),
           new Vector3(shapeData.x + 1, shapeData.y, shapeData.z),
-          -Vector3.forward
+          -Vector3.forward,
+          BlockTypes.GenerateCollider(shapeData.blockType)
       );
       meshData.AddTextureFace(shapeData.textureMap.back);
       AddLighting(meshData, shapeData, LightFace.BACK);
@@ -161,7 +167,8 @@ public static class BlockShapes{
           new Vector3(shapeData.x + 1, shapeData.y + 0.5f, shapeData.z),
           new Vector3(shapeData.x + 1, shapeData.y + 0.5f, shapeData.z + 1),
           new Vector3(shapeData.x + 1, shapeData.y, shapeData.z + 1),
-          Vector3.right
+          Vector3.right,
+          BlockTypes.GenerateCollider(shapeData.blockType)
       );
       meshData.AddTextureFace(shapeData.textureMap.right);
       AddLighting(meshData, shapeData, LightFace.RIGHT);
@@ -173,7 +180,8 @@ public static class BlockShapes{
           new Vector3(shapeData.x, shapeData.y + 0.5f, shapeData.z + 1),
           new Vector3(shapeData.x, shapeData.y + 0.5f, shapeData.z),
           new Vector3(shapeData.x, shapeData.y, shapeData.z),
-          -Vector3.right
+          -Vector3.right,
+          BlockTypes.GenerateCollider(shapeData.blockType)
       );
       meshData.AddTextureFace(shapeData.textureMap.left);
       AddLighting(meshData, shapeData, LightFace.LEFT);
@@ -185,7 +193,8 @@ public static class BlockShapes{
           new Vector3(shapeData.x, shapeData.y + 0.5f, shapeData.z + 1),
           new Vector3(shapeData.x + 1, shapeData.y + 0.5f, shapeData.z + 1),
           new Vector3(shapeData.x + 1, shapeData.y + 0.5f, shapeData.z),
-          Vector3.up
+          Vector3.up,
+          BlockTypes.GenerateCollider(shapeData.blockType)
       );
       meshData.AddTextureFace(shapeData.textureMap.top);
       AddLighting(meshData, shapeData, LightFace.TOP);
@@ -197,7 +206,8 @@ public static class BlockShapes{
           new Vector3(shapeData.x, shapeData.y, shapeData.z),
           new Vector3(shapeData.x + 1, shapeData.y, shapeData.z),
           new Vector3(shapeData.x + 1, shapeData.y, shapeData.z + 1),
-          -Vector3.up
+          -Vector3.up,
+          BlockTypes.GenerateCollider(shapeData.blockType)
       );
       meshData.AddTextureFace(shapeData.textureMap.bottom);
       AddLighting(meshData, shapeData, LightFace.BOTTOM);
@@ -209,7 +219,8 @@ public static class BlockShapes{
           new Vector3(shapeData.x + 1, shapeData.y + 0.5f, shapeData.z + 1),
           new Vector3(shapeData.x, shapeData.y + 0.5f, shapeData.z + 1),
           new Vector3(shapeData.x, shapeData.y, shapeData.z + 1),
-          Vector3.forward
+          Vector3.forward,
+          BlockTypes.GenerateCollider(shapeData.blockType)
       );
       meshData.AddTextureFace(shapeData.textureMap.front);
       AddLighting(meshData, shapeData, LightFace.FRONT);
@@ -221,7 +232,8 @@ public static class BlockShapes{
           new Vector3(shapeData.x, shapeData.y + 0.5f, shapeData.z),
           new Vector3(shapeData.x + 1, shapeData.y + 0.5f, shapeData.z),
           new Vector3(shapeData.x + 1, shapeData.y, shapeData.z),
-          -Vector3.forward
+          -Vector3.forward,
+          BlockTypes.GenerateCollider(shapeData.blockType)
       );
       meshData.AddTextureFace(shapeData.textureMap.back);
       AddLighting(meshData, shapeData, LightFace.BACK);
@@ -234,7 +246,8 @@ public static class BlockShapes{
         new Vector3(shapeData.x + 1, shapeData.y, shapeData.z + 1), 
         new Vector3(shapeData.x + 1, shapeData.y + 1, shapeData.z + 1),
         new Vector3(shapeData.x, shapeData.y + 1, shapeData.z),
-        Vector3.forward
+        Vector3.forward,
+        BlockTypes.GenerateCollider(shapeData.blockType)
     );
     meshData.AddTextureFace(shapeData.textureMap.top);
     AddLighting(meshData, shapeData, LightFace.TOP);
@@ -244,7 +257,8 @@ public static class BlockShapes{
         new Vector3(shapeData.x, shapeData.y, shapeData.z + 1),
         new Vector3(shapeData.x, shapeData.y + 1, shapeData.z + 1),
         new Vector3(shapeData.x + 1, shapeData.y + 1, shapeData.z),
-        Vector3.forward
+        Vector3.forward,
+        BlockTypes.GenerateCollider(shapeData.blockType)
     );
     meshData.AddTextureFace(shapeData.textureMap.top);
     AddLighting(meshData, shapeData, LightFace.TOP);
@@ -332,6 +346,8 @@ public static class BlockShapes{
     if (BlockTypes.IsTransparentBlock(block) && BlockTypes.IsTransparentBlock(targetBlock)) return false;
     if (BlockTypes.IsTransparentCutoutBlock(block) && BlockTypes.IsTransparentCutoutBlock(targetBlock)) return false;
     if (BlockTypes.IsSlab(targetBlock)) return true;
+    if (BlockTypes.IsSolidLiquid(block) && BlockTypes.IsSolidLiquid(targetBlock)) return false;
+    if (BlockTypes.IsSolidLiquid(targetBlock)) return true;
     return targetBlock > 127;
   }
 }

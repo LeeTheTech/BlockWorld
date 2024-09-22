@@ -200,4 +200,24 @@ public static class BlockTypes{
         return false;
     }
   }
+
+  public static bool IsSolidLiquid(byte blockType){
+    switch (blockType){
+      case LAVA:
+        return true;
+      default:
+        return false;
+    }
+  }
+
+  public static bool GenerateCollider(byte blockType){
+    switch (blockType){
+      case FOLIAGE:
+      case LAVA:
+      case WATER:
+        return false;
+      default:
+        return true;
+    }
+  }
 }

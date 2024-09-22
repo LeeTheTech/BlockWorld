@@ -11,6 +11,9 @@ public class ChunkMeshData{
   private readonly List<Vector2> uvs = new();
   private readonly List<Color32> colors = new();
   
+  private readonly List<int> colliderTriangles = new();
+  private readonly List<Vector3> colliderVertices = new();
+  
   public ChunkMeshData transparentMeshData;
   public ChunkMeshData noCullMeshData;
 
@@ -38,7 +41,7 @@ public class ChunkMeshData{
     colors.Add(new Color32(c.r, c.g, c.b, lBR));
   }
 
-  public void AddFace(Vector3 a, Vector3 b, Vector3 c, Vector3 d, Vector3 normal){
+  public void AddFace(Vector3 a, Vector3 b, Vector3 c, Vector3 d, Vector3 normal, bool collider){
     int index = vertices.Count;
     vertices.Add(a);
     vertices.Add(b);
@@ -54,6 +57,29 @@ public class ChunkMeshData{
     triangles.Add(index + 2);
     triangles.Add(index + 3);
     triangles.Add(index + 0);
+
+    if (collider){
+      int colliderIndex = colliderVertices.Count;
+      colliderVertices.Add(a);
+      colliderVertices.Add(b);
+      colliderVertices.Add(c);
+      colliderVertices.Add(d);
+      colliderTriangles.Add(colliderIndex + 0);
+      colliderTriangles.Add(colliderIndex + 1);
+      colliderTriangles.Add(colliderIndex + 2);
+      colliderTriangles.Add(colliderIndex + 2);
+      colliderTriangles.Add(colliderIndex + 3);
+      colliderTriangles.Add(colliderIndex + 0);
+    }
+  }
+
+  public void SetupColliderMesh(Mesh mesh){
+    mesh.subMeshCount = 3;
+    
+    mesh.SetVertices(colliderVertices.Concat(transparentMeshData.colliderVertices).Concat(noCullMeshData.colliderVertices).ToArray());
+    mesh.SetTriangles(colliderTriangles.ToArray(), 0); // Opaque mesh
+    mesh.SetTriangles(transparentMeshData.colliderTriangles.Select(index => index + colliderVertices.Count).ToArray(), 1); // Transparent mesh
+    mesh.SetTriangles(noCullMeshData.colliderTriangles.Select(index => index + colliderVertices.Count + transparentMeshData.colliderVertices.Count).ToArray(), 2); // No Cull mesh
   }
 
   public void SetupMesh(Mesh mesh){
@@ -63,15 +89,17 @@ public class ChunkMeshData{
     mesh.SetVertices(vertices.Concat(transparentMeshData.vertices).Concat(noCullMeshData.vertices).ToArray());
 
     // Set triangles for each sub-mesh
-    mesh.SetTriangles(triangles, 0); // Opaque mesh
-    mesh.SetTriangles(transparentMeshData.triangles.Select(val => val + vertices.Count).ToArray(), 1); // Transparent mesh
-    mesh.SetTriangles(noCullMeshData.triangles.Select(val => val + vertices.Count + transparentMeshData.vertices.Count).ToArray(), 2); // No Cull mesh
+    mesh.SetTriangles(triangles.ToArray(), 0); // Opaque mesh
+    mesh.SetTriangles(transparentMeshData.triangles.Select(index => index + vertices.Count).ToArray(), 1); // Transparent mesh
+    mesh.SetTriangles(noCullMeshData.triangles.Select(index => index + vertices.Count + transparentMeshData.vertices.Count).ToArray(), 2); // No Cull mesh
 
     // Combine UVs, Normals, and Colors for all meshes
     mesh.SetUVs(0, uvs.Concat(transparentMeshData.uvs).Concat(noCullMeshData.uvs).ToArray());
     mesh.SetNormals(normals.Concat(transparentMeshData.normals).Concat(noCullMeshData.normals).ToArray());
     mesh.SetColors(colors.Concat(transparentMeshData.colors).Concat(noCullMeshData.colors).ToArray());
+  }
 
+  public void ClearCachedMeshData(){
     // Clear all the mesh data
     vertices.Clear();
     triangles.Clear();
@@ -92,5 +120,9 @@ public class ChunkMeshData{
     noCullMeshData.colors.Clear();
     noCullMeshData.uvs.Clear();
     noCullMeshData.normals.Clear();
+    
+    // Clear the collider mesh data
+    colliderTriangles.Clear();
+    colliderVertices.Clear();
   }
 }
