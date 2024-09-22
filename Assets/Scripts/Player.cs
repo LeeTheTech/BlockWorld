@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.Rendering.PostProcessing;
 
 public class Player : MonoBehaviour{
   const int playerLayer = 8;
@@ -6,10 +7,12 @@ public class Player : MonoBehaviour{
   private Quaternion cameraRotation;
   private Vector3 cameraPosition;
   private long lastPressedSpace;
-  public State state = State.Creative_Walking;
+  public State state;
   private bool running;
   private float wobble;
   private float wobbleIntensity;
+  private PostProcessVolume waterPostProcessVolume;
+  private bool isUnderWater;
   public Setup setup;
 
   public enum State{
@@ -34,6 +37,9 @@ public class Player : MonoBehaviour{
     Cursor.visible = false;
     cameraRotation = Quaternion.Euler(euler);
     cameraPosition = transform.position + new Vector3(0, .5f, 0);
+    
+    PostProcessVolume[] postProcessVolumes = setup.mainCamera.GetComponents<PostProcessVolume>();
+    waterPostProcessVolume = postProcessVolumes[1];
   }
 
   void Update(){
@@ -62,13 +68,29 @@ public class Player : MonoBehaviour{
     else{
       SpectatorMovement(movement, running);
     }
-
+    
+    CheckUnderWater();
     CameraUpdate();
     BlockPlacement();
   }
 
   private long TimeStamp(){
     return System.DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+  }
+
+  private void CheckUnderWater(){
+    if (IsInWater()){
+      if (!isUnderWater){
+        waterPostProcessVolume.enabled = true;
+        isUnderWater = true;
+      }
+    }
+    else{
+      if (isUnderWater){
+        waterPostProcessVolume.enabled = false;
+        isUnderWater = false;
+      }
+    }
   }
 
   private void CameraUpdate(){
@@ -104,8 +126,7 @@ public class Player : MonoBehaviour{
   private void Movement(Vector2 movement, bool isRunning){
     float moveForce = isRunning ? setup.runForce : setup.walkForce;
     float moveSpeed = isRunning ? setup.runSpeed : setup.walkSpeed;
-
-
+    
     Vector3 forward = setup.mainCamera.transform.forward;
     forward.y = 0;
     forward.Normalize();
@@ -246,5 +267,15 @@ public class Player : MonoBehaviour{
     position += right * (movement.x * Time.deltaTime * moveSpeed);
     position += Vector3.up * (altitude * Time.deltaTime);
     transform.position = position;
+  }
+  
+  private bool IsInWater(){
+    Vector3 playerPosition = transform.position;
+    Vector3Int blockPosition = new Vector3Int(
+        Mathf.FloorToInt(playerPosition.x),
+        Mathf.FloorToInt(playerPosition.y),
+        Mathf.FloorToInt(playerPosition.z)
+    );
+    return setup.world.GetBlock(blockPosition.x, blockPosition.y, blockPosition.z) == BlockTypes.WATER;
   }
 }

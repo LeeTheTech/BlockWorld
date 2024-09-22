@@ -343,7 +343,9 @@ public static class BlockShapes{
   }
   
   private static bool ShouldRenderFace(byte block, byte targetBlock){
-    if (BlockTypes.IsTransparentBlock(block) && BlockTypes.IsTransparentBlock(targetBlock)) return false;
+    if (BlockTypes.IsTransparentBlock(block) && BlockTypes.IsTransparentBlock(targetBlock)){
+      return block != targetBlock;
+    }
     if (BlockTypes.IsTransparentCutoutBlock(block) && BlockTypes.IsTransparentCutoutBlock(targetBlock)) return false;
     if (BlockTypes.IsSlab(targetBlock)) return true;
     if (BlockTypes.IsSolidLiquid(block) && BlockTypes.IsSolidLiquid(targetBlock)) return false;
