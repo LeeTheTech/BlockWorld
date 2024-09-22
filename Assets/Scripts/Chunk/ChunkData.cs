@@ -9,28 +9,44 @@ public class ChunkData{
   public bool startedLoadingDetails{ get; private set; }
   public bool chunkReady{ get; private set; }
   public bool isDirty;
-  private readonly StructureChance structureChance = new((int.MaxValue / 100), (int.MaxValue / 512), (int.MaxValue / 50), (int.MaxValue / 100), (int.MaxValue / 20));
   
   private Thread loadTerrainThread;
   private Thread loadDetailsThread;
 
   public HashSet<Vector2Int> references;
   public List<StructureInfo> structures;
+  private readonly StructureChance structureChance = new((int.MaxValue / 100), (int.MaxValue / 512), (int.MaxValue / 50), (int.MaxValue / 100), (int.MaxValue / 20));
   public Dictionary<Vector3Int, byte> lightSources;
   public byte[,] highestNonAirBlock;
   public ChunkSaveData saveData;
   private ChunkData front, left, back, right;
 
   public struct StructureInfo{
+    public Vector3Int position;
+    public Structure.Type type;
+    public int seed;
+    
     public StructureInfo(Vector3Int position, Structure.Type type, int seed){
       this.position = position;
       this.type = type;
       this.seed = seed;
     }
+  }
+  
+  public struct StructureChance{
+    public int tree;
+    public int well;
+    public int caveEntrance;
+    public int cactus;
+    public int foliage;
 
-    public Vector3Int position;
-    public Structure.Type type;
-    public int seed;
+    public StructureChance(int treeChance, int wellChance, int caveEntranceChance, int cactusChance, int foliageChance){
+      tree = treeChance;
+      well = wellChance;
+      caveEntrance = caveEntranceChance;
+      cactus = cactusChance;
+      foliage = foliageChance;
+    }
   }
 
 

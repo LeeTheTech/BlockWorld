@@ -3,7 +3,7 @@ using UnityEngine;
 
 public static class StructureGenerator{
   
-  public static List<ChunkData.StructureInfo> GenerateStructures(byte[,,] blocks, Vector2Int worldPos, System.Random rnd, StructureChance structureChance){
+  public static List<ChunkData.StructureInfo> GenerateStructures(byte[,,] blocks, Vector2Int worldPos, System.Random rnd, ChunkData.StructureChance structureChance){
     List<ChunkData.StructureInfo> structures = new List<ChunkData.StructureInfo>();
     bool[,] spotsTaken = new bool[16, 16];
     GenerateCaveEntrances(structureChance, structures, blocks, rnd, spotsTaken);
@@ -13,7 +13,7 @@ public static class StructureGenerator{
     return structures;
   }
 
-  private static void GenerateCaveEntrances(StructureChance structureChance, List<ChunkData.StructureInfo> structures, byte[,,] blocks, System.Random rnd, bool[,] spotsTaken){
+  private static void GenerateCaveEntrances(ChunkData.StructureChance structureChance, List<ChunkData.StructureInfo> structures, byte[,,] blocks, System.Random rnd, bool[,] spotsTaken){
     if (rnd.Next() < structureChance.caveEntrance){
       int h = 255;
       while (h > 0) {
@@ -31,7 +31,7 @@ public static class StructureGenerator{
     }
   }
 
-  private static void GenerateTrees(StructureChance structureChance, List<ChunkData.StructureInfo> structures, byte[,,] blocks, Vector2Int worldPos, System.Random rnd, bool[,] spotsTaken){
+  private static void GenerateTrees(ChunkData.StructureChance structureChance, List<ChunkData.StructureInfo> structures, byte[,,] blocks, Vector2Int worldPos, System.Random rnd, bool[,] spotsTaken){
     for (int y = 2; y < 14; ++y){
       for (int x = 2; x < 14; ++x){
         BiomeType biomeType = BiomeManager.GetBiomeType(worldPos.x + x, worldPos.y + y);
@@ -76,7 +76,7 @@ public static class StructureGenerator{
     }
   }
 
-  private static void GenerateFoliage(StructureChance structureChance, List<ChunkData.StructureInfo> structures, byte[,,] blocks, Vector2Int worldPos, System.Random rnd, bool[,] spotsTaken){
+  private static void GenerateFoliage(ChunkData.StructureChance structureChance, List<ChunkData.StructureInfo> structures, byte[,,] blocks, Vector2Int worldPos, System.Random rnd, bool[,] spotsTaken){
     for (int y = 2; y < 14; ++y){
       for (int x = 2; x < 14; ++x){
         BiomeType biomeType = BiomeManager.GetBiomeType(worldPos.x + x, worldPos.y + y);
@@ -103,7 +103,7 @@ public static class StructureGenerator{
     }
   }
 
-  private static void GenerateWells(StructureChance structureChance, List<ChunkData.StructureInfo> structures, byte[,,] blocks, System.Random rnd, bool[,] spotsTaken){
+  private static void GenerateWells(ChunkData.StructureChance structureChance, List<ChunkData.StructureInfo> structures, byte[,,] blocks, System.Random rnd, bool[,] spotsTaken){
     if (rnd.Next() < structureChance.well){
       if (IsSpotFree(spotsTaken, new Vector2Int(7, 7), 3)){
         int minH = 255;
