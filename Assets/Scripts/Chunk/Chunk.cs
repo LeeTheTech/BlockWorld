@@ -233,6 +233,8 @@ public class Chunk : MonoBehaviour{
   
   private ChunkMeshData GetCorrectMeshData(byte block){
     switch (block){
+      case BlockTypes.FOLIAGE:
+        return chunkMeshData.noCullMeshData;
       case BlockTypes.ICE:
       case BlockTypes.WATER:
         return chunkMeshData.transparentMeshData;

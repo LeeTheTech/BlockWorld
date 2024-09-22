@@ -6,7 +6,8 @@ public static class BlockShapes{
     CUBE,
     SLAB,
     STAIR,
-    TORCH
+    TORCH,
+    FOLIAGE
   }
   
   private enum LightFace{
@@ -69,6 +70,9 @@ public static class BlockShapes{
         break;
       case BlockShape.TORCH:
         AddTorchFaces(shapeData, meshData);
+        break;
+      case BlockShape.FOLIAGE:
+        AddFoliageFaces(shapeData, meshData);
         break;
       default: 
         AddCubeFaces(shapeData, meshData);
@@ -222,6 +226,28 @@ public static class BlockShapes{
       meshData.AddTextureFace(shapeData.textureMap.back);
       AddLighting(meshData, shapeData, LightFace.BACK);
     }
+  }
+  
+  private static void AddFoliageFaces(ShapeData shapeData, ChunkMeshData meshData){
+    meshData.AddFace(
+        new Vector3(shapeData.x, shapeData.y, shapeData.z),
+        new Vector3(shapeData.x + 1, shapeData.y, shapeData.z + 1), 
+        new Vector3(shapeData.x + 1, shapeData.y + 1, shapeData.z + 1),
+        new Vector3(shapeData.x, shapeData.y + 1, shapeData.z),
+        Vector3.forward
+    );
+    meshData.AddTextureFace(shapeData.textureMap.top);
+    AddLighting(meshData, shapeData, LightFace.TOP);
+    
+    meshData.AddFace(
+        new Vector3(shapeData.x + 1, shapeData.y, shapeData.z),
+        new Vector3(shapeData.x, shapeData.y, shapeData.z + 1),
+        new Vector3(shapeData.x, shapeData.y + 1, shapeData.z + 1),
+        new Vector3(shapeData.x + 1, shapeData.y + 1, shapeData.z),
+        Vector3.forward
+    );
+    meshData.AddTextureFace(shapeData.textureMap.top);
+    AddLighting(meshData, shapeData, LightFace.TOP);
   }
 
   private static void AddTorchFaces(ShapeData shapeData, ChunkMeshData meshData){

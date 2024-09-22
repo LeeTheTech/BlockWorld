@@ -12,12 +12,14 @@ public class ChunkMeshData{
   private readonly List<Color32> colors = new();
   
   public ChunkMeshData transparentMeshData;
+  public ChunkMeshData noCullMeshData;
 
   public ChunkMeshData(bool isMainMesh = true){
     this.isMainMesh = isMainMesh;
     
     if (isMainMesh){
       transparentMeshData = new ChunkMeshData(false);
+      noCullMeshData = new ChunkMeshData(false);
     }
   }
   
@@ -55,24 +57,40 @@ public class ChunkMeshData{
   }
 
   public void SetupMesh(Mesh mesh){
-    //TODO double check sub-mesh idea isn't a bad one...
-    mesh.subMeshCount = 2;
-    mesh.SetVertices(vertices.Concat(transparentMeshData.vertices).ToArray());
-    mesh.SetTriangles(triangles, 0);
-    mesh.SetTriangles(transparentMeshData.triangles.Select(val => val + vertices.Count).ToArray(), 1);
-    mesh.SetUVs(0, uvs.Concat(transparentMeshData.uvs).ToArray());
-    mesh.SetNormals(normals.Concat(transparentMeshData.normals).ToArray());
-    mesh.SetColors(colors.Concat(transparentMeshData.colors).ToArray());
-    
+    mesh.subMeshCount = 3;
+
+    // Combine vertices, uvs, normals, colors
+    mesh.SetVertices(vertices.Concat(transparentMeshData.vertices).Concat(noCullMeshData.vertices).ToArray());
+
+    // Set triangles for each sub-mesh
+    mesh.SetTriangles(triangles, 0); // Opaque mesh
+    mesh.SetTriangles(transparentMeshData.triangles.Select(val => val + vertices.Count).ToArray(), 1); // Transparent mesh
+    mesh.SetTriangles(noCullMeshData.triangles.Select(val => val + vertices.Count + transparentMeshData.vertices.Count).ToArray(), 2); // No Cull mesh
+
+    // Combine UVs, Normals, and Colors for all meshes
+    mesh.SetUVs(0, uvs.Concat(transparentMeshData.uvs).Concat(noCullMeshData.uvs).ToArray());
+    mesh.SetNormals(normals.Concat(transparentMeshData.normals).Concat(noCullMeshData.normals).ToArray());
+    mesh.SetColors(colors.Concat(transparentMeshData.colors).Concat(noCullMeshData.colors).ToArray());
+
+    // Clear all the mesh data
     vertices.Clear();
     triangles.Clear();
     colors.Clear();
     uvs.Clear();
     normals.Clear();
+
+    // Clear transparent mesh data
     transparentMeshData.vertices.Clear();
     transparentMeshData.triangles.Clear();
     transparentMeshData.colors.Clear();
     transparentMeshData.uvs.Clear();
     transparentMeshData.normals.Clear();
+
+    // Clear the no cull mesh data
+    noCullMeshData.vertices.Clear();
+    noCullMeshData.triangles.Clear();
+    noCullMeshData.colors.Clear();
+    noCullMeshData.uvs.Clear();
+    noCullMeshData.normals.Clear();
   }
 }

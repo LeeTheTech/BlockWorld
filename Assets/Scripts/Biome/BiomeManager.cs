@@ -16,23 +16,40 @@ public static class BiomeManager{
     biomeWeights = new();
     biomeRanges = new();
     CreateBiomes();
+  }
+
+  private static void CreateBiomes(){
+    CreateBiome(BiomeType.GRASSLAND);
+    CreateBiome(BiomeType.DESERT);
+    CreateBiome(BiomeType.MOUNTAIN);
+    CreateBiome(BiomeType.SNOW);
     AssignBiomeWeights();
     CalculateBiomeRanges();
   }
 
-  private static void CreateBiomes(){
-    biomes.Add(BiomeType.GRASSLAND, new Biome(BiomeType.GRASSLAND, new BlockLayers(BlockTypes.GRASS, BlockTypes.DIRT, BlockTypes.STONE)));
-    biomes.Add(BiomeType.DESERT, new Biome(BiomeType.DESERT, new BlockLayers(BlockTypes.SAND, BlockTypes.SAND, BlockTypes.STONE)));
-    biomes.Add(BiomeType.MOUNTAIN, new Biome(BiomeType.MOUNTAIN, new BlockLayers(BlockTypes.GRASS, BlockTypes.DIRT, BlockTypes.STONE)));
-    biomes.Add(BiomeType.SNOW, new Biome(BiomeType.SNOW, new BlockLayers(BlockTypes.SNOW_GRASS, BlockTypes.DIRT, BlockTypes.STONE)));
+  private static void CreateBiome(BiomeType biomeType){
+    switch (biomeType){
+      case BiomeType.GRASSLAND:
+        biomes[BiomeType.GRASSLAND] = new Biome(BiomeType.GRASSLAND, new BlockLayers(BlockTypes.GRASS, BlockTypes.DIRT, BlockTypes.STONE));
+        break;
+      case BiomeType.DESERT:
+        biomes[BiomeType.DESERT] = new Biome(BiomeType.DESERT, new BlockLayers(BlockTypes.SAND, BlockTypes.SAND, BlockTypes.STONE));
+        break;
+      case BiomeType.MOUNTAIN:
+        biomes[BiomeType.MOUNTAIN] = new Biome(BiomeType.MOUNTAIN, new BlockLayers(BlockTypes.GRASS, BlockTypes.DIRT, BlockTypes.STONE));
+        break;
+      case BiomeType.SNOW:
+        biomes[BiomeType.SNOW] = new Biome(BiomeType.SNOW, new BlockLayers(BlockTypes.SNOW_GRASS, BlockTypes.DIRT, BlockTypes.STONE));
+        break;
+    }
   }
   
   private static void AssignBiomeWeights(){
     // Define weights for each biome - tweak these values for balance
-    biomeWeights.Add(BiomeType.GRASSLAND, 0.25f);  // 25% of the world
-    biomeWeights.Add(BiomeType.DESERT, 0.25f);     // 25% of the world
-    biomeWeights.Add(BiomeType.MOUNTAIN, 0.25f);   // 25% of the world
-    biomeWeights.Add(BiomeType.SNOW, 0.25f);       // 25% of the world
+    biomeWeights[BiomeType.GRASSLAND] = 0.25f;  // 25% of the world
+    biomeWeights[BiomeType.DESERT] = 0.25f;     // 25% of the world
+    biomeWeights[BiomeType.MOUNTAIN] = 0.25f;   // 25% of the world
+    biomeWeights[BiomeType.SNOW] = 0.25f;       // 25% of the world
   }
   
   private static void CalculateBiomeRanges(){

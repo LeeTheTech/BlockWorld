@@ -30,6 +30,7 @@ public static class BlockTypes{
   public const byte GLASS = 129;
   public const byte WATER = 130;
   public const byte ICE = 131;
+  public const byte FOLIAGE = 132;
   public const byte AIR = 255;
 
   public static Dictionary<byte, byte> lightLevel;
@@ -65,7 +66,8 @@ public static class BlockTypes{
         { PLANKS_OAK_STAIR, 0 },
         { TORCH, 0 },
         { SNOW_GRASS, 0 },
-        { LAVA, 20 }
+        { LAVA, 20 },
+        { FOLIAGE, 0 }
     };
 
     density = new Dictionary<byte, byte>{
@@ -95,7 +97,8 @@ public static class BlockTypes{
         { PLANKS_OAK_STAIR, 255 },
         { TORCH, 255 },
         { SNOW_GRASS, 255 },
-        { LAVA, 255 }
+        { LAVA, 255 },
+        { FOLIAGE, 60 }
     };
 
     digSound = new Dictionary<byte, AudioManager.Dig.Type>{
@@ -125,7 +128,8 @@ public static class BlockTypes{
         { PLANKS_OAK_STAIR, AudioManager.Dig.Type.Stone },
         { TORCH, AudioManager.Dig.Type.Stone },
         { SNOW_GRASS, AudioManager.Dig.Type.Grass },
-        { LAVA, AudioManager.Dig.Type.Grass }
+        { LAVA, AudioManager.Dig.Type.Grass },
+        { FOLIAGE, AudioManager.Dig.Type.Grass }
     };
 
     blockShape = new Dictionary<byte, BlockShapes.BlockShape>{
@@ -155,7 +159,8 @@ public static class BlockTypes{
         { PLANKS_OAK_STAIR, BlockShapes.BlockShape.STAIR },
         { TORCH, BlockShapes.BlockShape.TORCH },
         { SNOW_GRASS, BlockShapes.BlockShape.CUBE },
-        { LAVA, BlockShapes.BlockShape.CUBE }
+        { LAVA, BlockShapes.BlockShape.CUBE },
+        { FOLIAGE, BlockShapes.BlockShape.FOLIAGE }
     };
   }
 
@@ -172,6 +177,15 @@ public static class BlockTypes{
   public static bool IsTransparentCutoutBlock(byte blockType){
     switch (blockType){
       case GLASS:
+        return true;
+      default:
+        return false;
+    }
+  }
+  
+  public static bool IsNoCullCutoutBlock(byte blockType){
+    switch (blockType){
+      case FOLIAGE:
         return true;
       default:
         return false;

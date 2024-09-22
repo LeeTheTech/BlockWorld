@@ -6,11 +6,11 @@ public static class Structure{
     OAK_TREE,
     WELL,
     CAVE_ENTRANCE,
-    CACTUS
+    CACTUS,
+    FOLIAGE
   }
 
   private static Dictionary<Type, List<Change>> templates;
-  //private static byte[,,] caveMap;
 
   public struct Change{
     public Change(int x, int y, int z, byte b){
@@ -33,11 +33,14 @@ public static class Structure{
 
   public static bool OverwritesEverything(Type type){
     switch (type){
+      case Type.FOLIAGE: return false;
+      case Type.CACTUS: return false;
       case Type.OAK_TREE: return false;
       case Type.WELL: return true;
       case Type.CAVE_ENTRANCE: return true;
+      default:
+        return false;
     }
-    return false;
   }
 
 
@@ -47,8 +50,7 @@ public static class Structure{
     List<Change> result = template;
     switch (type){
       case Type.OAK_TREE:
-        result = new List<Change>(); // new list because there are variants
-        result.Add(new Change(0, -1, 0, BlockTypes.DIRT));
+        result = new List<Change>{ new(0, -1, 0, BlockTypes.DIRT) };
         bool cutOff = rnd.Next(100) == 0;
         if (cutOff){
           result.Add(new Change(0, 0, 0, BlockTypes.LOG_OAK));
@@ -106,16 +108,10 @@ public static class Structure{
           if (rnd.Next(0, 2) == 0) result.Add(new Change(2, height - i, -2, BlockTypes.LEAVES_OAK));
           if (rnd.Next(0, 2) == 0) result.Add(new Change(-2, height - i, -2, BlockTypes.LEAVES_OAK));
         }
-
-        break;
-      case Type.WELL:
-        //no variants
         break;
       case Type.CAVE_ENTRANCE:
-        //byte[,,] map = new byte[16, 48, 16];
         result = new List<Change>();
         byte[,,] caveMap = new byte[16, 48, 16];
-        //rnd = new System.Random(rnd.Next());
         Queue<Vector3Int> path = new Queue<Vector3Int>();
         int depth = rnd.Next(5, 11);
         for (int i = 0; i < depth; i++){
@@ -163,18 +159,17 @@ public static class Structure{
             }
           }
         }
-        //Debug.Log("Cave size: " + result.Count);
         break;
     }
     return result;
   }
 
   private static void GenerateTemplate(Type type){
-    Debug.Log("Generating structure type: " + type);
     List<Change> result = new List<Change>();
     switch (type){
       case Type.OAK_TREE:
-        //no template
+        break;
+      case Type.CAVE_ENTRANCE:
         break;
       case Type.WELL:
         for (int z = -2; z < 4; ++z){
@@ -210,19 +205,16 @@ public static class Structure{
           result.Add(new Change(0, -i, 1, BlockTypes.AIR));
           result.Add(new Change(1, -i, 1, BlockTypes.AIR));
         }
-
-        break;
-      case Type.CAVE_ENTRANCE:
-
         break;
       case Type.CACTUS:
-        // Cactus is usually a 3-block-high column
-        result.Add(new Change(0, 0, 0, BlockTypes.CACTUS));  // Bottom block
-        result.Add(new Change(0, 1, 0, BlockTypes.CACTUS));  // Middle block
-        result.Add(new Change(0, 2, 0, BlockTypes.CACTUS));  // Top block
+        result.Add(new Change(0, 0, 0, BlockTypes.CACTUS));
+        result.Add(new Change(0, 1, 0, BlockTypes.CACTUS));
+        result.Add(new Change(0, 2, 0, BlockTypes.CACTUS));
+        break;
+      case Type.FOLIAGE:
+        result.Add(new Change(0, 0, 0, BlockTypes.FOLIAGE));
         break;
     }
     templates.Add(type, result);
-    //Debug.Log("added to template " + type);
   }
 }
