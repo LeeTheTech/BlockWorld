@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 public class ChunkData{
   public Vector2Int position;
-  private byte[,,] blocks, light;
+  private byte[,,] blocks, light, blockStates;
   public bool terrainReady{ get; private set; }
   public bool startedLoadingDetails{ get; private set; }
   public bool chunkReady{ get; private set; }
@@ -60,6 +60,10 @@ public class ChunkData{
     lightSources = new Dictionary<Vector3Int, byte>();
     highestNonAirBlock = new byte[16, 16];
   }
+  
+  public byte[,,] GetBlockStates(){
+    return blockStates;
+  }
 
   public byte[,,] GetBlocks(){
     return blocks;
@@ -97,6 +101,7 @@ public class ChunkData{
 
   public void LoadTerrain(){
     blocks = new byte[16, 256, 16];
+    blockStates = new byte[16, 256, 16];
     light = new byte[16, 256, 16];
     Vector2Int worldPos = position * 16;
 
@@ -110,9 +115,11 @@ public class ChunkData{
         int heightGen = Mathf.Clamp(Mathf.RoundToInt(BiomeManager.seaLevel + biomeNoise), 0, 256);
 
         for (int y = 0; y < 256; ++y){
-          blocks[x, y, z] = BiomeManager.DetermineBlockType(heightGen, noiseX, y, noiseZ);
-          if (BlockTypes.lightLevel[blocks[x, y, z]] > 0){
-            lightSources[new Vector3Int(x, y, z)] = BlockTypes.lightLevel[blocks[x, y, z]];
+          byte blockType = BiomeManager.DetermineBlockType(heightGen, noiseX, y, noiseZ);
+          blocks[x, y, z] = blockType;
+          blockStates[x, y, z] = BlockStateUtil.SetOrientation(0, 0);
+          if (BlockTypes.lightLevel[blockType] > 0){
+            lightSources[new Vector3Int(x, y, z)] = BlockTypes.lightLevel[blockType];
           }
         }
       }
@@ -149,6 +156,7 @@ public class ChunkData{
           if (blocks[placeX, placeY, placeZ] < BlockTypes.density[c.b]) continue;
         }
         blocks[placeX, placeY, placeZ] = c.b;
+        blockStates[x, y, z] = BlockStateUtil.SetOrientation(0, c.bs);
       }
     }
     //remove all references to neighbors to avoid them staying in memory when unloading chunks
@@ -161,6 +169,7 @@ public class ChunkData{
     for (int i = 0; i < changes.Count; ++i){
       ChunkSaveData.C c = changes[i];
       blocks[c.x, c.y, c.z] = c.b;
+      blockStates[c.x, c.y, c.z] = c.bs;
       byte lightLevel = BlockTypes.lightLevel[c.b];
       if (lightLevel > 0){
         lightSources[new Vector3Int(c.x, c.y, c.z)] = lightLevel;
@@ -183,12 +192,14 @@ public class ChunkData{
     chunkReady = true;
   }
 
-  public void Modify(int x, int y, int z, byte blockType){
+  public void Modify(int x, int y, int z, byte blockType, byte blockState){
     if (!chunkReady) throw new System.Exception("Chunk has not finished loading");
     //Debug.Log($"Current highest block at {x}x{z} is {highestNonAirBlock[x, z]}");
 
-    saveData.changes.Add(new ChunkSaveData.C((byte)x, (byte)y, (byte)z, blockType));
+    saveData.changes.Add(new ChunkSaveData.C((byte)x, (byte)y, (byte)z, blockType, blockState));
     blocks[x, y, z] = blockType;
+    blockStates[x, y, z] = BlockStateUtil.SetOrientation(0, blockState);
+    
     if (blockType == BlockTypes.AIR){
       if (highestNonAirBlock[x, z] == y){
         highestNonAirBlock[x, z] = 0;

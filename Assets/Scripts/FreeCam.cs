@@ -59,11 +59,11 @@ public class FreeCam : MonoBehaviour{
       place |= (Input.GetKey(KeyCode.LeftControl) && Input.GetKey(KeyCode.Mouse1));
 
       if (remove){
-        world.Modify(removeBlock.x, removeBlock.y, removeBlock.z, BlockTypes.AIR);
+        world.Modify(removeBlock.x, removeBlock.y, removeBlock.z, BlockTypes.AIR, BlockStateUtil.SetOrientation(0, 0));
       }
 
       if (place){
-        world.Modify(placeBlock.x, placeBlock.y, placeBlock.z, UI.instance.hotbar.GetCurrentHighlighted());
+        world.Modify(placeBlock.x, placeBlock.y, placeBlock.z, UI.instance.hotbar.GetCurrentHighlighted(), BlockStateUtil.SetOrientation(0, 0));
       }
 
       highlightPrefab.transform.position = removeBlock + new Vector3(.5f, .5f, .5f);

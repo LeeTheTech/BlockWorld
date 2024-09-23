@@ -120,22 +120,49 @@ public class ChunkDataManager{
     if (y < 0) return 255;
     return data[chunk].GetBlocks()[x, y, z];
   }
+  
+  public byte GetBlockState(Vector2Int chunk, int x, int y, int z){
+    if (!data[chunk].chunkReady) throw new System.Exception($"Chunk {chunk} is not ready");
+    if (x > 15){
+      x -= 16;
+      chunk.x += 1;
+    }
 
-  public void Modify(Vector2Int chunk, int x, int y, int z, byte blockType){
+    if (x < 0){
+      x += 16;
+      chunk.x -= 1;
+    }
+
+    if (z > 15){
+      z -= 16;
+      chunk.y += 1;
+    }
+
+    if (z < 0){
+      z += 16;
+      chunk.y -= 1;
+    }
+
+    if (y > 255) return 255;
+    if (y < 0) return 255;
+    return data[chunk].GetBlockStates()[x, y, z];
+  }
+
+  public void Modify(Vector2Int chunk, int x, int y, int z, byte blockType, byte blockState){
     ChunkData chunkData = data[chunk];
-    chunkData.Modify(x, y, z, blockType);
+    chunkData.Modify(x, y, z, blockType, blockState);
     chunkData.isDirty = true;
     dirtyChunks.Add(chunkData.position);
     byte lightLevel = BlockTypes.lightLevel[blockType];
     Vector3Int position = new Vector3Int(x, y, z);
     if (lightLevel > 0){
       chunkData.lightSources[position] = lightLevel;
-      Debug.Log($"LightSource added ({blockType})");
+      //Debug.Log($"LightSource added ({blockType})");
     }
     else{
       if (chunkData.lightSources.ContainsKey(position)){
         chunkData.lightSources.Remove(position);
-        Debug.Log($"LightSource removed");
+        //Debug.Log($"LightSource removed");
       }
     }
   }

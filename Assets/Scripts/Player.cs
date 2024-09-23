@@ -15,6 +15,8 @@ public class Player : MonoBehaviour{
   private bool isUnderWater;
   public Setup setup;
 
+  private Direction playerDirection;
+
   public enum State{
     Survival = 0,
     Creative_Walking = 1,
@@ -72,10 +74,20 @@ public class Player : MonoBehaviour{
     CheckUnderWater();
     CameraUpdate();
     BlockPlacement();
+    CheckPlayerDetails();
   }
 
   private long TimeStamp(){
     return System.DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+  }
+
+  private void CheckPlayerDetails(){
+    // Player Direction
+    Vector3 forward = setup.mainCamera.transform.forward;
+    forward.y = 0;
+    forward.Normalize();
+    playerDirection = GetFacingDirection(forward);
+    setup.world.debugDirectionText.text = $"Direction : {playerDirection.ToString()}";
   }
 
   private void CheckUnderWater(){
@@ -220,7 +232,8 @@ public class Player : MonoBehaviour{
 
       if (remove){
         byte blockToReplace = setup.world.GetBlock(removeBlock.x, removeBlock.y, removeBlock.z);
-        if (setup.world.Modify(removeBlock.x, removeBlock.y, removeBlock.z, BlockTypes.AIR)){
+        byte blockStateToReplace = setup.world.GetBlockState(removeBlock.x, removeBlock.y, removeBlock.z);
+        if (setup.world.Modify(removeBlock.x, removeBlock.y, removeBlock.z, BlockTypes.AIR, blockStateToReplace)){
           AudioManager.instance.dig.Play(BlockTypes.digSound[blockToReplace], removeBlock);
           place = false;
         }
@@ -228,7 +241,7 @@ public class Player : MonoBehaviour{
 
       if (place){
         byte block = UI.instance.hotbar.GetCurrentHighlighted();
-        if (setup.world.Modify(placeBlock.x, placeBlock.y, placeBlock.z, block)){
+        if (setup.world.Modify(placeBlock.x, placeBlock.y, placeBlock.z, block, BlockStateUtil.SetOrientation(0, (byte)playerDirection))){
           AudioManager.instance.dig.Play(BlockTypes.digSound[block], removeBlock);
         }
       }
@@ -280,5 +293,29 @@ public class Player : MonoBehaviour{
       return setup.world.GetBlock(blockPosition.x, blockPosition.y, blockPosition.z) == BlockTypes.WATER;
     }
     return false;
+  }
+
+  private Direction GetFacingDirection(Vector3 forward){
+    // Define cardinal directions as vectors
+    Vector3 north = Vector3.forward; // Assuming forward is north
+    Vector3 east = Vector3.right; // Assuming right is east
+    Vector3 south = Vector3.back; // Assuming back is south
+    Vector3 west = Vector3.left; // Assuming left is west
+
+    // Calculate the angle between the forward vector and each cardinal direction
+    float angleToNorth = Vector3.Angle(forward, north);
+    float angleToEast = Vector3.Angle(forward, east);
+    float angleToSouth = Vector3.Angle(forward, south);
+    float angleToWest = Vector3.Angle(forward, west);
+
+    // Find the minimum angle and return the corresponding direction
+    float minAngle = Mathf.Min(angleToNorth, angleToEast, angleToSouth, angleToWest);
+
+    if (minAngle == angleToNorth) return Direction.NORTH;
+    if (minAngle == angleToEast) return Direction.EAST;
+    if (minAngle == angleToSouth) return Direction.SOUTH;
+    if (minAngle == angleToWest) return Direction.WEST;
+
+    return Direction.NORTH;
   }
 }

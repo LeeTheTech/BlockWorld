@@ -73,7 +73,6 @@ public class Chunk : MonoBehaviour{
           {
             lightMap[x, yy, z] = 15; //set all edges to 15 to stop tracing at edges
           }
-
           continue;
         }
 
@@ -184,6 +183,7 @@ public class Chunk : MonoBehaviour{
       for (int y = 0; y < 256; ++y){
         for (int x = 0; x < 16; ++x){
           byte blockType = chunkData.GetBlocks()[x, y, z];
+          byte blockState = chunkData.GetBlockStates()[x, y, z];
           if (blockType == BlockTypes.AIR) continue;
           int lx = x + 16;
           int ly = y;
@@ -196,7 +196,7 @@ public class Chunk : MonoBehaviour{
           byte bU = y == 255 ? BlockTypes.AIR : chunkData.GetBlocks()[x, y + 1, z];
           byte bD = y == 0 ? BlockTypes.AIR : chunkData.GetBlocks()[x, y - 1, z];
           
-          BlockShapes.AddFaces(new BlockShapes.ShapeData(position, textureMapper.map[blockType], lightMap, blockType, x, y, z, bR, bL, bF, bB, bU, bD, lx, ly, lz), GetCorrectMeshData(blockType));
+          BlockShapes.AddFaces(new BlockShapes.ShapeData(position, textureMapper.map[blockType], lightMap, blockState, blockType, x, y, z, bR, bL, bF, bB, bU, bD, lx, ly, lz), GetCorrectMeshData(blockType));
         }
       }
     }

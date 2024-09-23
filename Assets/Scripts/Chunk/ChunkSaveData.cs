@@ -14,13 +14,14 @@ public class ChunkSaveData{
   [System.Serializable]
   public struct C //Change
   {
-    public C(byte x, byte y, byte z, byte b){
+    public C(byte x, byte y, byte z, byte b, byte bs){
       this.x = x;
       this.y = y;
       this.z = z;
       this.b = b;
+      this.bs = bs;
     }
 
-    public byte x, y, z, b;
+    public byte x, y, z, b, bs;
   }
 }

@@ -55,11 +55,11 @@ public class SaveDataManager{
   private void ReadChunk(FileInfo file, ChunkSaveData saveData){
     //while (busy) System.Threading.Thread.Sleep(4);
     busy = true;
-    byte[] buffer = new byte[4];
+    byte[] buffer = new byte[5];
     using (FileStream stream = new FileStream(file.FullName, FileMode.Open)){
       while (stream.Position < stream.Length){
-        stream.Read(buffer, 0, 4);
-        saveData.changes.Add(new ChunkSaveData.C(buffer[0], buffer[1], buffer[2], buffer[3]));
+        stream.Read(buffer, 0, 5);
+        saveData.changes.Add(new ChunkSaveData.C(buffer[0], buffer[1], buffer[2], buffer[3], buffer[4]));
       }
     }
     busy = false;
@@ -68,14 +68,15 @@ public class SaveDataManager{
   private void WriteChunk(FileInfo file, ChunkSaveData saveData){
     //while (busy) System.Threading.Thread.Sleep(4);
     busy = true;
-    byte[] buffer = new byte[4];
+    byte[] buffer = new byte[5];
     using (FileStream stream = new FileStream(file.FullName, FileMode.Create)){
       for (int i = 0; i < saveData.changes.Count; ++i){
         buffer[0] = saveData.changes[i].x;
         buffer[1] = saveData.changes[i].y;
         buffer[2] = saveData.changes[i].z;
         buffer[3] = saveData.changes[i].b;
-        stream.Write(buffer, 0, 4);
+        buffer[4] = saveData.changes[i].bs;
+        stream.Write(buffer, 0, 5);
       }
     }
     Debug.Log("SaveManager saved changes to chunk " + saveData.position);

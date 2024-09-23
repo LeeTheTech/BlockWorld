@@ -7,6 +7,7 @@ public class World : MonoBehaviour{
   public ChunkManager chunkManager;
   private bool initialized;
   public TMPro.TextMeshProUGUI debugText;
+  public TMPro.TextMeshProUGUI debugDirectionText;
 
   public void Initialize(WorldInfo worldInfo){
     this.info = worldInfo;
@@ -25,7 +26,7 @@ public class World : MonoBehaviour{
     chunkManager.UpdateChunks(mainCamera);
   }
 
-  public bool Modify(int x, int y, int z, byte blockType){
+  public bool Modify(int x, int y, int z, byte blockType, byte blockState){
     if (!initialized) return false;
     if (y < 0 || y > 255){
       Debug.LogWarning("This is outside build limit");
@@ -37,7 +38,7 @@ public class World : MonoBehaviour{
     int relativeX = x - (chunkX * 16);
     int relativeZ = z - (chunkY * 16);
 
-    return chunkManager.Modify(new Vector2Int(chunkX, chunkY), relativeX, y, relativeZ, blockType);
+    return chunkManager.Modify(new Vector2Int(chunkX, chunkY), relativeX, y, relativeZ, blockType, blockState);
   }
 
   public bool IsBlockAvailable(int x, int y, int z){
@@ -63,5 +64,19 @@ public class World : MonoBehaviour{
     int relativeX = x - (chunkX * 16);
     int relativeZ = z - (chunkY * 16);
     return chunkManager.GetBlock(new Vector2Int(chunkX, chunkY), relativeX, y, relativeZ);
+  }
+  
+  public byte GetBlockState(int x, int y, int z){
+    if (!initialized) return 255;
+    if (y < 0 || y > 255){
+      Debug.LogWarning("This is outside build limit");
+      return 255;
+    }
+
+    int chunkX = Mathf.FloorToInt(x / 16f);
+    int chunkY = Mathf.FloorToInt(z / 16f);
+    int relativeX = x - (chunkX * 16);
+    int relativeZ = z - (chunkY * 16);
+    return chunkManager.GetBlockState(new Vector2Int(chunkX, chunkY), relativeX, y, relativeZ);
   }
 }

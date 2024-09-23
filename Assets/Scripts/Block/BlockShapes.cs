@@ -23,6 +23,7 @@ public static class BlockShapes{
     public Vector2Int position;
     public TextureMapper.TextureMap textureMap;
     public byte[,,] lightMap;
+    public byte blockState;
     public byte blockType;
     public int x;
     public int y;
@@ -37,10 +38,11 @@ public static class BlockShapes{
     public int ly;
     public int lz;
     
-    public ShapeData(Vector2Int position, TextureMapper.TextureMap textureMap, byte[,,] lightMap, byte blockType, int x, int y, int z, byte bR, byte bL, byte bF, byte bB, byte bU, byte bD, int lx, int ly, int lz){
+    public ShapeData(Vector2Int position, TextureMapper.TextureMap textureMap, byte[,,] lightMap, byte blockState, byte blockType, int x, int y, int z, byte bR, byte bL, byte bF, byte bB, byte bU, byte bD, int lx, int ly, int lz){
       this.position = position;
       this.textureMap = textureMap;
       this.lightMap = lightMap;
+      this.blockState = blockState;
       this.blockType = blockType;
       this.x = x;
       this.y = y;
@@ -66,7 +68,7 @@ public static class BlockShapes{
         AddSlabFaces(shapeData, meshData);
         break;
       case BlockShape.STAIR:
-        AddStairFaces(shapeData, meshData);
+        AddStairFaces(shapeData, meshData, GetDirectionFromOrientation(BlockStateUtil.GetOrientation(shapeData.blockState)));
         break;
       case BlockShape.TORCH:
         AddTorchFaces(shapeData, meshData);
@@ -269,9 +271,151 @@ public static class BlockShapes{
     AddSlabFaces(shapeData, meshData);
   }
 
-  private static void AddStairFaces(ShapeData shapeData, ChunkMeshData meshData){
-    //TODO implement later
-    AddSlabFaces(shapeData, meshData);
+  private static void AddStairFaces(ShapeData shapeData, ChunkMeshData meshData, Direction direction){
+    Vector3 pivot = new Vector3(shapeData.x + 0.5f, shapeData.y, shapeData.z + 0.5f);
+
+    if (ShouldRenderFace(shapeData.blockType, shapeData.bB)){
+      meshData.AddFace(
+          RotateVertex(new Vector3(shapeData.x, shapeData.y, shapeData.z), direction, pivot),
+          RotateVertex(new Vector3(shapeData.x, shapeData.y + 1, shapeData.z), direction, pivot),
+          RotateVertex(new Vector3(shapeData.x + 1, shapeData.y + 1, shapeData.z), direction, pivot),
+          RotateVertex(new Vector3(shapeData.x + 1, shapeData.y, shapeData.z), direction, pivot),
+          -Vector3.forward,
+          BlockTypes.GenerateCollider(shapeData.blockType)
+      );
+      meshData.AddTextureFace(shapeData.textureMap.back);
+      AddLighting(meshData, shapeData, LightFace.BACK);
+    }
+
+    if (ShouldRenderFace(shapeData.blockType, shapeData.bU)){
+      meshData.AddFace(
+          RotateVertex(new Vector3(shapeData.x, shapeData.y + 1, shapeData.z), direction, pivot),
+          RotateVertex(new Vector3(shapeData.x, shapeData.y + 1, shapeData.z + 0.5f), direction, pivot),
+          RotateVertex(new Vector3(shapeData.x + 1, shapeData.y + 1, shapeData.z + 0.5f), direction, pivot),
+          RotateVertex(new Vector3(shapeData.x + 1, shapeData.y + 1, shapeData.z), direction, pivot),
+          Vector3.up,
+          BlockTypes.GenerateCollider(shapeData.blockType)
+      );
+      meshData.AddTextureFace(shapeData.textureMap.top);
+      AddLighting(meshData, shapeData, LightFace.TOP);
+    }
+
+    if (ShouldRenderFace(shapeData.blockType, shapeData.bF)){
+      meshData.AddFace(
+          RotateVertex(new Vector3(shapeData.x + 1, shapeData.y + 0.5f, shapeData.z + 1 - 0.5f), direction, pivot),
+          RotateVertex(new Vector3(shapeData.x + 1, shapeData.y + 1, shapeData.z + 1 - 0.5f), direction, pivot),
+          RotateVertex(new Vector3(shapeData.x, shapeData.y + 1, shapeData.z + 1 - 0.5f), direction, pivot),
+          RotateVertex(new Vector3(shapeData.x, shapeData.y + 0.5f, shapeData.z + 1 - 0.5f), direction, pivot),
+          Vector3.forward,
+          BlockTypes.GenerateCollider(shapeData.blockType)
+      );
+      meshData.AddTextureFace(shapeData.textureMap.front);
+      AddLighting(meshData, shapeData, LightFace.FRONT);
+    }
+
+    if (ShouldRenderFace(shapeData.blockType, shapeData.bU)){
+      meshData.AddFace(
+          RotateVertex(new Vector3(shapeData.x, shapeData.y + 1 - 0.5f, shapeData.z + 0.5f), direction, pivot),
+          RotateVertex(new Vector3(shapeData.x, shapeData.y + 1 - 0.5f, shapeData.z + 1), direction, pivot),
+          RotateVertex(new Vector3(shapeData.x + 1, shapeData.y + 1 - 0.5f, shapeData.z + 1), direction, pivot),
+          RotateVertex(new Vector3(shapeData.x + 1, shapeData.y + 1 - 0.5f, shapeData.z + 0.5f), direction, pivot),
+          Vector3.up,
+          BlockTypes.GenerateCollider(shapeData.blockType)
+      );
+      meshData.AddTextureFace(shapeData.textureMap.top);
+      AddLighting(meshData, shapeData, LightFace.TOP);
+    }
+
+    if (ShouldRenderFace(shapeData.blockType, shapeData.bF)){
+      meshData.AddFace(
+          RotateVertex(new Vector3(shapeData.x + 1, shapeData.y, shapeData.z + 1), direction, pivot),
+          RotateVertex(new Vector3(shapeData.x + 1, shapeData.y + 0.5f, shapeData.z + 1), direction, pivot),
+          RotateVertex(new Vector3(shapeData.x, shapeData.y + 0.5f, shapeData.z + 1), direction, pivot),
+          RotateVertex(new Vector3(shapeData.x, shapeData.y, shapeData.z + 1), direction, pivot),
+          Vector3.forward,
+          BlockTypes.GenerateCollider(shapeData.blockType)
+      );
+      meshData.AddTextureFace(shapeData.textureMap.front);
+      AddLighting(meshData, shapeData, LightFace.FRONT);
+    }
+
+    if (ShouldRenderFace(shapeData.blockType, shapeData.bR)){
+      meshData.AddFace(
+          RotateVertex(new Vector3(shapeData.x + 1, shapeData.y, shapeData.z), direction, pivot),
+          RotateVertex(new Vector3(shapeData.x + 1, shapeData.y + 0.5f, shapeData.z), direction, pivot),
+          RotateVertex(new Vector3(shapeData.x + 1, shapeData.y + 0.5f, shapeData.z + 1), direction, pivot),
+          RotateVertex(new Vector3(shapeData.x + 1, shapeData.y, shapeData.z + 1), direction, pivot),
+          Vector3.right,
+          BlockTypes.GenerateCollider(shapeData.blockType)
+      );
+      meshData.AddTextureFace(shapeData.textureMap.right);
+      AddLighting(meshData, shapeData, LightFace.RIGHT);
+    }
+
+    if (ShouldRenderFace(shapeData.blockType, shapeData.bR)){
+      meshData.AddFace(
+          RotateVertex(new Vector3(shapeData.x + 1, shapeData.y + 0.5f, shapeData.z), direction, pivot),
+          RotateVertex(new Vector3(shapeData.x + 1, shapeData.y + 0.5f + 0.5f, shapeData.z), direction, pivot),
+          RotateVertex(new Vector3(shapeData.x + 1, shapeData.y + 0.5f + 0.5f, shapeData.z + 0.5f), direction, pivot),
+          RotateVertex(new Vector3(shapeData.x + 1, shapeData.y + 0.5f, shapeData.z + 0.5f), direction, pivot),
+          Vector3.right,
+          BlockTypes.GenerateCollider(shapeData.blockType)
+      );
+      meshData.AddTextureFace(shapeData.textureMap.right);
+      AddLighting(meshData, shapeData, LightFace.RIGHT);
+    }
+
+    if (ShouldRenderFace(shapeData.blockType, shapeData.bL)){
+      meshData.AddFace(
+          RotateVertex(new Vector3(shapeData.x, shapeData.y, shapeData.z + 1), direction, pivot),
+          RotateVertex(new Vector3(shapeData.x, shapeData.y + 0.5f, shapeData.z + 1), direction, pivot),
+          RotateVertex(new Vector3(shapeData.x, shapeData.y + 0.5f, shapeData.z), direction, pivot),
+          RotateVertex(new Vector3(shapeData.x, shapeData.y, shapeData.z), direction, pivot),
+          -Vector3.right,
+          BlockTypes.GenerateCollider(shapeData.blockType)
+      );
+      meshData.AddTextureFace(shapeData.textureMap.left);
+      AddLighting(meshData, shapeData, LightFace.LEFT);
+    }
+    
+    if (ShouldRenderFace(shapeData.blockType, shapeData.bL)){
+      meshData.AddFace(
+          RotateVertex(new Vector3(shapeData.x, shapeData.y + 0.5f, shapeData.z + 0.5f), direction, pivot),
+          RotateVertex(new Vector3(shapeData.x, shapeData.y + 0.5f + 0.5f, shapeData.z + 0.5f), direction, pivot),
+          RotateVertex(new Vector3(shapeData.x, shapeData.y + 0.5f + 0.5f, shapeData.z), direction, pivot),
+          RotateVertex(new Vector3(shapeData.x, shapeData.y + 0.5f, shapeData.z), direction, pivot),
+          -Vector3.right,
+          BlockTypes.GenerateCollider(shapeData.blockType)
+      );
+      meshData.AddTextureFace(shapeData.textureMap.left);
+      AddLighting(meshData, shapeData, LightFace.LEFT);
+    }
+
+    if (ShouldRenderFace(shapeData.blockType, shapeData.bD)){
+      meshData.AddFace(
+          RotateVertex(new Vector3(shapeData.x, shapeData.y, shapeData.z + 1), direction, pivot),
+          RotateVertex(new Vector3(shapeData.x, shapeData.y, shapeData.z), direction, pivot),
+          RotateVertex(new Vector3(shapeData.x + 1, shapeData.y, shapeData.z), direction, pivot),
+          RotateVertex(new Vector3(shapeData.x + 1, shapeData.y, shapeData.z + 1), direction, pivot),
+          -Vector3.up,
+          BlockTypes.GenerateCollider(shapeData.blockType)
+      );
+      meshData.AddTextureFace(shapeData.textureMap.bottom);
+      AddLighting(meshData, shapeData, LightFace.BOTTOM);
+    }
+  }
+
+  private static Vector3 RotateVertex(Vector3 vertex, Direction direction, Vector3 pivot){
+    switch (direction){
+      case Direction.EAST:
+        return new Vector3(pivot.z - vertex.z + pivot.x, vertex.y, vertex.x - pivot.x + pivot.z); // 90 degrees rotation
+      case Direction.SOUTH:
+        return new Vector3(pivot.x - vertex.x + pivot.x, vertex.y, pivot.z - vertex.z + pivot.z); // 180 degrees rotation
+      case Direction.WEST:
+        return new Vector3(vertex.z - pivot.z + pivot.x, vertex.y, pivot.x - vertex.x + pivot.z); // 270 degrees rotation
+      default: // North (no rotation)
+        return vertex;
+    }
   }
 
 
@@ -342,6 +486,21 @@ public static class BlockShapes{
     }
   }
   
+  private static Direction GetDirectionFromOrientation(byte orientation) {
+    switch (orientation) {
+      case 0:
+        return Direction.NORTH;
+      case 1:
+        return Direction.WEST;
+      case 2:
+        return Direction.SOUTH;
+      case 3:
+        return Direction.EAST;
+      default:
+        throw new ArgumentOutOfRangeException("Invalid orientation value");
+    }
+  }
+  
   private static bool ShouldRenderFace(byte block, byte targetBlock){
     if (BlockTypes.IsTransparentBlock(block) && BlockTypes.IsTransparentBlock(targetBlock)){
       return block != targetBlock;
@@ -350,6 +509,7 @@ public static class BlockShapes{
     if (BlockTypes.IsSlab(targetBlock)) return true;
     if (BlockTypes.IsSolidLiquid(block) && BlockTypes.IsSolidLiquid(targetBlock)) return false;
     if (BlockTypes.IsSolidLiquid(targetBlock)) return true;
+    if (BlockTypes.IsStair(block) || BlockTypes.IsStair(targetBlock)) return true;
     return targetBlock > 127;
   }
 }

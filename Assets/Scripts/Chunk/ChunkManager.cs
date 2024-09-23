@@ -50,7 +50,6 @@ public class ChunkManager : MonoBehaviour{
     modifiedRebuildQueue = new Queue<Vector2Int>();
     modifyNeighborOrder = new List<Vector2Int>();
     int chunkPoolSize = renderDistance * renderDistance * 4;
-    Debug.Log("Chunk pool size: " + chunkPoolSize);
     for (int i = 0; i < chunkPoolSize; ++i){
       Chunk c = Instantiate(chunkPrefab, chunkPrefab.transform.parent, true);
       GameObject cObject = c.gameObject;
@@ -68,7 +67,6 @@ public class ChunkManager : MonoBehaviour{
   public void UpdateChunks(Camera mainCamera){
     if (isShuttingDown) return;
     UnityEngine.Profiling.Profiler.BeginSample("UPDATING CHUNKS");
-    //Debug.Log("Active chunks: " + activeChunks.Count);
     chunkDataManager.Update();
 
     Transform cameraTransform = mainCamera.transform;
@@ -280,15 +278,20 @@ public class ChunkManager : MonoBehaviour{
     return chunkDataManager.GetBlock(chunk, x, y, z);
   }
   
+  public byte GetBlockState(Vector2Int chunk, int x, int y, int z){
+    if (!chunkMap.ContainsKey(chunk)) throw new System.Exception("Chunk is not available");
+    return chunkDataManager.GetBlockState(chunk, x, y, z);
+  }
+  
   public bool IsChunkAvailable(Vector2Int chunk){
     return chunkMap.ContainsKey(chunk);
   }
 
-  public bool Modify(Vector2Int chunk, int x, int y, int z, byte blockType){
+  public bool Modify(Vector2Int chunk, int x, int y, int z, byte blockType, byte blockState){
     if (modifiedRebuildQueue.Count > 0) return false;
     if (!chunkMap.ContainsKey(chunk)) throw new System.Exception("Chunk is not available");
     Debug.Log($"Chunk {chunk} Modifying {x} {y} {z} {blockType}");
-    chunkDataManager.Modify(chunk, x, y, z, blockType);
+    chunkDataManager.Modify(chunk, x, y, z, blockType, blockState);
     bool f = z == 15;
     bool b = z == 0;
     bool l = x == 0;

@@ -200,6 +200,15 @@ public static class BlockTypes{
         return false;
     }
   }
+  
+  public static bool IsStair(byte blockType){
+    switch (blockType){
+      case PLANKS_OAK_STAIR:
+        return true;
+      default:
+        return false;
+    }
+  }
 
   public static bool IsSolidLiquid(byte blockType){
     switch (blockType){
