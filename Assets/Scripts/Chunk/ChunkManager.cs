@@ -276,8 +276,12 @@ public class ChunkManager : MonoBehaviour{
   }
 
   public byte GetBlock(Vector2Int chunk, int x, int y, int z){
-    if (!chunkMap.ContainsKey(chunk)) return BlockTypes.AIR;
+    if (!chunkMap.ContainsKey(chunk)) throw new System.Exception("Chunk is not available");
     return chunkDataManager.GetBlock(chunk, x, y, z);
+  }
+  
+  public bool IsChunkAvailable(Vector2Int chunk){
+    return chunkMap.ContainsKey(chunk);
   }
 
   public bool Modify(Vector2Int chunk, int x, int y, int z, byte blockType){

@@ -21,7 +21,6 @@ public class Chunk : MonoBehaviour{
     mesh.name = "ChunkMesh";
     mesh.indexFormat = UnityEngine.Rendering.IndexFormat.UInt32;
     mesh.MarkDynamic();
-    meshCollider.sharedMesh = mesh;
     chunkMeshData = new ChunkMeshData();
     chunkMap = new ChunkData[3, 3]; //start at backleft
   }

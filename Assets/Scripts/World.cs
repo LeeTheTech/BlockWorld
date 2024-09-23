@@ -40,6 +40,17 @@ public class World : MonoBehaviour{
     return chunkManager.Modify(new Vector2Int(chunkX, chunkY), relativeX, y, relativeZ, blockType);
   }
 
+  public bool IsBlockAvailable(int x, int y, int z){
+    if (!initialized) return false;
+    if (y < 0 || y > 255){
+      return false;
+    }
+
+    int chunkX = Mathf.FloorToInt(x / 16f);
+    int chunkY = Mathf.FloorToInt(z / 16f);
+    return chunkManager.IsChunkAvailable(new Vector2Int(chunkX, chunkY));
+  }
+
   public byte GetBlock(int x, int y, int z){
     if (!initialized) return 255;
     if (y < 0 || y > 255){

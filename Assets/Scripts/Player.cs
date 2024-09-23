@@ -276,6 +276,9 @@ public class Player : MonoBehaviour{
         Mathf.FloorToInt(playerPosition.y),
         Mathf.FloorToInt(playerPosition.z)
     );
-    return setup.world.GetBlock(blockPosition.x, blockPosition.y, blockPosition.z) == BlockTypes.WATER;
+    if (setup.world.IsBlockAvailable(blockPosition.x, blockPosition.y, blockPosition.z)){
+      return setup.world.GetBlock(blockPosition.x, blockPosition.y, blockPosition.z) == BlockTypes.WATER;
+    }
+    return false;
   }
 }

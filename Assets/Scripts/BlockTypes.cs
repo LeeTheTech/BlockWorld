@@ -146,7 +146,6 @@ public static class BlockTypes{
         { GLOWSTONE, BlockShapes.BlockShape.CUBE },
         { LEAVES_OAK, BlockShapes.BlockShape.CUBE },
         { GLASS, BlockShapes.BlockShape.CUBE },
-        { WATER, BlockShapes.BlockShape.CUBE },
         { ICE, BlockShapes.BlockShape.CUBE },
         { CACTUS, BlockShapes.BlockShape.CUBE },
         { AIR, BlockShapes.BlockShape.CUBE },
@@ -160,6 +159,7 @@ public static class BlockTypes{
         { TORCH, BlockShapes.BlockShape.TORCH },
         { SNOW_GRASS, BlockShapes.BlockShape.CUBE },
         { LAVA, BlockShapes.BlockShape.CUBE },
+        { WATER, BlockShapes.BlockShape.CUBE },
         { FOLIAGE, BlockShapes.BlockShape.FOLIAGE }
     };
   }
