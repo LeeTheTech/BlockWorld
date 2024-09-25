@@ -9,9 +9,8 @@ public class ChunkManager : MonoBehaviour{
 
   private int renderDistance;
   private int maximumLoadQueueSize;
-  private int[,] surroundingArea;
 
-  public bool isInStartup; //start of the game loads faster and all around you
+  public bool isInStartup;
   public bool isShuttingDown;
 
   private Queue<Chunk> chunkPool;
@@ -23,7 +22,7 @@ public class ChunkManager : MonoBehaviour{
   private Vector3 cameraPosition;
   private Vector3 cameraForward;
 
-  //ShouldRender thread
+  //ShouldRender Thread
   private Thread shouldRenderThread;
   private readonly System.Object shouldRenderLock = new();
   private bool shouldRenderWaitForUpdate;
@@ -35,17 +34,22 @@ public class ChunkManager : MonoBehaviour{
   private readonly Vector2Int nBack = new(0, -1);
   private readonly Vector2Int nLeft = new(-1, 0);
   private readonly Vector2Int nRight = new(1, 0);
+  
+  //ShouldTick Thread
+  private Thread shouldTickThread;
+  private readonly System.Object shouldTickLock = new();
+  private Queue<Vector2Int> tickQueue;
+  private const int tickDistance = 3;
 
   public void Initialize(){
     renderDistance = GameManager.instance.gameSettings.RenderDistance;
     maximumLoadQueueSize = GameManager.instance.gameSettings.maximumLoadQueueSize;
-
-    surroundingArea = new int[renderDistance * 2, renderDistance * 2];
     chunkDataManager = new ChunkDataManager();
     chunkMap = new Dictionary<Vector2Int, Chunk>();
     chunkPool = new Queue<Chunk>();
     activeChunks = new List<Vector2Int>();
     loadQueue = new List<Vector2Int>();
+    tickQueue = new Queue<Vector2Int>();
     unloadQueue = new Queue<Vector2Int>();
     modifiedRebuildQueue = new Queue<Vector2Int>();
     modifyNeighborOrder = new List<Vector2Int>();
@@ -62,6 +66,11 @@ public class ChunkManager : MonoBehaviour{
         IsBackground = true
     };
     shouldRenderThread.Start();
+    
+    shouldTickThread = new Thread(ShouldTickThread){
+        IsBackground = true
+    };
+    shouldTickThread.Start();
   }
 
   public void UpdateChunks(Camera mainCamera){
@@ -77,11 +86,23 @@ public class ChunkManager : MonoBehaviour{
 
     UnityEngine.Profiling.Profiler.BeginSample("LOCK SHOULD RENDER");
 
-
-    for (int loop = 0; loop < (isInStartup ? 8 : 1); ++loop) //startup loads a laggy 8 chunks per frame
-    {
+    //startup loads 8 chunks per frame
+    for (int loop = 0; loop < (isInStartup ? 8 : 1); ++loop){
       lock (shouldRenderLock){
         loadQueueCount = loadQueue.Count;
+
+        lock (shouldTickLock){
+          if (tickQueue.Count > 0){
+            UnityEngine.Profiling.Profiler.BeginSample("TICK CHUNK");
+            Vector2Int position = tickQueue.Dequeue();
+            if (activeChunks.Contains(position)){
+              chunkMap[position].Tick(chunkDataManager);
+            }
+          }
+        }
+        
+        UnityEngine.Profiling.Profiler.EndSample();
+
         if (modifiedRebuildQueue.Count > 0){
           UnityEngine.Profiling.Profiler.BeginSample("MODIFY CHUNK");
           Vector2Int position = modifiedRebuildQueue.Dequeue();
@@ -93,8 +114,7 @@ public class ChunkManager : MonoBehaviour{
         }
         else{
           UnityEngine.Profiling.Profiler.BeginSample("UNLOADING");
-          while (true) //loop until everything is unloaded
-          {
+          while (true){
             if (unloadQueue.Count == 0) break;
 
             Vector2Int position = unloadQueue.Dequeue();
@@ -122,7 +142,6 @@ public class ChunkManager : MonoBehaviour{
               if (!buildChunk){
                 buildChunk = true;
                 chunkToBuild = position;
-                //Debug.Log("Building chunk " + position);
               }
             }
           }
@@ -141,7 +160,6 @@ public class ChunkManager : MonoBehaviour{
               activeChunks.Add(chunkToBuild);
             }
           }
-
           UnityEngine.Profiling.Profiler.EndSample();
         }
       }
@@ -170,6 +188,36 @@ public class ChunkManager : MonoBehaviour{
       positions = activeChunks.ToArray();
     }
     return positions;
+  }
+
+  private void ShouldTickThread(){
+    List<Vector2Int> visiblePoints = new List<Vector2Int>();
+    
+    while (true){
+      visiblePoints.Clear();
+      Vector2Int cameraChunkPos = new Vector2Int((int)cameraPosition.x / 16, (int)cameraPosition.z / 16);
+      Vector3 cameraPositionFloor = new Vector3(cameraPosition.x, 0, cameraPosition.z);
+      for (int y = 0; y < tickDistance * 2; ++y){
+        for (int x = 0; x < tickDistance * 2; ++x){
+          Vector2Int c = cameraChunkPos - new Vector2Int(tickDistance, tickDistance) + new Vector2Int(x, y);
+          Vector3 renderPosition = new Vector3(c.x * 16, 0, c.y * 16);
+          Vector3 toChunk = renderPosition - cameraPositionFloor;
+
+          if (toChunk.magnitude < (tickDistance * 16)){
+            visiblePoints.Add(c);
+          }
+        }
+      }
+      List<Vector2Int> ordered = visiblePoints.OrderBy(vp => Vector2Int.Distance(cameraChunkPos, vp)).ToList();
+      lock (shouldTickLock){
+        foreach (Vector2Int chunkPos in ordered){
+          if (!tickQueue.Contains(chunkPos)){
+            tickQueue.Enqueue(chunkPos);
+          }
+        }
+      }
+      Thread.Sleep(8);
+    }
   }
 
   private void ShouldRenderThread(){
@@ -213,15 +261,12 @@ public class ChunkManager : MonoBehaviour{
 
       while (shouldRenderWaitForUpdate) Thread.Sleep(8);
       shouldRenderWaitForUpdate = true;
-
-      long startTime;
-      startTime = TimeStamp();
+      
       lock (shouldRenderLock){
         for (int i = 0; i < activeChunks.Count; ++i){
           copyOfActiveChunks.Add(activeChunks[i]);
         }
       }
-      //Debug.Log($"Locked main thread for {TimeStamp() - startTime} MS to copy active chunk list");
 
       for (int i = copyOfActiveChunks.Count - 1; i > -1; --i){
         Vector2Int position = copyOfActiveChunks[i];
@@ -237,8 +282,7 @@ public class ChunkManager : MonoBehaviour{
           copyOfLoad.Enqueue(position);
         }
       }
-
-      startTime = TimeStamp();
+      
       lock (shouldRenderLock){
         while (copyOfUnload.Count > 0){
           unloadQueue.Enqueue(copyOfUnload.Dequeue());
@@ -252,7 +296,6 @@ public class ChunkManager : MonoBehaviour{
           }
         }
       }
-      //Debug.Log($"Locked main thread for {TimeStamp() - startTime} MS to schedule loading");
     }
   }
 
@@ -290,7 +333,6 @@ public class ChunkManager : MonoBehaviour{
   public bool Modify(Vector2Int chunk, int x, int y, int z, byte blockType, byte blockState){
     if (modifiedRebuildQueue.Count > 0) return false;
     if (!chunkMap.ContainsKey(chunk)) throw new System.Exception("Chunk is not available");
-    Debug.Log($"Chunk {chunk} Modifying {x} {y} {z} {blockType}");
     chunkDataManager.Modify(chunk, x, y, z, blockType, blockState);
     bool f = z == 15;
     bool b = z == 0;
@@ -340,12 +382,14 @@ public class ChunkManager : MonoBehaviour{
 
   void OnDestroy(){
     shouldRenderThread.Abort();
+    shouldTickThread.Abort();
     Thread.Sleep(30);
   }
   
   public void SaveAndShutDown(){
     isShuttingDown = true;
     shouldRenderThread.Abort();
+    shouldTickThread.Abort();
     Thread.Sleep(30);
     foreach (Vector2Int chunkPos in chunkMap.Keys){
       chunkDataManager.UnloadChunk(chunkPos);

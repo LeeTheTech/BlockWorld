@@ -217,6 +217,107 @@ public class Chunk : MonoBehaviour{
     UnityEngine.Profiling.Profiler.EndSample();
   }
 
+  public void Tick(ChunkDataManager chunkDataManager){
+    ChunkData chunkData = chunkDataManager.data[position];
+    byte[,,] blocks = chunkData.GetBlocks();
+    byte[,,] blockStates = chunkData.GetBlockStates();
+
+    bool rebuild = false;
+    for (int z = 0; z < 16; ++z){
+      for (int y = 0; y < 256; ++y){
+        for (int x = 0; x < 16; ++x){
+          byte block = blocks[x, y, z];
+          byte state = blockStates[x, y, z];
+          if (block == BlockTypes.WATER && BlockStateUtil.IsTicking(state)){
+            rebuild = true;
+            blockStates[x, y, z] = BlockStateUtil.SetTicking(state, false);
+            
+            if (y > 0 && blocks[x, y - 1, z] == BlockTypes.AIR){
+              blocks[x, y - 1, z] = BlockTypes.WATER;
+              blockStates[x, y - 1, z] = BlockStateUtil.SetTicking(state, true);
+            }
+            else{
+              TrySpreadWater(blocks, blockStates, chunkDataManager, position, x, y, z);
+            }
+          }
+        }
+      }
+    }
+    if (rebuild) Build(chunkDataManager);
+  }
+
+  private void TrySpreadWater(byte[,,] blocks, byte[,,] blockStates,  ChunkDataManager chunkDataManager, Vector2Int chunkPosition, int x, int y, int z){
+    // Spread water inside the chunk first
+    SpreadWaterWithinChunk(blocks, blockStates, x, y, z);
+
+    // Now check if the water is at the chunk edges
+    if (x == 0 || x == 15 || z == 0 || z == 15){
+      TrySpreadToNeighborChunk(chunkDataManager, chunkPosition, x, y, z);
+    }
+  }
+
+  private void SpreadWaterWithinChunk(byte[,,] blocks, byte[,,] blockStates, int x, int y, int z){
+    // Check adjacent blocks within the chunk
+    if (z > 0 && blocks[x, y, z - 1] == BlockTypes.AIR) {
+      blocks[x, y, z - 1] = BlockTypes.WATER;
+      blockStates[x, y, z - 1] = BlockStateUtil.CreateStateData(true, Direction.NORTH);
+    }
+
+    if (z < 15 && blocks[x, y, z + 1] == BlockTypes.AIR) {
+      blocks[x, y, z + 1] = BlockTypes.WATER;
+      blockStates[x, y, z + 1] = BlockStateUtil.CreateStateData(true, Direction.NORTH);
+    }
+
+    if (x > 0 && blocks[x - 1, y, z] == BlockTypes.AIR) {
+      blocks[x - 1, y, z] = BlockTypes.WATER;
+      blockStates[x - 1, y, z] = BlockStateUtil.CreateStateData(true, Direction.NORTH);
+    }
+
+    if (x < 15 && blocks[x + 1, y, z] == BlockTypes.AIR) {
+      blocks[x + 1, y, z] = BlockTypes.WATER;
+      blockStates[x + 1, y, z] = BlockStateUtil.CreateStateData(true, Direction.NORTH);
+    }
+  }
+
+  private static void TrySpreadToNeighborChunk(ChunkDataManager chunkDataManager, Vector2Int chunkPosition, int x, int y, int z){
+    switch (x){
+      // Determine the neighbor chunk position based on the edge
+      case 0:{
+        Vector2Int neighborPos = chunkPosition + Vector2Int.left;
+        SpreadWaterToNeighbor(chunkDataManager, neighborPos, 15, y, z); // Rightmost block of the neighbor chunk
+        break;
+      }
+      case 15:{
+        Vector2Int neighborPos = chunkPosition + Vector2Int.right;
+        SpreadWaterToNeighbor(chunkDataManager, neighborPos, 0, y, z); // Leftmost block of the neighbor chunk
+        break;
+      }
+    }
+    switch (z){
+      case 0:{
+        Vector2Int neighborPos = chunkPosition + Vector2Int.down;
+        SpreadWaterToNeighbor(chunkDataManager, neighborPos, x, y, 15); // Topmost block of the neighbor chunk
+        break;
+      }
+      case 15:{
+        Vector2Int neighborPos = chunkPosition + Vector2Int.up;
+        SpreadWaterToNeighbor(chunkDataManager, neighborPos, x, y, 0); // Bottommost block of the neighbor chunk
+        break;
+      }
+    }
+  }
+
+  private static void SpreadWaterToNeighbor(ChunkDataManager chunkDataManager, Vector2Int neighborPos, int neighborX, int y, int neighborZ){
+    ChunkData neighborChunk = chunkDataManager.data[neighborPos];
+    byte[,,] neighborBlocks = neighborChunk.GetBlocks();
+    byte[,,] neighborBlockStates = neighborChunk.GetBlockStates();
+
+    if (neighborBlocks[neighborX, y, neighborZ] == BlockTypes.AIR) {
+      neighborBlocks[neighborX, y, neighborZ] = BlockTypes.WATER;
+      neighborBlockStates[neighborX, y, neighborZ] = BlockStateUtil.CreateStateData(true, Direction.NORTH);
+    }
+  }
+
   private static byte GetHighestNonAir(ChunkData[,] chunkData, int x, int z){
     int cX = x < 16 ? 0 : (x < 32 ? 1 : 2);
     int cZ = z < 16 ? 0 : (z < 32 ? 1 : 2);

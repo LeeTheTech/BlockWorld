@@ -51,10 +51,10 @@ public static class Structure{
     List<Change> result = template;
     switch (type){
       case Type.OAK_TREE:
-        result = new List<Change>{ new(0, -1, 0, BlockTypes.DIRT, BlockStateUtil.SetOrientation(0, 0)) };
+        result = new List<Change>{ new(0, -1, 0, BlockTypes.DIRT, BlockStateUtil.CreateDefaultStateData()) };
         bool cutOff = rnd.Next(100) == 0;
         if (cutOff){
-          result.Add(new Change(0, 0, 0, BlockTypes.LOG_OAK, BlockStateUtil.SetOrientation(0, 0)));
+          result.Add(new Change(0, 0, 0, BlockTypes.LOG_OAK, BlockStateUtil.CreateDefaultStateData()));
           return result;
         }
 
@@ -63,51 +63,51 @@ public static class Structure{
         if (superHigh) height = 10;
 
         for (int i = 0; i < height; ++i){
-          result.Add(new Change(0, i, 0, BlockTypes.LOG_OAK, BlockStateUtil.SetOrientation(0, 0)));
+          result.Add(new Change(0, i, 0, BlockTypes.LOG_OAK, BlockStateUtil.CreateDefaultStateData()));
         }
 
-        result.Add(new Change(0, height, 0, BlockTypes.LEAVES_OAK, BlockStateUtil.SetOrientation(0, 0)));
+        result.Add(new Change(0, height, 0, BlockTypes.LEAVES_OAK, BlockStateUtil.CreateDefaultStateData()));
 
         for (int i = 0; i < 4; ++i){
-          result.Add(new Change(1, height - i, 0, BlockTypes.LEAVES_OAK, BlockStateUtil.SetOrientation(0, 0)));
-          result.Add(new Change(0, height - i, 1, BlockTypes.LEAVES_OAK, BlockStateUtil.SetOrientation(0, 0)));
-          result.Add(new Change(-1, height - i, 0, BlockTypes.LEAVES_OAK, BlockStateUtil.SetOrientation(0, 0)));
-          result.Add(new Change(0, height - i, -1, BlockTypes.LEAVES_OAK, BlockStateUtil.SetOrientation(0, 0)));
+          result.Add(new Change(1, height - i, 0, BlockTypes.LEAVES_OAK, BlockStateUtil.CreateDefaultStateData()));
+          result.Add(new Change(0, height - i, 1, BlockTypes.LEAVES_OAK, BlockStateUtil.CreateDefaultStateData()));
+          result.Add(new Change(-1, height - i, 0, BlockTypes.LEAVES_OAK, BlockStateUtil.CreateDefaultStateData()));
+          result.Add(new Change(0, height - i, -1, BlockTypes.LEAVES_OAK, BlockStateUtil.CreateDefaultStateData()));
         }
 
 
-        if (rnd.Next(0, 2) == 0) result.Add(new Change(1, height - 1, 1, BlockTypes.LEAVES_OAK, BlockStateUtil.SetOrientation(0, 0)));
-        if (rnd.Next(0, 2) == 0) result.Add(new Change(-1, height - 1, 1, BlockTypes.LEAVES_OAK, BlockStateUtil.SetOrientation(0, 0)));
-        if (rnd.Next(0, 2) == 0) result.Add(new Change(1, height - 1, -1, BlockTypes.LEAVES_OAK, BlockStateUtil.SetOrientation(0, 0)));
-        if (rnd.Next(0, 2) == 0) result.Add(new Change(-1, height - 1, -1, BlockTypes.LEAVES_OAK, BlockStateUtil.SetOrientation(0, 0)));
+        if (rnd.Next(0, 2) == 0) result.Add(new Change(1, height - 1, 1, BlockTypes.LEAVES_OAK, BlockStateUtil.CreateDefaultStateData()));
+        if (rnd.Next(0, 2) == 0) result.Add(new Change(-1, height - 1, 1, BlockTypes.LEAVES_OAK, BlockStateUtil.CreateDefaultStateData()));
+        if (rnd.Next(0, 2) == 0) result.Add(new Change(1, height - 1, -1, BlockTypes.LEAVES_OAK, BlockStateUtil.CreateDefaultStateData()));
+        if (rnd.Next(0, 2) == 0) result.Add(new Change(-1, height - 1, -1, BlockTypes.LEAVES_OAK, BlockStateUtil.CreateDefaultStateData()));
 
 
         for (int i = 2; i < 4; ++i){
-          result.Add(new Change(2, height - i, -1, BlockTypes.LEAVES_OAK, BlockStateUtil.SetOrientation(0, 0)));
-          result.Add(new Change(2, height - i, 0, BlockTypes.LEAVES_OAK, BlockStateUtil.SetOrientation(0, 0)));
-          result.Add(new Change(2, height - i, 1, BlockTypes.LEAVES_OAK, BlockStateUtil.SetOrientation(0, 0)));
+          result.Add(new Change(2, height - i, -1, BlockTypes.LEAVES_OAK, BlockStateUtil.CreateDefaultStateData()));
+          result.Add(new Change(2, height - i, 0, BlockTypes.LEAVES_OAK, BlockStateUtil.CreateDefaultStateData()));
+          result.Add(new Change(2, height - i, 1, BlockTypes.LEAVES_OAK, BlockStateUtil.CreateDefaultStateData()));
 
-          result.Add(new Change(-2, height - i, -1, BlockTypes.LEAVES_OAK, BlockStateUtil.SetOrientation(0, 0)));
-          result.Add(new Change(-2, height - i, 0, BlockTypes.LEAVES_OAK, BlockStateUtil.SetOrientation(0, 0)));
-          result.Add(new Change(-2, height - i, 1, BlockTypes.LEAVES_OAK, BlockStateUtil.SetOrientation(0, 0)));
+          result.Add(new Change(-2, height - i, -1, BlockTypes.LEAVES_OAK, BlockStateUtil.CreateDefaultStateData()));
+          result.Add(new Change(-2, height - i, 0, BlockTypes.LEAVES_OAK, BlockStateUtil.CreateDefaultStateData()));
+          result.Add(new Change(-2, height - i, 1, BlockTypes.LEAVES_OAK, BlockStateUtil.CreateDefaultStateData()));
 
-          result.Add(new Change(-1, height - i, 2, BlockTypes.LEAVES_OAK, BlockStateUtil.SetOrientation(0, 0)));
-          result.Add(new Change(0, height - i, 2, BlockTypes.LEAVES_OAK, BlockStateUtil.SetOrientation(0, 0)));
-          result.Add(new Change(1, height - i, 2, BlockTypes.LEAVES_OAK, BlockStateUtil.SetOrientation(0, 0)));
+          result.Add(new Change(-1, height - i, 2, BlockTypes.LEAVES_OAK, BlockStateUtil.CreateDefaultStateData()));
+          result.Add(new Change(0, height - i, 2, BlockTypes.LEAVES_OAK, BlockStateUtil.CreateDefaultStateData()));
+          result.Add(new Change(1, height - i, 2, BlockTypes.LEAVES_OAK, BlockStateUtil.CreateDefaultStateData()));
 
-          result.Add(new Change(-1, height - i, -2, BlockTypes.LEAVES_OAK, BlockStateUtil.SetOrientation(0, 0)));
-          result.Add(new Change(0, height - i, -2, BlockTypes.LEAVES_OAK, BlockStateUtil.SetOrientation(0, 0)));
-          result.Add(new Change(1, height - i, -2, BlockTypes.LEAVES_OAK, BlockStateUtil.SetOrientation(0, 0)));
+          result.Add(new Change(-1, height - i, -2, BlockTypes.LEAVES_OAK, BlockStateUtil.CreateDefaultStateData()));
+          result.Add(new Change(0, height - i, -2, BlockTypes.LEAVES_OAK, BlockStateUtil.CreateDefaultStateData()));
+          result.Add(new Change(1, height - i, -2, BlockTypes.LEAVES_OAK, BlockStateUtil.CreateDefaultStateData()));
 
-          result.Add(new Change(1, height - i, 1, BlockTypes.LEAVES_OAK, BlockStateUtil.SetOrientation(0, 0)));
-          result.Add(new Change(-1, height - i, 1, BlockTypes.LEAVES_OAK, BlockStateUtil.SetOrientation(0, 0)));
-          result.Add(new Change(1, height - i, -1, BlockTypes.LEAVES_OAK, BlockStateUtil.SetOrientation(0, 0)));
-          result.Add(new Change(-1, height - i, -1, BlockTypes.LEAVES_OAK, BlockStateUtil.SetOrientation(0, 0)));
+          result.Add(new Change(1, height - i, 1, BlockTypes.LEAVES_OAK, BlockStateUtil.CreateDefaultStateData()));
+          result.Add(new Change(-1, height - i, 1, BlockTypes.LEAVES_OAK, BlockStateUtil.CreateDefaultStateData()));
+          result.Add(new Change(1, height - i, -1, BlockTypes.LEAVES_OAK, BlockStateUtil.CreateDefaultStateData()));
+          result.Add(new Change(-1, height - i, -1, BlockTypes.LEAVES_OAK, BlockStateUtil.CreateDefaultStateData()));
 
-          if (rnd.Next(0, 2) == 0) result.Add(new Change(2, height - i, 2, BlockTypes.LEAVES_OAK, BlockStateUtil.SetOrientation(0, 0)));
-          if (rnd.Next(0, 2) == 0) result.Add(new Change(-2, height - i, 2, BlockTypes.LEAVES_OAK, BlockStateUtil.SetOrientation(0, 0)));
-          if (rnd.Next(0, 2) == 0) result.Add(new Change(2, height - i, -2, BlockTypes.LEAVES_OAK, BlockStateUtil.SetOrientation(0, 0)));
-          if (rnd.Next(0, 2) == 0) result.Add(new Change(-2, height - i, -2, BlockTypes.LEAVES_OAK, BlockStateUtil.SetOrientation(0, 0)));
+          if (rnd.Next(0, 2) == 0) result.Add(new Change(2, height - i, 2, BlockTypes.LEAVES_OAK, BlockStateUtil.CreateDefaultStateData()));
+          if (rnd.Next(0, 2) == 0) result.Add(new Change(-2, height - i, 2, BlockTypes.LEAVES_OAK, BlockStateUtil.CreateDefaultStateData()));
+          if (rnd.Next(0, 2) == 0) result.Add(new Change(2, height - i, -2, BlockTypes.LEAVES_OAK, BlockStateUtil.CreateDefaultStateData()));
+          if (rnd.Next(0, 2) == 0) result.Add(new Change(-2, height - i, -2, BlockTypes.LEAVES_OAK, BlockStateUtil.CreateDefaultStateData()));
         }
         break;
       case Type.CAVE_ENTRANCE:
@@ -155,7 +155,7 @@ public static class Structure{
           for (int y = 0; y < 48; ++y){
             for (int x = 0; x < 16; ++x){
               if (caveMap[x, y, z] == 1){
-                result.Add(new Change(x, y - 48, z, BlockTypes.AIR, BlockStateUtil.SetOrientation(0, 0)));
+                result.Add(new Change(x, y - 48, z, BlockTypes.AIR, 0));
               }
             }
           }
@@ -175,45 +175,45 @@ public static class Structure{
       case Type.WELL:
         for (int z = -2; z < 4; ++z){
           for (int x = -2; x < 4; ++x){
-            result.Add(new Change(x, -1, z, BlockTypes.COBBLESTONE, BlockStateUtil.SetOrientation(0, 0)));
+            result.Add(new Change(x, -1, z, BlockTypes.COBBLESTONE, BlockStateUtil.CreateDefaultStateData()));
           }
         }
 
         for (int z = -1; z < 3; ++z){
           for (int x = -1; x < 3; ++x){
-            result.Add(new Change(x, 0, z, BlockTypes.COBBLESTONE, BlockStateUtil.SetOrientation(0, 0)));
+            result.Add(new Change(x, 0, z, BlockTypes.COBBLESTONE, BlockStateUtil.CreateDefaultStateData()));
           }
         }
 
         for (int z = -1; z < 3; ++z){
           for (int x = -1; x < 3; ++x){
-            result.Add(new Change(x, 3, z, BlockTypes.PLANKS_OAK, BlockStateUtil.SetOrientation(0, 0)));
+            result.Add(new Change(x, 3, z, BlockTypes.PLANKS_OAK, BlockStateUtil.CreateDefaultStateData()));
           }
         }
 
-        result.Add(new Change(-1, 1, -1, BlockTypes.PLANKS_OAK, BlockStateUtil.SetOrientation(0, 0)));
-        result.Add(new Change(2, 1, -1, BlockTypes.PLANKS_OAK, BlockStateUtil.SetOrientation(0, 0)));
-        result.Add(new Change(-1, 1, 2, BlockTypes.PLANKS_OAK, BlockStateUtil.SetOrientation(0, 0)));
-        result.Add(new Change(2, 1, 2, BlockTypes.PLANKS_OAK, BlockStateUtil.SetOrientation(0, 0)));
-        result.Add(new Change(-1, 2, -1, BlockTypes.PLANKS_OAK, BlockStateUtil.SetOrientation(0, 0)));
-        result.Add(new Change(2, 2, -1, BlockTypes.PLANKS_OAK, BlockStateUtil.SetOrientation(0, 0)));
-        result.Add(new Change(-1, 2, 2, BlockTypes.PLANKS_OAK, BlockStateUtil.SetOrientation(0, 0)));
-        result.Add(new Change(2, 2, 2, BlockTypes.PLANKS_OAK, BlockStateUtil.SetOrientation(0, 0)));
+        result.Add(new Change(-1, 1, -1, BlockTypes.PLANKS_OAK, BlockStateUtil.CreateDefaultStateData()));
+        result.Add(new Change(2, 1, -1, BlockTypes.PLANKS_OAK, BlockStateUtil.CreateDefaultStateData()));
+        result.Add(new Change(-1, 1, 2, BlockTypes.PLANKS_OAK, BlockStateUtil.CreateDefaultStateData()));
+        result.Add(new Change(2, 1, 2, BlockTypes.PLANKS_OAK, BlockStateUtil.CreateDefaultStateData()));
+        result.Add(new Change(-1, 2, -1, BlockTypes.PLANKS_OAK, BlockStateUtil.CreateDefaultStateData()));
+        result.Add(new Change(2, 2, -1, BlockTypes.PLANKS_OAK, BlockStateUtil.CreateDefaultStateData()));
+        result.Add(new Change(-1, 2, 2, BlockTypes.PLANKS_OAK, BlockStateUtil.CreateDefaultStateData()));
+        result.Add(new Change(2, 2, 2, BlockTypes.PLANKS_OAK, BlockStateUtil.CreateDefaultStateData()));
 
         for (int i = 0; i < 16; ++i){
-          result.Add(new Change(0, -i, 0, BlockTypes.AIR, BlockStateUtil.SetOrientation(0, 0)));
-          result.Add(new Change(1, -i, 0, BlockTypes.AIR, BlockStateUtil.SetOrientation(0, 0)));
-          result.Add(new Change(0, -i, 1, BlockTypes.AIR, BlockStateUtil.SetOrientation(0, 0)));
-          result.Add(new Change(1, -i, 1, BlockTypes.AIR, BlockStateUtil.SetOrientation(0, 0)));
+          result.Add(new Change(0, -i, 0, BlockTypes.AIR, 0));
+          result.Add(new Change(1, -i, 0, BlockTypes.AIR, 0));
+          result.Add(new Change(0, -i, 1, BlockTypes.AIR, 0));
+          result.Add(new Change(1, -i, 1, BlockTypes.AIR, 0));
         }
         break;
       case Type.CACTUS:
-        result.Add(new Change(0, 0, 0, BlockTypes.CACTUS, BlockStateUtil.SetOrientation(0, 0)));
-        result.Add(new Change(0, 1, 0, BlockTypes.CACTUS, BlockStateUtil.SetOrientation(0, 0)));
-        result.Add(new Change(0, 2, 0, BlockTypes.CACTUS, BlockStateUtil.SetOrientation(0, 0)));
+        result.Add(new Change(0, 0, 0, BlockTypes.CACTUS, BlockStateUtil.CreateDefaultStateData()));
+        result.Add(new Change(0, 1, 0, BlockTypes.CACTUS, BlockStateUtil.CreateDefaultStateData()));
+        result.Add(new Change(0, 2, 0, BlockTypes.CACTUS, BlockStateUtil.CreateDefaultStateData()));
         break;
       case Type.FOLIAGE:
-        result.Add(new Change(0, 0, 0, BlockTypes.FOLIAGE, BlockStateUtil.SetOrientation(0, 0)));
+        result.Add(new Change(0, 0, 0, BlockTypes.FOLIAGE, BlockStateUtil.CreateDefaultStateData()));
         break;
     }
     templates.Add(type, result);

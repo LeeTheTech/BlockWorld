@@ -68,7 +68,7 @@ public static class BlockShapes{
         AddSlabFaces(shapeData, meshData);
         break;
       case BlockShape.STAIR:
-        AddStairFaces(shapeData, meshData, GetDirectionFromOrientation(BlockStateUtil.GetOrientation(shapeData.blockState)));
+        AddStairFaces(shapeData, meshData, BlockStateUtil.GetOrientation(shapeData.blockState));
         break;
       case BlockShape.TORCH:
         AddTorchFaces(shapeData, meshData);
@@ -486,21 +486,6 @@ public static class BlockShapes{
     }
   }
   
-  private static Direction GetDirectionFromOrientation(byte orientation) {
-    switch (orientation) {
-      case 0:
-        return Direction.NORTH;
-      case 1:
-        return Direction.WEST;
-      case 2:
-        return Direction.SOUTH;
-      case 3:
-        return Direction.EAST;
-      default:
-        throw new ArgumentOutOfRangeException("Invalid orientation value");
-    }
-  }
-  
   private static bool ShouldRenderFace(byte block, byte targetBlock){
     if (BlockTypes.IsTransparentBlock(block) && BlockTypes.IsTransparentBlock(targetBlock)){
       return block != targetBlock;
@@ -511,5 +496,20 @@ public static class BlockShapes{
     if (BlockTypes.IsSolidLiquid(targetBlock)) return true;
     if (BlockTypes.IsStair(block) || BlockTypes.IsStair(targetBlock)) return true;
     return targetBlock > 127;
+  }
+  
+  public static Direction GetStairPlaceOrientation(Direction direction) {
+    switch (direction) {
+      case Direction.NORTH:
+        return Direction.NORTH;
+      case Direction.EAST:
+        return Direction.WEST;
+      case Direction.SOUTH:
+        return Direction.SOUTH;
+      case Direction.WEST:
+        return Direction.EAST;
+      default:
+        throw new ArgumentOutOfRangeException("Invalid orientation value");
+    }
   }
 }

@@ -241,7 +241,7 @@ public class Player : MonoBehaviour{
 
       if (place){
         byte block = UI.instance.hotbar.GetCurrentHighlighted();
-        if (setup.world.Modify(placeBlock.x, placeBlock.y, placeBlock.z, block, BlockStateUtil.SetOrientation(0, (byte)playerDirection))){
+        if (setup.world.Modify(placeBlock.x, placeBlock.y, placeBlock.z, block, BlockStateUtil.CreateStateData(true, BlockShapes.GetStairPlaceOrientation(playerDirection)))){
           AudioManager.instance.dig.Play(BlockTypes.digSound[block], removeBlock);
         }
       }
@@ -295,7 +295,7 @@ public class Player : MonoBehaviour{
     return false;
   }
 
-  private Direction GetFacingDirection(Vector3 forward){
+  private static Direction GetFacingDirection(Vector3 forward){
     // Define cardinal directions as vectors
     Vector3 north = Vector3.forward; // Assuming forward is north
     Vector3 east = Vector3.right; // Assuming right is east

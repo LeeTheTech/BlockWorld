@@ -157,12 +157,10 @@ public class ChunkDataManager{
     Vector3Int position = new Vector3Int(x, y, z);
     if (lightLevel > 0){
       chunkData.lightSources[position] = lightLevel;
-      //Debug.Log($"LightSource added ({blockType})");
     }
     else{
       if (chunkData.lightSources.ContainsKey(position)){
         chunkData.lightSources.Remove(position);
-        //Debug.Log($"LightSource removed");
       }
     }
   }
