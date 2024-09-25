@@ -241,7 +241,7 @@ public class Player : MonoBehaviour{
 
       if (place){
         byte block = UI.instance.hotbar.GetCurrentHighlighted();
-        if (setup.world.Modify(placeBlock.x, placeBlock.y, placeBlock.z, block, BlockStateUtil.CreateStateData(true, BlockShapes.GetStairPlaceOrientation(playerDirection)))){
+        if (setup.world.Modify(placeBlock.x, placeBlock.y, placeBlock.z, block, BlockStateUtil.CreateStateData(true, BlockShapes.GetStairPlaceOrientation(playerDirection), 0))){
           AudioManager.instance.dig.Play(BlockTypes.digSound[block], removeBlock);
         }
       }
