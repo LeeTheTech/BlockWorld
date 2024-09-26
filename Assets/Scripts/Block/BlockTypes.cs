@@ -25,6 +25,7 @@ public static class BlockTypes{
   public const byte SNOW_GRASS = 21;
   public const byte LAVA = 22;
   public const byte TNT = 23;
+  public const byte GRAVEL = 24;
 
   //TRANSPARENT
   public const byte LEAVES_OAK = 128;
@@ -69,7 +70,8 @@ public static class BlockTypes{
         { SNOW_GRASS, 0 },
         { LAVA, 15 },
         { FOLIAGE, 0 },
-        { TNT, 0 }
+        { TNT, 0 },
+        { GRAVEL, 0 }
     };
 
     density = new Dictionary<byte, byte>{
@@ -101,7 +103,8 @@ public static class BlockTypes{
         { SNOW_GRASS, 255 },
         { LAVA, 255 },
         { FOLIAGE, 60 },
-        { TNT, 255 }
+        { TNT, 255 },
+        { GRAVEL, 255 }
     };
 
     digSound = new Dictionary<byte, AudioManager.Dig.Type>{
@@ -133,7 +136,8 @@ public static class BlockTypes{
         { SNOW_GRASS, AudioManager.Dig.Type.Grass },
         { LAVA, AudioManager.Dig.Type.Grass },
         { FOLIAGE, AudioManager.Dig.Type.Grass },
-        { TNT, AudioManager.Dig.Type.Grass }
+        { TNT, AudioManager.Dig.Type.Grass },
+        { GRAVEL, AudioManager.Dig.Type.Grass }
     };
 
     blockShape = new Dictionary<byte, BlockShapes.BlockShape>{
@@ -165,7 +169,8 @@ public static class BlockTypes{
         { LAVA, BlockShapes.BlockShape.CUBE },
         { WATER, BlockShapes.BlockShape.CUBE },
         { FOLIAGE, BlockShapes.BlockShape.FOLIAGE },
-        { TNT, BlockShapes.BlockShape.CUBE }
+        { TNT, BlockShapes.BlockShape.CUBE },
+        { GRAVEL, BlockShapes.BlockShape.CUBE }
     };
   }
 

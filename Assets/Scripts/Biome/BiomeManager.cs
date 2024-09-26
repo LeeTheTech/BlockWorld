@@ -150,6 +150,19 @@ public static class BiomeManager{
     if (y == heightGen && y == seaLevel - 1){
       return BlockTypes.SAND; // Sand block
     }
+    
+    // Beach into water
+    if (y < seaLevel && y >= seaLevel - 4) {
+      return BlockTypes.SAND; // Place gravel below water
+    }
+    
+    if (y < seaLevel && y >= seaLevel - 10) {
+      return BlockTypes.GRAVEL; // Place gravel at the bottom of any underwater area
+    }
+    
+    if (y < seaLevel) {
+      return BlockTypes.STONE; // Place gravel at the bottom of any underwater area
+    }
 
     // General terrain handling
     if (y > heightGen){

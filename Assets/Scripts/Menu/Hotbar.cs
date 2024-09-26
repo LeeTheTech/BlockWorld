@@ -11,7 +11,7 @@ public class Hotbar : MonoBehaviour{
   
   private int[] hotbarBlocks = {
       BlockTypes.PLANKS_OAK_SLAB,
-      BlockTypes.PLANKS_OAK,
+      BlockTypes.GRAVEL,
       BlockTypes.GLASS,
       BlockTypes.PLANKS_OAK_STAIR,
       BlockTypes.TNT,

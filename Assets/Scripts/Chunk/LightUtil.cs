@@ -77,6 +77,11 @@ public static class LightingUtil{
 
   private static void TrySpreadLight(ChunkData[,] chunkMap, byte[,,] lightMap, Queue<Vector3Int> simulateQueue, int x, int y, int z, byte blockLight, byte blockType){
     switch (blockType){
+      case BlockTypes.PLANKS_OAK_SLAB:
+      case BlockTypes.PLANKS_OAK_STAIR:
+      case BlockTypes.GLASS:
+      case BlockTypes.WATER:
+      case BlockTypes.FOLIAGE:
       case BlockTypes.AIR:
         byte light = lightMap[x, y, z];
         if (light < blockLight - 1){

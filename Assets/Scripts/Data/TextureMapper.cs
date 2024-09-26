@@ -283,6 +283,16 @@ public class TextureMapper{
               new TextureMap.Face(new Vector2(4, 0)),
               new Color32(255, 255, 255, 255)
           )
+      },{
+          BlockTypes.GRAVEL, new TextureMap(
+              new TextureMap.Face(new Vector2(4, 1)),
+              new TextureMap.Face(new Vector2(4, 1)),
+              new TextureMap.Face(new Vector2(4, 1)),
+              new TextureMap.Face(new Vector2(4, 1)),
+              new TextureMap.Face(new Vector2(4, 1)),
+              new TextureMap.Face(new Vector2(4, 1)),
+              new Color32(255, 255, 255, 255)
+          )
       }
   };
 
