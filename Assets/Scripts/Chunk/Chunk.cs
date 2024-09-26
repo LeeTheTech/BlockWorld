@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class Chunk : MonoBehaviour{
   public MeshFilter meshFilter;
@@ -47,8 +46,6 @@ public class Chunk : MonoBehaviour{
     ChunkData backLeft = chunkDataManager.data[position + nBack + nLeft];
     ChunkData backRight = chunkDataManager.data[position + nBack + nRight];
 
-    byte[,,] lightMap = new byte[48, 256, 48];
-
     chunkMap[0, 0] = backLeft;
     chunkMap[1, 0] = back;
     chunkMap[2, 0] = backRight;
@@ -62,120 +59,10 @@ public class Chunk : MonoBehaviour{
     UnityEngine.Profiling.Profiler.EndSample();
 
     UnityEngine.Profiling.Profiler.BeginSample("SIMULATING LIGHT");
-
-    Queue<Vector3Int> simulateQueue = new Queue<Vector3Int>();
-    //sunray tracing needs to start above the highest non-air block to increase performance
-    //all blocks above that block need to be set to 15
-    for (int z = 0; z < 48; ++z){
-      for (int x = 0; x < 48; ++x){
-        if ((x % 47) * (z % 47) == 0){
-          for (int yy = 0; yy < 256; ++yy) //dont do outer edges
-          {
-            lightMap[x, yy, z] = 15; //set all edges to 15 to stop tracing at edges
-          }
-          continue;
-        }
-
-        int y = GetHighestNonAir(chunkMap, x, z);
-        if (x < 46) y = Mathf.Max(y, GetHighestNonAir(chunkMap, x + 1, z));
-        if (x > 1) y = Mathf.Max(y, GetHighestNonAir(chunkMap, x - 1, z));
-        if (z < 46) y = Mathf.Max(y, GetHighestNonAir(chunkMap, x, z + 1));
-        if (z > 1) y = Mathf.Max(y, GetHighestNonAir(chunkMap, x, z - 1));
-        y = Mathf.Min(y + 1, 255);
-        simulateQueue.Enqueue(new Vector3Int(x, y, z));
-
-        while (y < 255){
-          lightMap[x, y, z] = 15;
-          y++;
-        }
-      }
-    }
-
-    for (int y = 0; y < 3; ++y){
-      for (int x = 0; x < 3; ++x){
-        foreach (KeyValuePair<Vector3Int, byte> kv in chunkMap[x, y].lightSources){
-          Vector3Int pos = kv.Key;
-          int lX = (16 * x) + pos.x;
-          int lY = pos.y;
-          int lZ = (16 * y) + pos.z;
-          lightMap[lX, lY, lZ] = kv.Value;
-          simulateQueue.Enqueue(new Vector3Int(lX, lY, lZ));
-        }
-      }
-    }
-
-    while (simulateQueue.Count > 0){
-      Vector3Int pos = simulateQueue.Dequeue();
-      int x = pos.x;
-      int y = pos.y;
-      int z = pos.z;
-
-      byte bR = (x == 47 ? BlockTypes.BEDROCK : GetBlockFromMap(chunkMap, x + 1, y, z));
-      byte bL = (x == 0 ? BlockTypes.BEDROCK : GetBlockFromMap(chunkMap, x - 1, y, z));
-      byte bF = (z == 47 ? BlockTypes.BEDROCK : GetBlockFromMap(chunkMap, x, y, z + 1));
-      byte bB = (z == 0 ? BlockTypes.BEDROCK : GetBlockFromMap(chunkMap, x, y, z - 1));
-      byte bU = (y == 255 ? BlockTypes.BEDROCK : GetBlockFromMap(chunkMap, x, y + 1, z));
-      byte bD = (y == 0 ? BlockTypes.BEDROCK : GetBlockFromMap(chunkMap, x, y - 1, z));
-
-      byte blockLight = lightMap[x, y, z];
-
-      if (bR == BlockTypes.AIR){
-        byte lightR = lightMap[x + 1, y, z];
-        if (lightR < blockLight - 1){
-          lightMap[x + 1, y, z] = (byte)(blockLight - 1);
-          simulateQueue.Enqueue(new Vector3Int(x + 1, y, z));
-        }
-      }
-
-      if (bL == BlockTypes.AIR){
-        byte lightL = lightMap[x - 1, y, z];
-        if (lightL < blockLight - 1){
-          lightMap[x - 1, y, z] = (byte)(blockLight - 1);
-          //if (x - 1 == 0) Debug.LogError("THIS SHOULD NOT HAPPEN");
-          simulateQueue.Enqueue(new Vector3Int(x - 1, y, z));
-        }
-      }
-
-      if (bD == BlockTypes.AIR){
-        if (blockLight == 15){
-          lightMap[x, y - 1, z] = blockLight;
-          simulateQueue.Enqueue(new Vector3Int(x, y - 1, z));
-        }
-        else{
-          byte lightD = lightMap[x, y - 1, z];
-          if (lightD < blockLight - 1){
-            lightMap[x, y - 1, z] = (byte)(blockLight - 1);
-            simulateQueue.Enqueue(new Vector3Int(x, y - 1, z));
-          }
-        }
-      }
-
-      if (bU == BlockTypes.AIR){
-        byte lightU = lightMap[x, y + 1, z];
-        if (lightU < blockLight - 1){
-          lightMap[x, y + 1, z] = (byte)(blockLight - 1);
-          simulateQueue.Enqueue(new Vector3Int(x, y + 1, z));
-        }
-      }
-
-      if (bF == BlockTypes.AIR){
-        byte lightF = lightMap[x, y, z + 1];
-        if (lightF < blockLight - 1){
-          lightMap[x, y, z + 1] = (byte)(blockLight - 1);
-          simulateQueue.Enqueue(new Vector3Int(x, y, z + 1));
-        }
-      }
-
-      if (bB == BlockTypes.AIR){
-        byte lightB = lightMap[x, y, z - 1];
-        if (lightB < blockLight - 1){
-          lightMap[x, y, z - 1] = (byte)(blockLight - 1);
-          simulateQueue.Enqueue(new Vector3Int(x, y, z - 1));
-        }
-      }
-    }
+    
+    byte[,,] lightMap = LightingUtil.SimulateLighting(chunkMap);
+    
     UnityEngine.Profiling.Profiler.EndSample();
-
 
     UnityEngine.Profiling.Profiler.BeginSample("CREATING FACES");
     TextureMapper textureMapper = GameManager.instance.textureMapper;
@@ -217,6 +104,7 @@ public class Chunk : MonoBehaviour{
     UnityEngine.Profiling.Profiler.EndSample();
   }
 
+
   public void Tick(ChunkDataManager chunkDataManager){
     ChunkData chunkData = chunkDataManager.data[position];
     byte[,,] blocks = chunkData.GetBlocks();
@@ -227,33 +115,25 @@ public class Chunk : MonoBehaviour{
       for (int y = 0; y < 256; ++y){
         for (int x = 0; x < 16; ++x){
           byte block = blocks[x, y, z];
+          if (block == BlockTypes.AIR) continue;
           byte state = blockStates[x, y, z];
           if (BlockTypes.IsLiquid(block) && BlockStateUtil.IsTicking(state)){
             rebuild = true;
             LiquidUtil.HandleLiquidTick(chunkDataManager, position, block, state, x, y, z, blocks, blockStates);
-          }
+          } 
+          else if (BlockTypes.IsExplosive(block) && BlockStateUtil.IsTicking(state)){
+            rebuild = true;
+            ExplosiveUtil.HandleExplosiveTick(chunkDataManager, position, block, state, x, y, z, blocks, blockStates);
+          } 
+          // else if (BlockStateUtil.ShouldBreak(state)){
+          //   rebuild = true;
+          //   blocks[x, y, z] = BlockTypes.AIR;
+          //   blockStates[x, y, z] = 0;
+          // }
         }
       }
     }
     if (rebuild) Build(chunkDataManager);
-  }
-
-  private static byte GetHighestNonAir(ChunkData[,] chunkData, int x, int z){
-    int cX = x < 16 ? 0 : (x < 32 ? 1 : 2);
-    int cZ = z < 16 ? 0 : (z < 32 ? 1 : 2);
-    return chunkData[cX, cZ].highestNonAirBlock[x - (cX * 16), z - (cZ * 16)];
-  }
-
-  private static byte GetBlockFromMap(ChunkData[,] chunkData, int x, int y, int z){
-    try{
-      int cX = x < 16 ? 0 : (x < 32 ? 1 : 2);
-      int cZ = z < 16 ? 0 : (z < 32 ? 1 : 2);
-      return chunkData[cX, cZ].GetBlocks()[x - (cX * 16), y, z - (cZ * 16)];
-    }
-    catch (System.Exception){
-      Debug.LogWarning($"{x} {y} {z}");
-      throw;
-    }
   }
   
   private ChunkMeshData GetCorrectMeshData(byte block){

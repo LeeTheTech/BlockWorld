@@ -273,6 +273,16 @@ public class TextureMapper{
               new TextureMap.Face(new Vector2(2, 6)),
               new Color32(109, 164, 73, 255)
           )
+      },{
+          BlockTypes.TNT, new TextureMap(
+              new TextureMap.Face(new Vector2(3, 6)),
+              new TextureMap.Face(new Vector2(3, 6)),
+              new TextureMap.Face(new Vector2(3, 6)),
+              new TextureMap.Face(new Vector2(3, 6)),
+              new TextureMap.Face(new Vector2(3, 7)),
+              new TextureMap.Face(new Vector2(4, 0)),
+              new Color32(255, 255, 255, 255)
+          )
       }
   };
 

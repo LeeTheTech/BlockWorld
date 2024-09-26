@@ -24,6 +24,7 @@ public static class BlockTypes{
   public const byte TORCH = 20;
   public const byte SNOW_GRASS = 21;
   public const byte LAVA = 22;
+  public const byte TNT = 23;
 
   //TRANSPARENT
   public const byte LEAVES_OAK = 128;
@@ -66,8 +67,9 @@ public static class BlockTypes{
         { PLANKS_OAK_STAIR, 0 },
         { TORCH, 0 },
         { SNOW_GRASS, 0 },
-        { LAVA, 20 },
-        { FOLIAGE, 0 }
+        { LAVA, 15 },
+        { FOLIAGE, 0 },
+        { TNT, 0 }
     };
 
     density = new Dictionary<byte, byte>{
@@ -98,7 +100,8 @@ public static class BlockTypes{
         { TORCH, 255 },
         { SNOW_GRASS, 255 },
         { LAVA, 255 },
-        { FOLIAGE, 60 }
+        { FOLIAGE, 60 },
+        { TNT, 255 }
     };
 
     digSound = new Dictionary<byte, AudioManager.Dig.Type>{
@@ -129,7 +132,8 @@ public static class BlockTypes{
         { TORCH, AudioManager.Dig.Type.Stone },
         { SNOW_GRASS, AudioManager.Dig.Type.Grass },
         { LAVA, AudioManager.Dig.Type.Grass },
-        { FOLIAGE, AudioManager.Dig.Type.Grass }
+        { FOLIAGE, AudioManager.Dig.Type.Grass },
+        { TNT, AudioManager.Dig.Type.Grass }
     };
 
     blockShape = new Dictionary<byte, BlockShapes.BlockShape>{
@@ -160,7 +164,8 @@ public static class BlockTypes{
         { SNOW_GRASS, BlockShapes.BlockShape.CUBE },
         { LAVA, BlockShapes.BlockShape.CUBE },
         { WATER, BlockShapes.BlockShape.CUBE },
-        { FOLIAGE, BlockShapes.BlockShape.FOLIAGE }
+        { FOLIAGE, BlockShapes.BlockShape.FOLIAGE },
+        { TNT, BlockShapes.BlockShape.CUBE }
     };
   }
 
@@ -223,6 +228,15 @@ public static class BlockTypes{
     switch (blockType){
       case LAVA:
         case WATER:
+        return true;
+      default:
+        return false;
+    }
+  }
+
+  public static bool IsExplosive(byte blockType){
+    switch (blockType){
+      case TNT:
         return true;
       default:
         return false;
