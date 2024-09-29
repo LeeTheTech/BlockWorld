@@ -213,7 +213,7 @@ public static class Structure{
         result.Add(new Change(0, 2, 0, BlockTypes.CACTUS, BlockStateUtil.CreateDefaultStateData()));
         break;
       case Type.FOLIAGE:
-        result.Add(new Change(0, 0, 0, BlockTypes.FOLIAGE, BlockStateUtil.CreateDefaultStateData()));
+        result.Add(new Change(0, 0, 0, BlockTypes.POPPY, BlockStateUtil.CreateDefaultStateData()));
         break;
     }
     templates.Add(type, result);

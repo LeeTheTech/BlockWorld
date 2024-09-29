@@ -22,7 +22,8 @@ public static class BlockShapes{
   public struct ShapeData{
     public Vector2Int position;
     public TextureMapper.TextureMap textureMap;
-    public byte[,,] lightMap;
+    public byte[,,] blockLightMap;
+    public byte[,,] sunLightMap;
     public byte blockState;
     public byte blockType;
     public int x;
@@ -38,10 +39,11 @@ public static class BlockShapes{
     public int ly;
     public int lz;
     
-    public ShapeData(Vector2Int position, TextureMapper.TextureMap textureMap, byte[,,] lightMap, byte blockState, byte blockType, int x, int y, int z, byte bR, byte bL, byte bF, byte bB, byte bU, byte bD, int lx, int ly, int lz){
+    public ShapeData(Vector2Int position, TextureMapper.TextureMap textureMap, byte[,,] blockLightMap, byte[,,] sunLightMap, byte blockState, byte blockType, int x, int y, int z, byte bR, byte bL, byte bF, byte bB, byte bU, byte bD, int lx, int ly, int lz){
       this.position = position;
       this.textureMap = textureMap;
-      this.lightMap = lightMap;
+      this.blockLightMap = blockLightMap;
+      this.sunLightMap = sunLightMap;
       this.blockState = blockState;
       this.blockType = blockType;
       this.x = x;
@@ -419,70 +421,100 @@ public static class BlockShapes{
   }
 
 
-  private static void AddLighting(ChunkMeshData meshData, ShapeData shapeData, LightFace LightFace){
+  private static void AddLighting(ChunkMeshData meshData, ShapeData shapeData, LightFace lightFace){
     int b;
     int t;
-    byte bl;
-    byte tl;
-    byte tr;
-    byte br;
-    switch (LightFace){
+
+    byte sbl, stl, str, sbr;  // Sunlight corners
+    byte bbl, btl, btr, bbr;  // Block light corners
+    
+    switch (lightFace){
       case LightFace.RIGHT:
         b = shapeData.y == 0 ? 0 : 1;
         t = shapeData.y == 255 ? 0 : 1;
-        bl = (byte)((shapeData.lightMap[shapeData.lx + 1, shapeData.ly, shapeData.lz] + shapeData.lightMap[shapeData.lx + 1, shapeData.ly, shapeData.lz - 1] + shapeData.lightMap[shapeData.lx + 1, shapeData.ly - b, shapeData.lz] + shapeData.lightMap[shapeData.lx + 1, shapeData.ly - b, shapeData.lz - 1]) / 4);
-        tl = (byte)((shapeData.lightMap[shapeData.lx + 1, shapeData.ly, shapeData.lz] + shapeData.lightMap[shapeData.lx + 1, shapeData.ly, shapeData.lz - 1] + shapeData.lightMap[shapeData.lx + 1, shapeData.ly + t, shapeData.lz] + shapeData.lightMap[shapeData.lx + 1, shapeData.ly + t, shapeData.lz - 1]) / 4);
-        tr = (byte)((shapeData.lightMap[shapeData.lx + 1, shapeData.ly, shapeData.lz] + shapeData.lightMap[shapeData.lx + 1, shapeData.ly, shapeData.lz + 1] + shapeData.lightMap[shapeData.lx + 1, shapeData.ly + t, shapeData.lz] + shapeData.lightMap[shapeData.lx + 1, shapeData.ly + t, shapeData.lz + 1]) / 4);
-        br = (byte)((shapeData.lightMap[shapeData.lx + 1, shapeData.ly, shapeData.lz] + shapeData.lightMap[shapeData.lx + 1, shapeData.ly, shapeData.lz + 1] + shapeData.lightMap[shapeData.lx + 1, shapeData.ly - b, shapeData.lz] + shapeData.lightMap[shapeData.lx + 1, shapeData.ly - b, shapeData.lz + 1]) / 4);
-        meshData.AddColors(shapeData.textureMap, bl, tl, tr, br);
+        sbl = (byte)((shapeData.sunLightMap[shapeData.lx + 1, shapeData.ly, shapeData.lz] + shapeData.sunLightMap[shapeData.lx + 1, shapeData.ly, shapeData.lz - 1] + shapeData.sunLightMap[shapeData.lx + 1, shapeData.ly - b, shapeData.lz] + shapeData.sunLightMap[shapeData.lx + 1, shapeData.ly - b, shapeData.lz - 1]) / 4);
+        stl = (byte)((shapeData.sunLightMap[shapeData.lx + 1, shapeData.ly, shapeData.lz] + shapeData.sunLightMap[shapeData.lx + 1, shapeData.ly, shapeData.lz - 1] + shapeData.sunLightMap[shapeData.lx + 1, shapeData.ly + t, shapeData.lz] + shapeData.sunLightMap[shapeData.lx + 1, shapeData.ly + t, shapeData.lz - 1]) / 4);
+        str = (byte)((shapeData.sunLightMap[shapeData.lx + 1, shapeData.ly, shapeData.lz] + shapeData.sunLightMap[shapeData.lx + 1, shapeData.ly, shapeData.lz + 1] + shapeData.sunLightMap[shapeData.lx + 1, shapeData.ly + t, shapeData.lz] + shapeData.sunLightMap[shapeData.lx + 1, shapeData.ly + t, shapeData.lz + 1]) / 4);
+        sbr = (byte)((shapeData.sunLightMap[shapeData.lx + 1, shapeData.ly, shapeData.lz] + shapeData.sunLightMap[shapeData.lx + 1, shapeData.ly, shapeData.lz + 1] + shapeData.sunLightMap[shapeData.lx + 1, shapeData.ly - b, shapeData.lz] + shapeData.sunLightMap[shapeData.lx + 1, shapeData.ly - b, shapeData.lz + 1]) / 4);
+        
+        bbl = (byte)((shapeData.blockLightMap[shapeData.lx + 1, shapeData.ly, shapeData.lz] + shapeData.blockLightMap[shapeData.lx + 1, shapeData.ly, shapeData.lz - 1] + shapeData.blockLightMap[shapeData.lx + 1, shapeData.ly - b, shapeData.lz] + shapeData.blockLightMap[shapeData.lx + 1, shapeData.ly - b, shapeData.lz - 1]) / 4);
+        btl = (byte)((shapeData.blockLightMap[shapeData.lx + 1, shapeData.ly, shapeData.lz] + shapeData.blockLightMap[shapeData.lx + 1, shapeData.ly, shapeData.lz - 1] + shapeData.blockLightMap[shapeData.lx + 1, shapeData.ly + t, shapeData.lz] + shapeData.blockLightMap[shapeData.lx + 1, shapeData.ly + t, shapeData.lz - 1]) / 4);
+        btr = (byte)((shapeData.blockLightMap[shapeData.lx + 1, shapeData.ly, shapeData.lz] + shapeData.blockLightMap[shapeData.lx + 1, shapeData.ly, shapeData.lz + 1] + shapeData.blockLightMap[shapeData.lx + 1, shapeData.ly + t, shapeData.lz] + shapeData.blockLightMap[shapeData.lx + 1, shapeData.ly + t, shapeData.lz + 1]) / 4);
+        bbr = (byte)((shapeData.blockLightMap[shapeData.lx + 1, shapeData.ly, shapeData.lz] + shapeData.blockLightMap[shapeData.lx + 1, shapeData.ly, shapeData.lz + 1] + shapeData.blockLightMap[shapeData.lx + 1, shapeData.ly - b, shapeData.lz] + shapeData.blockLightMap[shapeData.lx + 1, shapeData.ly - b, shapeData.lz + 1]) / 4);
+        meshData.AddColors(shapeData.textureMap, sbl, stl, str, sbr, bbl, btl, btr, bbr);
         return;
       case LightFace.LEFT:
         b = (shapeData.y == 0 ? 0 : 1);
         t = (shapeData.y == 255 ? 0 : 1);
-        br = (byte)((shapeData.lightMap[shapeData.lx - 1, shapeData.ly, shapeData.lz] + shapeData.lightMap[shapeData.lx - 1, shapeData.ly, shapeData.lz - 1] + shapeData.lightMap[shapeData.lx - 1, shapeData.ly - b, shapeData.lz] + shapeData.lightMap[shapeData.lx - 1, shapeData.ly - b, shapeData.lz - 1]) / 4);
-        tr = (byte)((shapeData.lightMap[shapeData.lx - 1, shapeData.ly, shapeData.lz] + shapeData.lightMap[shapeData.lx - 1, shapeData.ly, shapeData.lz - 1] + shapeData.lightMap[shapeData.lx - 1, shapeData.ly + t, shapeData.lz] + shapeData.lightMap[shapeData.lx - 1, shapeData.ly + t, shapeData.lz - 1]) / 4);
-        tl = (byte)((shapeData.lightMap[shapeData.lx - 1, shapeData.ly, shapeData.lz] + shapeData.lightMap[shapeData.lx - 1, shapeData.ly, shapeData.lz + 1] + shapeData.lightMap[shapeData.lx - 1, shapeData.ly + t, shapeData.lz] + shapeData.lightMap[shapeData.lx - 1, shapeData.ly + t, shapeData.lz + 1]) / 4);
-        bl = (byte)((shapeData.lightMap[shapeData.lx - 1, shapeData.ly, shapeData.lz] + shapeData.lightMap[shapeData.lx - 1, shapeData.ly, shapeData.lz + 1] + shapeData.lightMap[shapeData.lx - 1, shapeData.ly - b, shapeData.lz] + shapeData.lightMap[shapeData.lx - 1, shapeData.ly - b, shapeData.lz + 1]) / 4);
-        meshData.AddColors(shapeData.textureMap, bl, tl, tr, br);
+        sbr = (byte)((shapeData.sunLightMap[shapeData.lx - 1, shapeData.ly, shapeData.lz] + shapeData.sunLightMap[shapeData.lx - 1, shapeData.ly, shapeData.lz - 1] + shapeData.sunLightMap[shapeData.lx - 1, shapeData.ly - b, shapeData.lz] + shapeData.sunLightMap[shapeData.lx - 1, shapeData.ly - b, shapeData.lz - 1]) / 4);
+        str = (byte)((shapeData.sunLightMap[shapeData.lx - 1, shapeData.ly, shapeData.lz] + shapeData.sunLightMap[shapeData.lx - 1, shapeData.ly, shapeData.lz - 1] + shapeData.sunLightMap[shapeData.lx - 1, shapeData.ly + t, shapeData.lz] + shapeData.sunLightMap[shapeData.lx - 1, shapeData.ly + t, shapeData.lz - 1]) / 4);
+        stl = (byte)((shapeData.sunLightMap[shapeData.lx - 1, shapeData.ly, shapeData.lz] + shapeData.sunLightMap[shapeData.lx - 1, shapeData.ly, shapeData.lz + 1] + shapeData.sunLightMap[shapeData.lx - 1, shapeData.ly + t, shapeData.lz] + shapeData.sunLightMap[shapeData.lx - 1, shapeData.ly + t, shapeData.lz + 1]) / 4);
+        sbl = (byte)((shapeData.sunLightMap[shapeData.lx - 1, shapeData.ly, shapeData.lz] + shapeData.sunLightMap[shapeData.lx - 1, shapeData.ly, shapeData.lz + 1] + shapeData.sunLightMap[shapeData.lx - 1, shapeData.ly - b, shapeData.lz] + shapeData.sunLightMap[shapeData.lx - 1, shapeData.ly - b, shapeData.lz + 1]) / 4);
+        
+        bbr = (byte)((shapeData.blockLightMap[shapeData.lx - 1, shapeData.ly, shapeData.lz] + shapeData.blockLightMap[shapeData.lx - 1, shapeData.ly, shapeData.lz - 1] + shapeData.blockLightMap[shapeData.lx - 1, shapeData.ly - b, shapeData.lz] + shapeData.blockLightMap[shapeData.lx - 1, shapeData.ly - b, shapeData.lz - 1]) / 4);
+        btr = (byte)((shapeData.blockLightMap[shapeData.lx - 1, shapeData.ly, shapeData.lz] + shapeData.blockLightMap[shapeData.lx - 1, shapeData.ly, shapeData.lz - 1] + shapeData.blockLightMap[shapeData.lx - 1, shapeData.ly + t, shapeData.lz] + shapeData.blockLightMap[shapeData.lx - 1, shapeData.ly + t, shapeData.lz - 1]) / 4);
+        btl = (byte)((shapeData.blockLightMap[shapeData.lx - 1, shapeData.ly, shapeData.lz] + shapeData.blockLightMap[shapeData.lx - 1, shapeData.ly, shapeData.lz + 1] + shapeData.blockLightMap[shapeData.lx - 1, shapeData.ly + t, shapeData.lz] + shapeData.blockLightMap[shapeData.lx - 1, shapeData.ly + t, shapeData.lz + 1]) / 4);
+        bbl = (byte)((shapeData.blockLightMap[shapeData.lx - 1, shapeData.ly, shapeData.lz] + shapeData.blockLightMap[shapeData.lx - 1, shapeData.ly, shapeData.lz + 1] + shapeData.blockLightMap[shapeData.lx - 1, shapeData.ly - b, shapeData.lz] + shapeData.blockLightMap[shapeData.lx - 1, shapeData.ly - b, shapeData.lz + 1]) / 4);
+        meshData.AddColors(shapeData.textureMap, sbl, stl, str, sbr, bbl, btl, btr, bbr);
         return;
       case LightFace.TOP:
         b = (shapeData.y == 0 ? 0 : 1);
         t = (shapeData.y == 255 ? 0 : 1);
-        bl = (byte)((shapeData.lightMap[shapeData.lx, shapeData.ly + t, shapeData.lz] + shapeData.lightMap[shapeData.lx - 1, shapeData.ly + t, shapeData.lz] + shapeData.lightMap[shapeData.lx, shapeData.ly + t, shapeData.lz - 1] + shapeData.lightMap[shapeData.lx - 1, shapeData.ly + t, shapeData.lz - 1]) / 4);
-        tl = (byte)((shapeData.lightMap[shapeData.lx, shapeData.ly + t, shapeData.lz] + shapeData.lightMap[shapeData.lx - 1, shapeData.ly + t, shapeData.lz] + shapeData.lightMap[shapeData.lx, shapeData.ly + t, shapeData.lz + 1] + shapeData.lightMap[shapeData.lx - 1, shapeData.ly + t, shapeData.lz + 1]) / 4);
-        tr = (byte)((shapeData.lightMap[shapeData.lx, shapeData.ly + t, shapeData.lz] + shapeData.lightMap[shapeData.lx + 1, shapeData.ly + t, shapeData.lz] + shapeData.lightMap[shapeData.lx, shapeData.ly + t, shapeData.lz + 1] + shapeData.lightMap[shapeData.lx + 1, shapeData.ly + t, shapeData.lz + 1]) / 4);
-        br = (byte)((shapeData.lightMap[shapeData.lx, shapeData.ly + t, shapeData.lz] + shapeData.lightMap[shapeData.lx + 1, shapeData.ly + t, shapeData.lz] + shapeData.lightMap[shapeData.lx, shapeData.ly + t, shapeData.lz - 1] + shapeData.lightMap[shapeData.lx + 1, shapeData.ly + t, shapeData.lz - 1]) / 4);
-        meshData.AddColors(shapeData.textureMap, bl, tl, tr, br);
+        sbl = (byte)((shapeData.sunLightMap[shapeData.lx, shapeData.ly + t, shapeData.lz] + shapeData.sunLightMap[shapeData.lx - 1, shapeData.ly + t, shapeData.lz] + shapeData.sunLightMap[shapeData.lx, shapeData.ly + t, shapeData.lz - 1] + shapeData.sunLightMap[shapeData.lx - 1, shapeData.ly + t, shapeData.lz - 1]) / 4);
+        stl = (byte)((shapeData.sunLightMap[shapeData.lx, shapeData.ly + t, shapeData.lz] + shapeData.sunLightMap[shapeData.lx - 1, shapeData.ly + t, shapeData.lz] + shapeData.sunLightMap[shapeData.lx, shapeData.ly + t, shapeData.lz + 1] + shapeData.sunLightMap[shapeData.lx - 1, shapeData.ly + t, shapeData.lz + 1]) / 4);
+        str = (byte)((shapeData.sunLightMap[shapeData.lx, shapeData.ly + t, shapeData.lz] + shapeData.sunLightMap[shapeData.lx + 1, shapeData.ly + t, shapeData.lz] + shapeData.sunLightMap[shapeData.lx, shapeData.ly + t, shapeData.lz + 1] + shapeData.sunLightMap[shapeData.lx + 1, shapeData.ly + t, shapeData.lz + 1]) / 4);
+        sbr = (byte)((shapeData.sunLightMap[shapeData.lx, shapeData.ly + t, shapeData.lz] + shapeData.sunLightMap[shapeData.lx + 1, shapeData.ly + t, shapeData.lz] + shapeData.sunLightMap[shapeData.lx, shapeData.ly + t, shapeData.lz - 1] + shapeData.sunLightMap[shapeData.lx + 1, shapeData.ly + t, shapeData.lz - 1]) / 4);
+        
+        bbl = (byte)((shapeData.blockLightMap[shapeData.lx, shapeData.ly + t, shapeData.lz] + shapeData.blockLightMap[shapeData.lx - 1, shapeData.ly + t, shapeData.lz] + shapeData.blockLightMap[shapeData.lx, shapeData.ly + t, shapeData.lz - 1] + shapeData.blockLightMap[shapeData.lx - 1, shapeData.ly + t, shapeData.lz - 1]) / 4);
+        btl = (byte)((shapeData.blockLightMap[shapeData.lx, shapeData.ly + t, shapeData.lz] + shapeData.blockLightMap[shapeData.lx - 1, shapeData.ly + t, shapeData.lz] + shapeData.blockLightMap[shapeData.lx, shapeData.ly + t, shapeData.lz + 1] + shapeData.blockLightMap[shapeData.lx - 1, shapeData.ly + t, shapeData.lz + 1]) / 4);
+        btr = (byte)((shapeData.blockLightMap[shapeData.lx, shapeData.ly + t, shapeData.lz] + shapeData.blockLightMap[shapeData.lx + 1, shapeData.ly + t, shapeData.lz] + shapeData.blockLightMap[shapeData.lx, shapeData.ly + t, shapeData.lz + 1] + shapeData.blockLightMap[shapeData.lx + 1, shapeData.ly + t, shapeData.lz + 1]) / 4);
+        bbr = (byte)((shapeData.blockLightMap[shapeData.lx, shapeData.ly + t, shapeData.lz] + shapeData.blockLightMap[shapeData.lx + 1, shapeData.ly + t, shapeData.lz] + shapeData.blockLightMap[shapeData.lx, shapeData.ly + t, shapeData.lz - 1] + shapeData.blockLightMap[shapeData.lx + 1, shapeData.ly + t, shapeData.lz - 1]) / 4);
+        meshData.AddColors(shapeData.textureMap, sbl, stl, str, sbr, bbl, btl, btr, bbr);
         return;
       case LightFace.BOTTOM:
         b = (shapeData.y == 0 ? 0 : 1);
         t = (shapeData.y == 255 ? 0 : 1);
-        tl = (byte)((shapeData.lightMap[shapeData.lx, shapeData.ly - b, shapeData.lz] + shapeData.lightMap[shapeData.lx - 1, shapeData.ly - b, shapeData.lz] + shapeData.lightMap[shapeData.lx, shapeData.ly - b, shapeData.lz - 1] + shapeData.lightMap[shapeData.lx - 1, shapeData.ly - b, shapeData.lz - 1]) / 4);
-        bl = (byte)((shapeData.lightMap[shapeData.lx, shapeData.ly - b, shapeData.lz] + shapeData.lightMap[shapeData.lx - 1, shapeData.ly - b, shapeData.lz] + shapeData.lightMap[shapeData.lx, shapeData.ly - b, shapeData.lz + 1] + shapeData.lightMap[shapeData.lx - 1, shapeData.ly - b, shapeData.lz + 1]) / 4);
-        br = (byte)((shapeData.lightMap[shapeData.lx, shapeData.ly - b, shapeData.lz] + shapeData.lightMap[shapeData.lx + 1, shapeData.ly - b, shapeData.lz] + shapeData.lightMap[shapeData.lx, shapeData.ly - b, shapeData.lz + 1] + shapeData.lightMap[shapeData.lx + 1, shapeData.ly - b, shapeData.lz + 1]) / 4);
-        tr = (byte)((shapeData.lightMap[shapeData.lx, shapeData.ly - b, shapeData.lz] + shapeData.lightMap[shapeData.lx + 1, shapeData.ly - b, shapeData.lz] + shapeData.lightMap[shapeData.lx, shapeData.ly - b, shapeData.lz - 1] + shapeData.lightMap[shapeData.lx + 1, shapeData.ly - b, shapeData.lz - 1]) / 4);
-        meshData.AddColors(shapeData.textureMap, bl, tl, tr, br);
+        stl = (byte)((shapeData.sunLightMap[shapeData.lx, shapeData.ly - b, shapeData.lz] + shapeData.sunLightMap[shapeData.lx - 1, shapeData.ly - b, shapeData.lz] + shapeData.sunLightMap[shapeData.lx, shapeData.ly - b, shapeData.lz - 1] + shapeData.sunLightMap[shapeData.lx - 1, shapeData.ly - b, shapeData.lz - 1]) / 4);
+        sbl = (byte)((shapeData.sunLightMap[shapeData.lx, shapeData.ly - b, shapeData.lz] + shapeData.sunLightMap[shapeData.lx - 1, shapeData.ly - b, shapeData.lz] + shapeData.sunLightMap[shapeData.lx, shapeData.ly - b, shapeData.lz + 1] + shapeData.sunLightMap[shapeData.lx - 1, shapeData.ly - b, shapeData.lz + 1]) / 4);
+        sbr = (byte)((shapeData.sunLightMap[shapeData.lx, shapeData.ly - b, shapeData.lz] + shapeData.sunLightMap[shapeData.lx + 1, shapeData.ly - b, shapeData.lz] + shapeData.sunLightMap[shapeData.lx, shapeData.ly - b, shapeData.lz + 1] + shapeData.sunLightMap[shapeData.lx + 1, shapeData.ly - b, shapeData.lz + 1]) / 4);
+        str = (byte)((shapeData.sunLightMap[shapeData.lx, shapeData.ly - b, shapeData.lz] + shapeData.sunLightMap[shapeData.lx + 1, shapeData.ly - b, shapeData.lz] + shapeData.sunLightMap[shapeData.lx, shapeData.ly - b, shapeData.lz - 1] + shapeData.sunLightMap[shapeData.lx + 1, shapeData.ly - b, shapeData.lz - 1]) / 4);
+        
+        btl = (byte)((shapeData.blockLightMap[shapeData.lx, shapeData.ly - b, shapeData.lz] + shapeData.blockLightMap[shapeData.lx - 1, shapeData.ly - b, shapeData.lz] + shapeData.blockLightMap[shapeData.lx, shapeData.ly - b, shapeData.lz - 1] + shapeData.blockLightMap[shapeData.lx - 1, shapeData.ly - b, shapeData.lz - 1]) / 4);
+        bbl = (byte)((shapeData.blockLightMap[shapeData.lx, shapeData.ly - b, shapeData.lz] + shapeData.blockLightMap[shapeData.lx - 1, shapeData.ly - b, shapeData.lz] + shapeData.blockLightMap[shapeData.lx, shapeData.ly - b, shapeData.lz + 1] + shapeData.blockLightMap[shapeData.lx - 1, shapeData.ly - b, shapeData.lz + 1]) / 4);
+        bbr = (byte)((shapeData.blockLightMap[shapeData.lx, shapeData.ly - b, shapeData.lz] + shapeData.blockLightMap[shapeData.lx + 1, shapeData.ly - b, shapeData.lz] + shapeData.blockLightMap[shapeData.lx, shapeData.ly - b, shapeData.lz + 1] + shapeData.blockLightMap[shapeData.lx + 1, shapeData.ly - b, shapeData.lz + 1]) / 4);
+        btr = (byte)((shapeData.blockLightMap[shapeData.lx, shapeData.ly - b, shapeData.lz] + shapeData.blockLightMap[shapeData.lx + 1, shapeData.ly - b, shapeData.lz] + shapeData.blockLightMap[shapeData.lx, shapeData.ly - b, shapeData.lz - 1] + shapeData.blockLightMap[shapeData.lx + 1, shapeData.ly - b, shapeData.lz - 1]) / 4);
+        meshData.AddColors(shapeData.textureMap, sbl, stl, str, sbr, bbl, btl, btr, bbr);
         return;
       case LightFace.FRONT:
         b = (shapeData.y == 0 ? 0 : 1);
         t = (shapeData.y == 255 ? 0 : 1);
-        br = (byte)((shapeData.lightMap[shapeData.lx, shapeData.ly, shapeData.lz + 1] + shapeData.lightMap[shapeData.lx - 1, shapeData.ly, shapeData.lz + 1] + shapeData.lightMap[shapeData.lx, shapeData.ly - b, shapeData.lz + 1] + shapeData.lightMap[shapeData.lx - 1, shapeData.ly - b, shapeData.lz + 1]) / 4);
-        tr = (byte)((shapeData.lightMap[shapeData.lx, shapeData.ly, shapeData.lz + 1] + shapeData.lightMap[shapeData.lx - 1, shapeData.ly, shapeData.lz + 1] + shapeData.lightMap[shapeData.lx, shapeData.ly + t, shapeData.lz + 1] + shapeData.lightMap[shapeData.lx - 1, shapeData.ly + t, shapeData.lz + 1]) / 4);
-        tl = (byte)((shapeData.lightMap[shapeData.lx, shapeData.ly, shapeData.lz + 1] + shapeData.lightMap[shapeData.lx + 1, shapeData.ly, shapeData.lz + 1] + shapeData.lightMap[shapeData.lx, shapeData.ly + t, shapeData.lz + 1] + shapeData.lightMap[shapeData.lx + 1, shapeData.ly + t, shapeData.lz + 1]) / 4);
-        bl = (byte)((shapeData.lightMap[shapeData.lx, shapeData.ly, shapeData.lz + 1] + shapeData.lightMap[shapeData.lx + 1, shapeData.ly, shapeData.lz + 1] + shapeData.lightMap[shapeData.lx, shapeData.ly - b, shapeData.lz + 1] + shapeData.lightMap[shapeData.lx + 1, shapeData.ly - b, shapeData.lz + 1]) / 4);
-        meshData.AddColors(shapeData.textureMap, bl, tl, tr, br);
+        sbr = (byte)((shapeData.sunLightMap[shapeData.lx, shapeData.ly, shapeData.lz + 1] + shapeData.sunLightMap[shapeData.lx - 1, shapeData.ly, shapeData.lz + 1] + shapeData.sunLightMap[shapeData.lx, shapeData.ly - b, shapeData.lz + 1] + shapeData.sunLightMap[shapeData.lx - 1, shapeData.ly - b, shapeData.lz + 1]) / 4);
+        str = (byte)((shapeData.sunLightMap[shapeData.lx, shapeData.ly, shapeData.lz + 1] + shapeData.sunLightMap[shapeData.lx - 1, shapeData.ly, shapeData.lz + 1] + shapeData.sunLightMap[shapeData.lx, shapeData.ly + t, shapeData.lz + 1] + shapeData.sunLightMap[shapeData.lx - 1, shapeData.ly + t, shapeData.lz + 1]) / 4);
+        stl = (byte)((shapeData.sunLightMap[shapeData.lx, shapeData.ly, shapeData.lz + 1] + shapeData.sunLightMap[shapeData.lx + 1, shapeData.ly, shapeData.lz + 1] + shapeData.sunLightMap[shapeData.lx, shapeData.ly + t, shapeData.lz + 1] + shapeData.sunLightMap[shapeData.lx + 1, shapeData.ly + t, shapeData.lz + 1]) / 4);
+        sbl = (byte)((shapeData.sunLightMap[shapeData.lx, shapeData.ly, shapeData.lz + 1] + shapeData.sunLightMap[shapeData.lx + 1, shapeData.ly, shapeData.lz + 1] + shapeData.sunLightMap[shapeData.lx, shapeData.ly - b, shapeData.lz + 1] + shapeData.sunLightMap[shapeData.lx + 1, shapeData.ly - b, shapeData.lz + 1]) / 4);
+        
+        bbr = (byte)((shapeData.blockLightMap[shapeData.lx, shapeData.ly, shapeData.lz + 1] + shapeData.blockLightMap[shapeData.lx - 1, shapeData.ly, shapeData.lz + 1] + shapeData.blockLightMap[shapeData.lx, shapeData.ly - b, shapeData.lz + 1] + shapeData.blockLightMap[shapeData.lx - 1, shapeData.ly - b, shapeData.lz + 1]) / 4);
+        btr = (byte)((shapeData.blockLightMap[shapeData.lx, shapeData.ly, shapeData.lz + 1] + shapeData.blockLightMap[shapeData.lx - 1, shapeData.ly, shapeData.lz + 1] + shapeData.blockLightMap[shapeData.lx, shapeData.ly + t, shapeData.lz + 1] + shapeData.blockLightMap[shapeData.lx - 1, shapeData.ly + t, shapeData.lz + 1]) / 4);
+        btl = (byte)((shapeData.blockLightMap[shapeData.lx, shapeData.ly, shapeData.lz + 1] + shapeData.blockLightMap[shapeData.lx + 1, shapeData.ly, shapeData.lz + 1] + shapeData.blockLightMap[shapeData.lx, shapeData.ly + t, shapeData.lz + 1] + shapeData.blockLightMap[shapeData.lx + 1, shapeData.ly + t, shapeData.lz + 1]) / 4);
+        bbl = (byte)((shapeData.blockLightMap[shapeData.lx, shapeData.ly, shapeData.lz + 1] + shapeData.blockLightMap[shapeData.lx + 1, shapeData.ly, shapeData.lz + 1] + shapeData.blockLightMap[shapeData.lx, shapeData.ly - b, shapeData.lz + 1] + shapeData.blockLightMap[shapeData.lx + 1, shapeData.ly - b, shapeData.lz + 1]) / 4);
+        meshData.AddColors(shapeData.textureMap, sbl, stl, str, sbr, bbl, btl, btr, bbr);
         return;
       case LightFace.BACK:
         b = (shapeData.y == 0 ? 0 : 1);
         t = (shapeData.y == 255 ? 0 : 1);
-        bl = (byte)((shapeData.lightMap[shapeData.lx, shapeData.ly, shapeData.lz - 1] + shapeData.lightMap[shapeData.lx - 1, shapeData.ly, shapeData.lz - 1] + shapeData.lightMap[shapeData.lx, shapeData.ly - b, shapeData.lz - 1] + shapeData.lightMap[shapeData.lx - 1, shapeData.ly - b, shapeData.lz - 1]) / 4);
-        tl = (byte)((shapeData.lightMap[shapeData.lx, shapeData.ly, shapeData.lz - 1] + shapeData.lightMap[shapeData.lx - 1, shapeData.ly, shapeData.lz - 1] + shapeData.lightMap[shapeData.lx, shapeData.ly + t, shapeData.lz - 1] + shapeData.lightMap[shapeData.lx - 1, shapeData.ly + t, shapeData.lz - 1]) / 4);
-        tr = (byte)((shapeData.lightMap[shapeData.lx, shapeData.ly, shapeData.lz - 1] + shapeData.lightMap[shapeData.lx + 1, shapeData.ly, shapeData.lz - 1] + shapeData.lightMap[shapeData.lx, shapeData.ly + t, shapeData.lz - 1] + shapeData.lightMap[shapeData.lx + 1, shapeData.ly + t, shapeData.lz - 1]) / 4);
-        br = (byte)((shapeData.lightMap[shapeData.lx, shapeData.ly, shapeData.lz - 1] + shapeData.lightMap[shapeData.lx + 1, shapeData.ly, shapeData.lz - 1] + shapeData.lightMap[shapeData.lx, shapeData.ly - b, shapeData.lz - 1] + shapeData.lightMap[shapeData.lx + 1, shapeData.ly - b, shapeData.lz - 1]) / 4);
-        meshData.AddColors(shapeData.textureMap, bl, tl, tr, br);
+        sbl = (byte)((shapeData.sunLightMap[shapeData.lx, shapeData.ly, shapeData.lz - 1] + shapeData.sunLightMap[shapeData.lx - 1, shapeData.ly, shapeData.lz - 1] + shapeData.sunLightMap[shapeData.lx, shapeData.ly - b, shapeData.lz - 1] + shapeData.sunLightMap[shapeData.lx - 1, shapeData.ly - b, shapeData.lz - 1]) / 4);
+        stl = (byte)((shapeData.sunLightMap[shapeData.lx, shapeData.ly, shapeData.lz - 1] + shapeData.sunLightMap[shapeData.lx - 1, shapeData.ly, shapeData.lz - 1] + shapeData.sunLightMap[shapeData.lx, shapeData.ly + t, shapeData.lz - 1] + shapeData.sunLightMap[shapeData.lx - 1, shapeData.ly + t, shapeData.lz - 1]) / 4);
+        str = (byte)((shapeData.sunLightMap[shapeData.lx, shapeData.ly, shapeData.lz - 1] + shapeData.sunLightMap[shapeData.lx + 1, shapeData.ly, shapeData.lz - 1] + shapeData.sunLightMap[shapeData.lx, shapeData.ly + t, shapeData.lz - 1] + shapeData.sunLightMap[shapeData.lx + 1, shapeData.ly + t, shapeData.lz - 1]) / 4);
+        sbr = (byte)((shapeData.sunLightMap[shapeData.lx, shapeData.ly, shapeData.lz - 1] + shapeData.sunLightMap[shapeData.lx + 1, shapeData.ly, shapeData.lz - 1] + shapeData.sunLightMap[shapeData.lx, shapeData.ly - b, shapeData.lz - 1] + shapeData.sunLightMap[shapeData.lx + 1, shapeData.ly - b, shapeData.lz - 1]) / 4);
+        
+        bbl = (byte)((shapeData.blockLightMap[shapeData.lx, shapeData.ly, shapeData.lz - 1] + shapeData.blockLightMap[shapeData.lx - 1, shapeData.ly, shapeData.lz - 1] + shapeData.blockLightMap[shapeData.lx, shapeData.ly - b, shapeData.lz - 1] + shapeData.blockLightMap[shapeData.lx - 1, shapeData.ly - b, shapeData.lz - 1]) / 4);
+        btl = (byte)((shapeData.blockLightMap[shapeData.lx, shapeData.ly, shapeData.lz - 1] + shapeData.blockLightMap[shapeData.lx - 1, shapeData.ly, shapeData.lz - 1] + shapeData.blockLightMap[shapeData.lx, shapeData.ly + t, shapeData.lz - 1] + shapeData.blockLightMap[shapeData.lx - 1, shapeData.ly + t, shapeData.lz - 1]) / 4);
+        btr = (byte)((shapeData.blockLightMap[shapeData.lx, shapeData.ly, shapeData.lz - 1] + shapeData.blockLightMap[shapeData.lx + 1, shapeData.ly, shapeData.lz - 1] + shapeData.blockLightMap[shapeData.lx, shapeData.ly + t, shapeData.lz - 1] + shapeData.blockLightMap[shapeData.lx + 1, shapeData.ly + t, shapeData.lz - 1]) / 4);
+        bbr = (byte)((shapeData.blockLightMap[shapeData.lx, shapeData.ly, shapeData.lz - 1] + shapeData.blockLightMap[shapeData.lx + 1, shapeData.ly, shapeData.lz - 1] + shapeData.blockLightMap[shapeData.lx, shapeData.ly - b, shapeData.lz - 1] + shapeData.blockLightMap[shapeData.lx + 1, shapeData.ly - b, shapeData.lz - 1]) / 4);
+        meshData.AddColors(shapeData.textureMap, sbl, stl, str, sbr, bbl, btl, btr, bbr);
         return;
       default:
-        throw new ArgumentOutOfRangeException(nameof(LightFace), LightFace, "Invalid Light Face Direction!");
+        throw new ArgumentOutOfRangeException(nameof(LightFace), lightFace, "Invalid Light Face Direction!");
     }
   }
   

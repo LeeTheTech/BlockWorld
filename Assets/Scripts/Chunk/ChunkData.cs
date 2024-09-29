@@ -180,7 +180,7 @@ public class ChunkData{
       for (int x = 0; x < 16; ++x){
         highestNonAirBlock[x, z] = 0;
         for (int y = 255; y > -1; --y){
-          if (blocks[x, y, z] != BlockTypes.AIR){
+          if (ChunkLighting.IsHighestSunBlock(blocks[x, y, z])){
             highestNonAirBlock[x, z] = (byte)y;
             break;
           }
@@ -202,7 +202,7 @@ public class ChunkData{
       if (highestNonAirBlock[x, z] == y){
         highestNonAirBlock[x, z] = 0;
         for (int yy = y; yy > -1; yy--){
-          if (blocks[x, yy, z] != BlockTypes.AIR){
+          if (ChunkLighting.IsHighestSunBlock(blocks[x, yy, z])){
             highestNonAirBlock[x, z] = (byte)yy;
             break;
           }

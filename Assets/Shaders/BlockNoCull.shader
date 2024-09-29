@@ -81,6 +81,7 @@
             // Texture and lighting parameters.
             uniform sampler2D _BlockTextures; // Texture sampler for block textures.
             uniform float _MinLightLevel; // Minimum light level used in lighting calculations.
+            uniform float _GlobalLightIntensity;
 
             // Fragment shader function.
             structurePS pixel_shader(structureVS vs)
@@ -98,14 +99,22 @@
                 fixed4 sky = GetSkyColor(vs.world_vertex - _WorldSpaceCameraPos);
                 // Get sky color based on world vertex position.
                 float fade = saturate(pow(distance(_WorldSpaceCameraPos.xz, vs.world_vertex.xz) / (16.0 - 1.0) / 16.0, 12)); // Compute fade factor based on distance from the camera.
-                float4 vertexColor = vs.color; // Get vertex color.
-                c.rgb *= vertexColor.rgb; // Multiply texture color by vertex color.
 
-                float lightLevel = vertexColor.a * 16; // Compute light level from vertex alpha.
-                float light = lerp(_MinLightLevel, 1, lightLevel);
-                // Interpolate light level between minimum and full light.
+                float sunLight = vs.color.g * 16; // Extract sunlight (green channel)
+                float blockLight = vs.color.b * 16; // Extract block light (blue channel)
+                
+                float blockLightWeight = 1.0 - _GlobalLightIntensity;
+                float sunLightWeight = _GlobalLightIntensity;
 
-                c *= light; // Apply light to the texture color.
+                // Blend the two lights based on the weights
+                float light = (blockLight * blockLightWeight) + (sunLight * sunLightWeight);
+
+                // Ensure there's always a minimum light contribution to avoid complete darkness at night
+                float minLightContribution = 0.2; // You can tweak this value
+                light = max(light, minLightContribution); // Ensure minimum light contribution
+
+                // Apply the blended light to the texture color
+                c.rgb *= light;
                 c.rgb += diffuseColor; // Add diffuse color to the texture color.
                 c.a = 1; // Set alpha to 1 (fully opaque).
 

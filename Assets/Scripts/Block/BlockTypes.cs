@@ -33,6 +33,7 @@ public static class BlockTypes{
   public const byte WATER = 130;
   public const byte ICE = 131;
   public const byte FOLIAGE = 132;
+  public const byte POPPY = 133;
   public const byte AIR = 255;
 
   public static Dictionary<byte, byte> lightLevel;
@@ -71,7 +72,8 @@ public static class BlockTypes{
         { LAVA, 15 },
         { FOLIAGE, 0 },
         { TNT, 0 },
-        { GRAVEL, 0 }
+        { GRAVEL, 0 },
+        { POPPY, 0 }
     };
 
     density = new Dictionary<byte, byte>{
@@ -104,7 +106,8 @@ public static class BlockTypes{
         { LAVA, 255 },
         { FOLIAGE, 60 },
         { TNT, 255 },
-        { GRAVEL, 255 }
+        { GRAVEL, 255 },
+        { POPPY, 255 }
     };
 
     digSound = new Dictionary<byte, AudioManager.Dig.Type>{
@@ -137,7 +140,8 @@ public static class BlockTypes{
         { LAVA, AudioManager.Dig.Type.Grass },
         { FOLIAGE, AudioManager.Dig.Type.Grass },
         { TNT, AudioManager.Dig.Type.Grass },
-        { GRAVEL, AudioManager.Dig.Type.Grass }
+        { GRAVEL, AudioManager.Dig.Type.Grass },
+        { POPPY, AudioManager.Dig.Type.Grass }
     };
 
     blockShape = new Dictionary<byte, BlockShapes.BlockShape>{
@@ -170,7 +174,8 @@ public static class BlockTypes{
         { WATER, BlockShapes.BlockShape.CUBE },
         { FOLIAGE, BlockShapes.BlockShape.FOLIAGE },
         { TNT, BlockShapes.BlockShape.CUBE },
-        { GRAVEL, BlockShapes.BlockShape.CUBE }
+        { GRAVEL, BlockShapes.BlockShape.CUBE },
+        { POPPY, BlockShapes.BlockShape.FOLIAGE }
     };
   }
 
@@ -250,6 +255,7 @@ public static class BlockTypes{
 
   public static bool GenerateCollider(byte blockType){
     switch (blockType){
+      case POPPY:
       case FOLIAGE:
       case LAVA:
       case WATER:

@@ -60,7 +60,8 @@ public class Chunk : MonoBehaviour{
 
     UnityEngine.Profiling.Profiler.BeginSample("SIMULATING LIGHT");
     
-    byte[,,] lightMap = LightingUtil.SimulateLighting(chunkMap);
+    byte[,,] blockLightMap = ChunkLighting.SimulateBlockLighting(chunkMap);
+    byte[,,] sunLightMap = ChunkLighting.SimulateSunLighting(chunkMap);
     
     UnityEngine.Profiling.Profiler.EndSample();
 
@@ -83,7 +84,7 @@ public class Chunk : MonoBehaviour{
           byte bU = y == 255 ? BlockTypes.AIR : chunkData.GetBlocks()[x, y + 1, z];
           byte bD = y == 0 ? BlockTypes.AIR : chunkData.GetBlocks()[x, y - 1, z];
           
-          BlockShapes.AddFaces(new BlockShapes.ShapeData(position, textureMapper.map[blockType], lightMap, blockState, blockType, x, y, z, bR, bL, bF, bB, bU, bD, lx, ly, lz), GetCorrectMeshData(blockType));
+          BlockShapes.AddFaces(new BlockShapes.ShapeData(position, textureMapper.map[blockType], blockLightMap, sunLightMap, blockState, blockType, x, y, z, bR, bL, bF, bB, bU, bD, lx, ly, lz), GetCorrectMeshData(blockType));
         }
       }
     }
@@ -138,6 +139,7 @@ public class Chunk : MonoBehaviour{
   
   private ChunkMeshData GetCorrectMeshData(byte block){
     switch (block){
+      case BlockTypes.POPPY:
       case BlockTypes.FOLIAGE:
         return chunkMeshData.noCullMeshData;
       case BlockTypes.ICE:

@@ -40,7 +40,7 @@
         void surf(Input IN, inout SurfaceOutput o)
         {
             float2 uv = IN.uv_BlockTextures; // Get UV coordinates from input.
-            uv = uv / 512.0; // Scale UV coordinates (likely for texture atlas).
+            uv = uv / 512.0; // Scale UV coordinates 
             uv.y = 1 - uv.y; // Flip UV vertically.
             fixed4 c = tex2D(_BlockTextures, uv); // Sample the block texture at the given UV coordinates.
             clip(c.a - 0.1); // Clip pixels with alpha less than 0.1 (create transparency).

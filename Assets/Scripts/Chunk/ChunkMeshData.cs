@@ -33,14 +33,14 @@ public class ChunkMeshData{
     uvs.Add(face.br);
   }
 
-  public void AddColors(TextureMapper.TextureMap textureMap, byte lBL, byte lTL, byte lTR, byte lBR){
-    Color32 c = textureMap.defaultColor;
-    colors.Add(new Color32(c.r, c.g, c.b, lBL));
-    colors.Add(new Color32(c.r, c.g, c.b, lTL));
-    colors.Add(new Color32(c.r, c.g, c.b, lTR));
-    colors.Add(new Color32(c.r, c.g, c.b, lBR));
+  public void AddColors(TextureMapper.TextureMap textureMap, byte slBL, byte slTL, byte slTR, byte slBR, byte blBL, byte blTL, byte blTR, byte blBR){
+    //Color32 c = textureMap.defaultColor;
+    colors.Add(new Color32(0, slBL, blBL, 0));
+    colors.Add(new Color32(0, slTL, blTL, 0));
+    colors.Add(new Color32(0, slTR, blTR, 0));
+    colors.Add(new Color32(0, slBR, blBR, 0));
   }
-
+  
   public void AddFace(Vector3 a, Vector3 b, Vector3 c, Vector3 d, Vector3 normal, bool collider){
     int index = vertices.Count;
     vertices.Add(a);
