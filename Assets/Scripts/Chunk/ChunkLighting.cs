@@ -67,14 +67,14 @@ public static class ChunkLighting{
           simulateQueue.Enqueue(new Vector3Int(x, y, z));
         }
         break;
-      case BlockTypes.LAVA:
-        for (int newY = y + 1; newY < 5; newY++){
-          if (lightMap[x, newY, z] < 12){
-            lightMap[x, newY, z] = 12;
-            simulateQueue.Enqueue(new Vector3Int(x, newY, z));
-          }
-        }
-        break;
+      // case BlockTypes.LAVA:
+      //   for (int newY = y + 1; newY < 5; newY++){
+      //     if (lightMap[x, newY, z] < 12){
+      //       lightMap[x, newY, z] = 12;
+      //       simulateQueue.Enqueue(new Vector3Int(x, newY, z));
+      //     }
+      //   }
+      //   break;
     }
   }
 
@@ -162,14 +162,14 @@ public static class ChunkLighting{
           simulateQueue.Enqueue(new Vector3Int(x, y, z));
         }
         break;
-      case BlockTypes.LAVA:
-        for (int newY = y + 1; newY < 5; newY++){
-          if (lightMap[x, newY, z] < 12){
-            lightMap[x, newY, z] = 12;
-            simulateQueue.Enqueue(new Vector3Int(x, newY, z));
-          }
-        }
-        break;
+      // case BlockTypes.LAVA:
+      //   for (int newY = y + 1; newY < 5; newY++){
+      //     if (lightMap[x, newY, z] < 12){
+      //       lightMap[x, newY, z] = 12;
+      //       simulateQueue.Enqueue(new Vector3Int(x, newY, z));
+      //     }
+      //   }
+      //   break;
     }
   }
 

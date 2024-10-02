@@ -164,7 +164,7 @@ public class ChunkDataManager{
       }
     }
   }
-
+  
   public void UnloadChunk(Vector2Int position){
     RemoveReferenceInNeighbors(position, position);
     RemoveReferenceInNeighbors(position + nFront, position);

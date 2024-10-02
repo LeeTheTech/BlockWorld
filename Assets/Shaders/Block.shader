@@ -108,7 +108,7 @@
                 float light = (blockLight * blockLightWeight) + (sunLight * sunLightWeight);
 
                 // Ensure there's always a minimum light contribution to avoid complete darkness at night
-                float minLightContribution = 0.2; // You can tweak this value
+                float minLightContribution = 0.1; // You can tweak this value
                 light = max(light, minLightContribution); // Ensure minimum light contribution
 
                 // Apply the blended light to the texture color

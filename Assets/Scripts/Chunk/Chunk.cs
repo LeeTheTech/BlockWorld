@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
 public class Chunk : MonoBehaviour{
   public MeshFilter meshFilter;
@@ -106,7 +107,7 @@ public class Chunk : MonoBehaviour{
   }
 
 
-  public void Tick(ChunkDataManager chunkDataManager){
+  public void Tick(ChunkDataManager chunkDataManager, List<Vector2Int> chunksToRebuild){
     ChunkData chunkData = chunkDataManager.data[position];
     byte[,,] blocks = chunkData.GetBlocks();
     byte[,,] blockStates = chunkData.GetBlockStates();
@@ -120,21 +121,19 @@ public class Chunk : MonoBehaviour{
           byte state = blockStates[x, y, z];
           if (BlockTypes.IsLiquid(block) && BlockStateUtil.IsTicking(state)){
             rebuild = true;
-            LiquidUtil.HandleLiquidTick(chunkDataManager, position, block, state, x, y, z, blocks, blockStates);
+            ChunkLiquid.HandleLiquidTick(chunkDataManager, chunkData.position, chunksToRebuild, block, state, x, y, z, blocks, blockStates);
           } 
           else if (BlockTypes.IsExplosive(block) && BlockStateUtil.IsTicking(state)){
             rebuild = true;
-            ExplosiveUtil.HandleExplosiveTick(chunkDataManager, position, block, state, x, y, z, blocks, blockStates);
-          } 
-          // else if (BlockStateUtil.ShouldBreak(state)){
-          //   rebuild = true;
-          //   blocks[x, y, z] = BlockTypes.AIR;
-          //   blockStates[x, y, z] = 0;
-          // }
+            ChunkExplosive.HandleExplosiveTick(chunkDataManager, chunkData.position, chunksToRebuild, block, state, x, y, z, blocks, blockStates);
+          }
         }
       }
     }
-    if (rebuild) Build(chunkDataManager);
+
+    if (rebuild){
+      chunksToRebuild.Add(new Vector2Int(chunkData.position.x, chunkData.position.y));
+    }
   }
   
   private ChunkMeshData GetCorrectMeshData(byte block){

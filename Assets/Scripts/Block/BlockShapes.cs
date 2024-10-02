@@ -524,6 +524,7 @@ public static class BlockShapes{
     }
     if (BlockTypes.IsTransparentCutoutBlock(block) && BlockTypes.IsTransparentCutoutBlock(targetBlock)) return false;
     if (BlockTypes.IsSlab(targetBlock)) return true;
+    //TODO fix issue between chunks
     if (BlockTypes.IsSolidLiquid(block) && BlockTypes.IsSolidLiquid(targetBlock)) return false;
     if (BlockTypes.IsSolidLiquid(targetBlock)) return true;
     if (BlockTypes.IsStair(block) || BlockTypes.IsStair(targetBlock)) return true;

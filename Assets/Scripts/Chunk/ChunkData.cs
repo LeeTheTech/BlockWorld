@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 public class ChunkData{
   public Vector2Int position;
-  private byte[,,] blocks, light, blockStates;
+  private byte[,,] blocks, blockStates;
   public bool terrainReady{ get; private set; }
   public bool startedLoadingDetails{ get; private set; }
   public bool chunkReady{ get; private set; }
@@ -68,15 +68,6 @@ public class ChunkData{
     return blocks;
   }
 
-  public byte[,,] GetLights(){
-    return light;
-  }
-
-  public byte[,,] NewLights(){
-    light = new byte[16, 256, 16];
-    return light;
-  }
-
   public void StartTerrainLoading(){
     loadTerrainThread = new Thread(LoadTerrain){
         IsBackground = true
@@ -101,7 +92,6 @@ public class ChunkData{
   public void LoadTerrain(){
     blocks = new byte[16, 256, 16];
     blockStates = new byte[16, 256, 16];
-    light = new byte[16, 256, 16];
     Vector2Int worldPos = position * 16;
 
     // Terrain
@@ -169,9 +159,13 @@ public class ChunkData{
       ChunkSaveData.C c = changes[i];
       blocks[c.x, c.y, c.z] = c.b;
       blockStates[c.x, c.y, c.z] = c.bs;
-      byte lightLevel = BlockTypes.lightLevel[c.b];
-      if (lightLevel > 0){
-        lightSources[new Vector3Int(c.x, c.y, c.z)] = lightLevel;
+      
+      Vector3Int lightSource = new Vector3Int(c.x, c.y, c.z);
+      if (BlockTypes.lightLevel[c.b] > 0){
+        lightSources[lightSource] = BlockTypes.lightLevel[c.b];
+      }
+      else if (lightSources.ContainsKey(lightSource)){
+        lightSources.Remove(lightSource);
       }
     }
 
@@ -198,7 +192,7 @@ public class ChunkData{
     blocks[x, y, z] = blockType;
     blockStates[x, y, z] = blockState;
     
-    if (blockType == BlockTypes.AIR){
+    if (!ChunkLighting.IsHighestSunBlock(blockType)){
       if (highestNonAirBlock[x, z] == y){
         highestNonAirBlock[x, z] = 0;
         for (int yy = y; yy > -1; yy--){

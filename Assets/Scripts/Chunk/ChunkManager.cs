@@ -35,11 +35,19 @@ public class ChunkManager : MonoBehaviour{
   private readonly Vector2Int nLeft = new(-1, 0);
   private readonly Vector2Int nRight = new(1, 0);
   
+  private readonly Vector2Int nFrontLeft = new(-1, 1);
+  private readonly Vector2Int nFrontRight = new(1, 1);
+  private readonly Vector2Int nBackLeft = new(-1, -1);
+  private readonly Vector2Int nBackRight = new(1, -1);
+  
   //ShouldTick Thread
   private Thread shouldTickThread;
   private readonly System.Object shouldTickLock = new();
   private Queue<Vector2Int> tickQueue;
+  private Queue<Vector2Int> tickModifiedRebuildQueue;
+  private List<Vector2Int> tickChunksToRebuild;
   private const int tickDistance = 3;
+  private bool tickRan;
 
   public void Initialize(){
     renderDistance = GameManager.instance.gameSettings.RenderDistance;
@@ -50,6 +58,8 @@ public class ChunkManager : MonoBehaviour{
     activeChunks = new List<Vector2Int>();
     loadQueue = new List<Vector2Int>();
     tickQueue = new Queue<Vector2Int>();
+    tickModifiedRebuildQueue = new Queue<Vector2Int>();
+    tickChunksToRebuild = new List<Vector2Int>();
     unloadQueue = new Queue<Vector2Int>();
     modifiedRebuildQueue = new Queue<Vector2Int>();
     modifyNeighborOrder = new List<Vector2Int>();
@@ -92,13 +102,28 @@ public class ChunkManager : MonoBehaviour{
         loadQueueCount = loadQueue.Count;
 
         lock (shouldTickLock){
-          if (tickQueue.Count > 0){
-            UnityEngine.Profiling.Profiler.BeginSample("TICK CHUNK");
+          UnityEngine.Profiling.Profiler.BeginSample("TICK CHUNK");
+          // Tick chunk
+          if (tickQueue.Count > 0 && tickModifiedRebuildQueue.Count == 0){
+            tickRan = true;
             Vector2Int position = tickQueue.Dequeue();
-            if (activeChunks.Contains(position)){
-              chunkMap[position].Tick(chunkDataManager);
+            if (activeChunks.Contains(position)){ 
+              chunkMap[position].Tick(chunkDataManager, tickChunksToRebuild);
+              foreach (Vector2Int chunkPos in tickChunksToRebuild){
+                QueueTickModify(chunkPos);
+              }
+              tickChunksToRebuild.Clear();
             }
           }
+          // Process ticked chunks
+          if (tickModifiedRebuildQueue.Count > 0 && tickRan == false){
+            Vector2Int position = tickModifiedRebuildQueue.Dequeue();
+            if (activeChunks.Contains(position)){
+              chunkMap[position].Build(chunkDataManager);
+            }
+          }
+          
+          tickRan = false;
         }
         
         UnityEngine.Profiling.Profiler.EndSample();
@@ -328,6 +353,47 @@ public class ChunkManager : MonoBehaviour{
   
   public bool IsChunkAvailable(Vector2Int chunk){
     return chunkMap.ContainsKey(chunk);
+  }
+
+  private void QueueTickModify(Vector2Int chunk){
+    if (!chunkMap.ContainsKey(chunk)) throw new System.Exception("Chunk is not available");
+    
+    // Front
+    if (!tickModifiedRebuildQueue.Contains(chunk + nFront)){
+      tickModifiedRebuildQueue.Enqueue(chunk + nFront);
+    }
+    if (!tickModifiedRebuildQueue.Contains(chunk + nFrontRight)){
+      tickModifiedRebuildQueue.Enqueue(chunk + nFrontRight);
+    }
+    if (!tickModifiedRebuildQueue.Contains(chunk + nFrontLeft)){
+      tickModifiedRebuildQueue.Enqueue(chunk + nFrontLeft);
+    }
+    
+    // Right
+    if (!tickModifiedRebuildQueue.Contains(chunk + nRight)){
+      tickModifiedRebuildQueue.Enqueue(chunk + nRight);
+    }
+    
+    // Left
+    if (!tickModifiedRebuildQueue.Contains(chunk + nLeft)){
+      tickModifiedRebuildQueue.Enqueue(chunk + nLeft);
+    }
+    
+    // Back
+    if (!tickModifiedRebuildQueue.Contains(chunk + nBack)){
+      tickModifiedRebuildQueue.Enqueue(chunk + nBack);
+    }
+    if (!tickModifiedRebuildQueue.Contains(chunk + nBackLeft)){
+      tickModifiedRebuildQueue.Enqueue(chunk + nBackLeft);
+    }
+    if (!tickModifiedRebuildQueue.Contains(chunk + nBackRight)){
+      tickModifiedRebuildQueue.Enqueue(chunk + nBackRight);
+    }
+    
+    // Target Chunk
+    if (!tickModifiedRebuildQueue.Contains(chunk)){
+      tickModifiedRebuildQueue.Enqueue(chunk);
+    }
   }
 
   public bool Modify(Vector2Int chunk, int x, int y, int z, byte blockType, byte blockState){
