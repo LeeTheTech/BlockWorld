@@ -18,7 +18,7 @@ public class Hotbar : MonoBehaviour{
       BlockTypes.LAVA,
       BlockTypes.WATER,
       BlockTypes.GLOWSTONE,
-      BlockTypes.ICE
+      BlockTypes.FIRE
   };
 
   public void Initialize(){

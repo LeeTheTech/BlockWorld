@@ -5,6 +5,7 @@ Shader "Unlit/BlockTransparent"
         Tags
         {
             "RenderType"="Transparent"
+            "Queue"="Transparent"
         }
         LOD 100
         Blend SrcAlpha OneMinusSrcAlpha

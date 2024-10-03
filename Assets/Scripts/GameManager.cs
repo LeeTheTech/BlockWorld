@@ -11,6 +11,7 @@ public class GameManager : MonoBehaviour{
   public AudioManager audioManager;
   public bool isInStartup;
   public Texture2D textures;
+  public Texture2D animatedTextures;
   public Camera screenshotCamera;
   public Texture2D latestScreenshot;
 
@@ -92,6 +93,13 @@ public class GameManager : MonoBehaviour{
     temp.Apply();
     textures = temp;
     Shader.SetGlobalTexture("_BlockTextures", textures);
+    
+    Texture2D animatedTemp = new Texture2D(animatedTextures.width, animatedTextures.height, TextureFormat.ARGB32, 5, false);
+    animatedTemp.SetPixels(animatedTextures.GetPixels());
+    animatedTemp.filterMode = FilterMode.Point;
+    animatedTemp.Apply();
+    animatedTextures = animatedTemp;
+    Shader.SetGlobalTexture("_AnimatedBlockTextures", animatedTextures);
   }
 
   private void DebugStuff(){

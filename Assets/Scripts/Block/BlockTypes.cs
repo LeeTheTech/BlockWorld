@@ -34,6 +34,7 @@ public static class BlockTypes{
   public const byte ICE = 131;
   public const byte FOLIAGE = 132;
   public const byte POPPY = 133;
+  public const byte FIRE = 134;
   public const byte AIR = 255;
 
   public static Dictionary<byte, byte> lightLevel;
@@ -73,7 +74,8 @@ public static class BlockTypes{
         { FOLIAGE, 0 },
         { TNT, 0 },
         { GRAVEL, 0 },
-        { POPPY, 0 }
+        { POPPY, 0 },
+        { FIRE, 15 }
     };
 
     density = new Dictionary<byte, byte>{
@@ -107,7 +109,8 @@ public static class BlockTypes{
         { FOLIAGE, 60 },
         { TNT, 255 },
         { GRAVEL, 255 },
-        { POPPY, 255 }
+        { POPPY, 255 },
+        { FIRE, 255 }
     };
 
     digSound = new Dictionary<byte, AudioManager.Dig.Type>{
@@ -141,7 +144,8 @@ public static class BlockTypes{
         { FOLIAGE, AudioManager.Dig.Type.Grass },
         { TNT, AudioManager.Dig.Type.Grass },
         { GRAVEL, AudioManager.Dig.Type.Grass },
-        { POPPY, AudioManager.Dig.Type.Grass }
+        { POPPY, AudioManager.Dig.Type.Grass },
+        { FIRE, AudioManager.Dig.Type.Grass }
     };
 
     blockShape = new Dictionary<byte, BlockShapes.BlockShape>{
@@ -175,7 +179,8 @@ public static class BlockTypes{
         { FOLIAGE, BlockShapes.BlockShape.FOLIAGE },
         { TNT, BlockShapes.BlockShape.CUBE },
         { GRAVEL, BlockShapes.BlockShape.CUBE },
-        { POPPY, BlockShapes.BlockShape.FOLIAGE }
+        { POPPY, BlockShapes.BlockShape.FOLIAGE },
+        { FIRE, BlockShapes.BlockShape.FIRE }
     };
   }
 
@@ -191,6 +196,7 @@ public static class BlockTypes{
   
   public static bool IsTransparentCutoutBlock(byte blockType){
     switch (blockType){
+      case LEAVES_OAK:
       case GLASS:
         return true;
       default:
@@ -233,11 +239,11 @@ public static class BlockTypes{
         return false;
     }
   }
-  
+
   public static bool IsLiquid(byte blockType){
     switch (blockType){
       case LAVA:
-        case WATER:
+      case WATER:
         return true;
       default:
         return false;
@@ -259,6 +265,7 @@ public static class BlockTypes{
       case FOLIAGE:
       case LAVA:
       case WATER:
+      case FIRE:
         return false;
       default:
         return true;

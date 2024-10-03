@@ -2,6 +2,40 @@
 using UnityEngine;
 
 public class TextureMapper{
+  public Dictionary<byte, TextureMap> animatedMap = new(){
+      {
+          BlockTypes.WATER, new TextureMap(
+              new TextureMap.Face(new Vector2(0, 0)),
+              new TextureMap.Face(new Vector2(0, 0)),
+              new TextureMap.Face(new Vector2(0, 0)),
+              new TextureMap.Face(new Vector2(0, 0)),
+              new TextureMap.Face(new Vector2(0, 0)),
+              new TextureMap.Face(new Vector2(0, 0)),
+              new Color32(255, 255, 255, 255)
+          )
+      },{
+          BlockTypes.LAVA, new TextureMap(
+              new TextureMap.Face(new Vector2(1, 0)),
+              new TextureMap.Face(new Vector2(1, 0)),
+              new TextureMap.Face(new Vector2(1, 0)),
+              new TextureMap.Face(new Vector2(1, 0)),
+              new TextureMap.Face(new Vector2(1, 0)),
+              new TextureMap.Face(new Vector2(1, 0)),
+              new Color32(255, 255, 255, 255)
+          )
+      },{
+          BlockTypes.FIRE, new TextureMap(
+              new TextureMap.Face(new Vector2(2, 0)),
+              new TextureMap.Face(new Vector2(2, 0)),
+              new TextureMap.Face(new Vector2(2, 0)),
+              new TextureMap.Face(new Vector2(2, 0)),
+              new TextureMap.Face(new Vector2(2, 0)),
+              new TextureMap.Face(new Vector2(2, 0)),
+              new Color32(255, 255, 255, 255)
+          )
+      }
+  };
+
   public Dictionary<byte, TextureMap> map = new(){
       {
           BlockTypes.GRASS, new TextureMap(
@@ -303,6 +337,16 @@ public class TextureMapper{
               new TextureMap.Face(new Vector2(4, 2)),
               new Color32(255, 255, 255, 255)
           )
+      },{
+          BlockTypes.FIRE, new TextureMap(
+              new TextureMap.Face(new Vector2(4, 3)),
+              new TextureMap.Face(new Vector2(4, 3)),
+              new TextureMap.Face(new Vector2(4, 3)),
+              new TextureMap.Face(new Vector2(4, 3)),
+              new TextureMap.Face(new Vector2(4, 3)),
+              new TextureMap.Face(new Vector2(4, 3)),
+              new Color32(255, 255, 255, 255)
+          )
       }
   };
 
@@ -329,6 +373,17 @@ public class TextureMapper{
       }
 
       public Vector2 tl, tr, bl, br;
+    }
+  }
+
+  public TextureMap GetTextureMap(byte blockType){
+    switch (blockType){
+        case BlockTypes.FIRE:
+      case BlockTypes.LAVA:
+      case BlockTypes.WATER:
+        return animatedMap[blockType];
+      default:
+        return map[blockType];
     }
   }
 }

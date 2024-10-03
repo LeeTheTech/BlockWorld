@@ -15,14 +15,20 @@ public class ChunkMeshData{
   private readonly List<Vector3> colliderVertices = new();
   
   public ChunkMeshData transparentMeshData;
+  public ChunkMeshData transparentLiquidMeshData;
   public ChunkMeshData noCullMeshData;
+  public ChunkMeshData animationMeshData;
+  public ChunkMeshData noCullAnimationMeshData;
 
   public ChunkMeshData(bool isMainMesh = true){
     this.isMainMesh = isMainMesh;
     
     if (isMainMesh){
       transparentMeshData = new ChunkMeshData(false);
+      transparentLiquidMeshData = new ChunkMeshData(false);
       noCullMeshData = new ChunkMeshData(false);
+      animationMeshData = new ChunkMeshData(false);
+      noCullAnimationMeshData = new ChunkMeshData(false);
     }
   }
   
@@ -74,25 +80,71 @@ public class ChunkMeshData{
   }
 
   public void SetupColliderMesh(Mesh mesh){
-    mesh.SetVertices(colliderVertices.Concat(transparentMeshData.colliderVertices).Concat(noCullMeshData.colliderVertices).ToArray());
-    mesh.SetTriangles(colliderTriangles.Concat(transparentMeshData.colliderTriangles.Select(index => index + colliderVertices.Count)).Concat(noCullMeshData.colliderTriangles.Select(index => index + colliderVertices.Count + transparentMeshData.colliderVertices.Count)).ToArray(), 0);
+    // Combine vertices, including noCullAnimationMeshData collider vertices
+    mesh.SetVertices(colliderVertices
+        .Concat(noCullMeshData.colliderVertices) // No cull mesh collider vertices
+        .Concat(transparentMeshData.colliderVertices) // Transparent mesh collider vertices
+        .Concat(transparentLiquidMeshData.colliderVertices) // Liquid transparent collider vertices
+        .Concat(animationMeshData.colliderVertices) // Animated collider vertices
+        .Concat(noCullAnimationMeshData.colliderVertices) // No cull animation collider vertices
+        .ToArray());
+
+    // Set the triangles for the collider mesh, including noCullAnimationMeshData collider triangles
+    mesh.SetTriangles(colliderTriangles
+        .Concat(noCullMeshData.colliderTriangles.Select(index => index + colliderVertices.Count)) // No cull collider triangles
+        .Concat(transparentMeshData.colliderTriangles.Select(index => index + colliderVertices.Count + noCullMeshData.colliderVertices.Count)) // Transparent collider triangles
+        .Concat(transparentLiquidMeshData.colliderTriangles.Select(index => index + colliderVertices.Count + noCullMeshData.colliderVertices.Count + transparentMeshData.colliderVertices.Count)) // Liquid transparent collider triangles
+        .Concat(animationMeshData.colliderTriangles.Select(index => index + colliderVertices.Count + noCullMeshData.colliderVertices.Count + transparentMeshData.colliderVertices.Count + transparentLiquidMeshData.colliderVertices.Count)) // Animated collider triangles
+        .Concat(noCullAnimationMeshData.colliderTriangles.Select(index => index + colliderVertices.Count + noCullMeshData.colliderVertices.Count + transparentMeshData.colliderVertices.Count + transparentLiquidMeshData.colliderVertices.Count + animationMeshData.colliderVertices.Count)) // No cull animation collider triangles
+        .ToArray(), 0);
   }
 
   public void SetupMesh(Mesh mesh){
-    mesh.subMeshCount = 3;
+    mesh.subMeshCount = 6; // Increment sub-mesh count for the new noCullAnimation mesh
 
-    // Combine vertices, uvs, normals, colors
-    mesh.SetVertices(vertices.Concat(transparentMeshData.vertices).Concat(noCullMeshData.vertices).ToArray());
+    // Combine vertices, uvs, normals, colors, including noCullAnimationMeshData
+    mesh.SetVertices(vertices
+        .Concat(noCullMeshData.vertices) // No cull mesh vertices
+        .Concat(transparentMeshData.vertices) // Transparent mesh vertices
+        .Concat(transparentLiquidMeshData.vertices) // Liquid transparent mesh vertices
+        .Concat(animationMeshData.vertices) // Animated mesh vertices
+        .Concat(noCullAnimationMeshData.vertices) // No cull animation mesh vertices
+        .ToArray());
 
     // Set triangles for each sub-mesh
     mesh.SetTriangles(triangles.ToArray(), 0); // Opaque mesh
-    mesh.SetTriangles(transparentMeshData.triangles.Select(index => index + vertices.Count).ToArray(), 1); // Transparent mesh
-    mesh.SetTriangles(noCullMeshData.triangles.Select(index => index + vertices.Count + transparentMeshData.vertices.Count).ToArray(), 2); // No Cull mesh
+    mesh.SetTriangles(noCullMeshData.triangles.Select(index => index + vertices.Count).ToArray(), 1); // No cull mesh
+    mesh.SetTriangles(transparentMeshData.triangles.Select(index => index + vertices.Count + noCullMeshData.vertices.Count).ToArray(), 2); // Transparent mesh
+    mesh.SetTriangles(transparentLiquidMeshData.triangles.Select(index => index + vertices.Count + noCullMeshData.vertices.Count + transparentMeshData.vertices.Count).ToArray(), 3); // Liquid transparent mesh
+    mesh.SetTriangles(animationMeshData.triangles.Select(index => index + vertices.Count + noCullMeshData.vertices.Count + transparentMeshData.vertices.Count + transparentLiquidMeshData.vertices.Count).ToArray(), 4); // Animated mesh
+    mesh.SetTriangles(noCullAnimationMeshData.triangles.Select(index => index + vertices.Count + noCullMeshData.vertices.Count + transparentMeshData.vertices.Count + transparentLiquidMeshData.vertices.Count + animationMeshData.vertices.Count).ToArray(), 5); // No cull animation mesh
 
-    // Combine UVs, Normals, and Colors for all meshes
-    mesh.SetUVs(0, uvs.Concat(transparentMeshData.uvs).Concat(noCullMeshData.uvs).ToArray());
-    mesh.SetNormals(normals.Concat(transparentMeshData.normals).Concat(noCullMeshData.normals).ToArray());
-    mesh.SetColors(colors.Concat(transparentMeshData.colors).Concat(noCullMeshData.colors).ToArray());
+    // Combine UVs for all meshes
+    mesh.SetUVs(0, uvs
+        .Concat(noCullMeshData.uvs) // No cull mesh uvs
+        .Concat(transparentMeshData.uvs) // Transparent mesh uvs
+        .Concat(transparentLiquidMeshData.uvs) // Liquid transparent mesh uvs
+        .Concat(animationMeshData.uvs) // Animated mesh uvs
+        .Concat(noCullAnimationMeshData.uvs) // No cull animation mesh uvs
+        .ToArray());
+
+    // Combine Normals for all meshes
+    mesh.SetNormals(normals
+        .Concat(noCullMeshData.normals) // No cull mesh normals
+        .Concat(transparentMeshData.normals) // Transparent mesh normals
+        .Concat(transparentLiquidMeshData.normals) // Liquid transparent mesh normals
+        .Concat(animationMeshData.normals) // Animated mesh normals
+        .Concat(noCullAnimationMeshData.normals) // No cull animation mesh normals
+        .ToArray());
+
+    // Combine Colors for all meshes
+    mesh.SetColors(colors
+        .Concat(noCullMeshData.colors) // No cull mesh colors
+        .Concat(transparentMeshData.colors) // Transparent mesh colors
+        .Concat(transparentLiquidMeshData.colors) // Liquid transparent mesh colors
+        .Concat(animationMeshData.colors) // Animated mesh colors
+        .Concat(noCullAnimationMeshData.colors) // No cull animation mesh colors
+        .ToArray());
   }
 
   public void ClearCachedMeshData(){
@@ -122,5 +174,32 @@ public class ChunkMeshData{
     noCullMeshData.normals.Clear();
     noCullMeshData.colliderTriangles.Clear();
     noCullMeshData.colliderVertices.Clear();
+    
+    // Clear the transparent liquid mesh data
+    transparentLiquidMeshData.vertices.Clear();
+    transparentLiquidMeshData.triangles.Clear();
+    transparentLiquidMeshData.colors.Clear();
+    transparentLiquidMeshData.uvs.Clear();
+    transparentLiquidMeshData.normals.Clear();
+    transparentLiquidMeshData.colliderTriangles.Clear();
+    transparentLiquidMeshData.colliderVertices.Clear();
+    
+    // Clear the animation mesh data
+    animationMeshData.vertices.Clear();
+    animationMeshData.triangles.Clear();
+    animationMeshData.colors.Clear();
+    animationMeshData.uvs.Clear();
+    animationMeshData.normals.Clear();
+    animationMeshData.colliderTriangles.Clear();
+    animationMeshData.colliderVertices.Clear();
+    
+    // Clear the no cull animation mesh data
+    noCullAnimationMeshData.vertices.Clear();
+    noCullAnimationMeshData.triangles.Clear();
+    noCullAnimationMeshData.colors.Clear();
+    noCullAnimationMeshData.uvs.Clear();
+    noCullAnimationMeshData.normals.Clear();
+    noCullAnimationMeshData.colliderTriangles.Clear();
+    noCullAnimationMeshData.colliderVertices.Clear();
   }
 }

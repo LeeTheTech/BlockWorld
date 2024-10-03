@@ -7,7 +7,8 @@ public static class BlockShapes{
     SLAB,
     STAIR,
     TORCH,
-    FOLIAGE
+    FOLIAGE,
+    FIRE
   }
   
   private enum LightFace{
@@ -78,6 +79,9 @@ public static class BlockShapes{
       case BlockShape.FOLIAGE:
         AddFoliageFaces(shapeData, meshData);
         break;
+      case BlockShape.FIRE:
+        AddFireFaces(shapeData, meshData);
+        break;
       default: 
         AddCubeFaces(shapeData, meshData);
         break;
@@ -135,6 +139,60 @@ public static class BlockShapes{
       );
       meshData.AddTextureFace(shapeData.textureMap.bottom);
       AddLighting(meshData, shapeData, LightFace.BOTTOM);
+    }
+
+    if (ShouldRenderFace(shapeData.blockType, shapeData.bF)){
+      meshData.AddFace(
+          new Vector3(shapeData.x + 1, shapeData.y, shapeData.z + 1),
+          new Vector3(shapeData.x + 1, shapeData.y + 1, shapeData.z + 1),
+          new Vector3(shapeData.x, shapeData.y + 1, shapeData.z + 1),
+          new Vector3(shapeData.x, shapeData.y, shapeData.z + 1),
+          Vector3.forward,
+          BlockTypes.GenerateCollider(shapeData.blockType)
+      );
+      meshData.AddTextureFace(shapeData.textureMap.front);
+      AddLighting(meshData, shapeData, LightFace.FRONT);
+    }
+
+    if (ShouldRenderFace(shapeData.blockType, shapeData.bB)){
+      meshData.AddFace(
+          new Vector3(shapeData.x, shapeData.y, shapeData.z),
+          new Vector3(shapeData.x, shapeData.y + 1, shapeData.z),
+          new Vector3(shapeData.x + 1, shapeData.y + 1, shapeData.z),
+          new Vector3(shapeData.x + 1, shapeData.y, shapeData.z),
+          -Vector3.forward,
+          BlockTypes.GenerateCollider(shapeData.blockType)
+      );
+      meshData.AddTextureFace(shapeData.textureMap.back);
+      AddLighting(meshData, shapeData, LightFace.BACK);
+    }
+  }
+  
+  private static void AddFireFaces(ShapeData shapeData, ChunkMeshData meshData){
+    if (ShouldRenderFace(shapeData.blockType, shapeData.bR)){
+      meshData.AddFace(
+          new Vector3(shapeData.x + 1, shapeData.y, shapeData.z),
+          new Vector3(shapeData.x + 1, shapeData.y + 1, shapeData.z),
+          new Vector3(shapeData.x + 1, shapeData.y + 1, shapeData.z + 1),
+          new Vector3(shapeData.x + 1, shapeData.y, shapeData.z + 1),
+          Vector3.right,
+          BlockTypes.GenerateCollider(shapeData.blockType)
+      );
+      meshData.AddTextureFace(shapeData.textureMap.right);
+      AddLighting(meshData, shapeData, LightFace.RIGHT);
+    }
+
+    if (ShouldRenderFace(shapeData.blockType, shapeData.bL)){
+      meshData.AddFace(
+          new Vector3(shapeData.x, shapeData.y, shapeData.z + 1),
+          new Vector3(shapeData.x, shapeData.y + 1, shapeData.z + 1),
+          new Vector3(shapeData.x, shapeData.y + 1, shapeData.z),
+          new Vector3(shapeData.x, shapeData.y, shapeData.z),
+          -Vector3.right,
+          BlockTypes.GenerateCollider(shapeData.blockType)
+      );
+      meshData.AddTextureFace(shapeData.textureMap.left);
+      AddLighting(meshData, shapeData, LightFace.LEFT);
     }
 
     if (ShouldRenderFace(shapeData.blockType, shapeData.bF)){
@@ -519,9 +577,8 @@ public static class BlockShapes{
   }
   
   private static bool ShouldRenderFace(byte block, byte targetBlock){
-    if (BlockTypes.IsTransparentBlock(block) && BlockTypes.IsTransparentBlock(targetBlock)){
-      return block != targetBlock;
-    }
+    if (BlockTypes.IsTransparentBlock(block) && BlockTypes.IsTransparentCutoutBlock(targetBlock)) return false;
+    if (BlockTypes.IsTransparentBlock(block) && BlockTypes.IsTransparentBlock(targetBlock)) return block != targetBlock;
     if (BlockTypes.IsTransparentCutoutBlock(block) && BlockTypes.IsTransparentCutoutBlock(targetBlock)) return false;
     if (BlockTypes.IsSlab(targetBlock)) return true;
     //TODO fix issue between chunks
