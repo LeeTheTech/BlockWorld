@@ -88,7 +88,7 @@
                 float3 normalDirection = normalize(vs.normal); // Normalize the normal vector.
                 half3 specular;
                 half specularMonochrome;
-                half3 diffuseColor =DiffuseAndSpecularFromMetallic(_Color.rgb, _Metallic, specular, specularMonochrome);
+                half3 diffuseColor = DiffuseAndSpecularFromMetallic(_Color.rgb, _Metallic, specular, specularMonochrome);
                 // Compute diffuse and specular colors.
 
                 fixed4 c = tex2D(_BlockTextures, vs.uv); // Sample the texture color at the given UV coordinates.
@@ -108,7 +108,7 @@
                 float light = (blockLight * blockLightWeight) + (sunLight * sunLightWeight);
 
                 // Ensure there's always a minimum light contribution to avoid complete darkness at night
-                float minLightContribution = 0.1; // You can tweak this value
+                float minLightContribution = 0.05;
                 light = max(light, minLightContribution); // Ensure minimum light contribution
 
                 // Apply the blended light to the texture color

@@ -48,33 +48,37 @@ public static class ChunkLighting{
     byte blockLight = lightMap[x, y, z];
 
     // Spread block light
-    TrySpreadBlockLight(lightMap, simulateQueue, x + 1, y, z, blockLight, (x == 47 ? BlockTypes.BEDROCK : GetBlockFromMap(chunkMap, x + 1, y, z)));
-    TrySpreadBlockLight(lightMap, simulateQueue, x - 1, y, z, blockLight, (x == 0 ? BlockTypes.BEDROCK : GetBlockFromMap(chunkMap, x - 1, y, z)));
-    TrySpreadBlockLight(lightMap, simulateQueue, x, y - 1, z, blockLight, (y == 0 ? BlockTypes.BEDROCK : GetBlockFromMap(chunkMap, x, y - 1, z)));
-    TrySpreadBlockLight(lightMap, simulateQueue, x, y + 1, z, blockLight, (y == 255 ? BlockTypes.BEDROCK : GetBlockFromMap(chunkMap, x, y + 1, z)));
-    TrySpreadBlockLight(lightMap, simulateQueue, x, y, z + 1, blockLight, (z == 47 ? BlockTypes.BEDROCK : GetBlockFromMap(chunkMap, x, y, z + 1)));
-    TrySpreadBlockLight(lightMap, simulateQueue, x, y, z - 1, blockLight, (z == 0 ? BlockTypes.BEDROCK : GetBlockFromMap(chunkMap, x, y, z - 1)));
+    TrySpreadLight(lightMap, simulateQueue, x + 1, y, z, blockLight, (x == 47 ? BlockTypes.BEDROCK : GetBlockFromMap(chunkMap, x + 1, y, z)));
+    TrySpreadLight(lightMap, simulateQueue, x - 1, y, z, blockLight, (x == 0 ? BlockTypes.BEDROCK : GetBlockFromMap(chunkMap, x - 1, y, z)));
+    TrySpreadLight(lightMap, simulateQueue, x, y - 1, z, blockLight, (y == 0 ? BlockTypes.BEDROCK : GetBlockFromMap(chunkMap, x, y - 1, z)));
+    TrySpreadLight(lightMap, simulateQueue, x, y + 1, z, blockLight, (y == 255 ? BlockTypes.BEDROCK : GetBlockFromMap(chunkMap, x, y + 1, z)));
+    TrySpreadLight(lightMap, simulateQueue, x, y, z + 1, blockLight, (z == 47 ? BlockTypes.BEDROCK : GetBlockFromMap(chunkMap, x, y, z + 1)));
+    TrySpreadLight(lightMap, simulateQueue, x, y, z - 1, blockLight, (z == 0 ? BlockTypes.BEDROCK : GetBlockFromMap(chunkMap, x, y, z - 1)));
   }
 
-  private static void TrySpreadBlockLight(byte[,,] lightMap, Queue<Vector3Int> simulateQueue, int x, int y, int z, byte blockLight, byte blockType){
+  private static void TrySpreadLight(byte[,,] lightMap, Queue<Vector3Int> simulateQueue, int x, int y, int z, byte blockLight, byte blockType){
     switch (blockType){
       case BlockTypes.POPPY:
       case BlockTypes.FOLIAGE:
       case BlockTypes.AIR:
+      case BlockTypes.GLOWSTONE:
+      case BlockTypes.LEAVES_OAK:
+      case BlockTypes.FIRE:
+      case BlockTypes.WATER:
         byte light = lightMap[x, y, z];
-        if (light < blockLight - 1){
-          lightMap[x, y, z] = (byte)(blockLight - 1); // Set the block light
+        if (light < blockLight - 2){
+          lightMap[x, y, z] = (byte)(blockLight - 2); // Set the block light
           simulateQueue.Enqueue(new Vector3Int(x, y, z));
         }
         break;
-      // case BlockTypes.LAVA:
-      //   for (int newY = y + 1; newY < 5; newY++){
-      //     if (lightMap[x, newY, z] < 12){
-      //       lightMap[x, newY, z] = 12;
-      //       simulateQueue.Enqueue(new Vector3Int(x, newY, z));
-      //     }
-      //   }
-      //   break;
+      case BlockTypes.LAVA:
+        for (int newY = y + 1; newY < 3; newY++){
+          if (lightMap[x, newY, z] < 12){
+            lightMap[x, newY, z] = 12;
+            simulateQueue.Enqueue(new Vector3Int(x, newY, z));
+          }
+        }
+        break;
     }
   }
 
@@ -135,42 +139,18 @@ public static class ChunkLighting{
     int z = pos.z;
 
     byte sunLight = lightMap[x, y, z];
-    TrySpreadSunLight(lightMap, simulateQueue, x + 1, y, z, sunLight,
+    TrySpreadLight(lightMap, simulateQueue, x + 1, y, z, sunLight,
         (x == 47 ? BlockTypes.BEDROCK : GetBlockFromMap(chunkMap, x + 1, y, z)));
-    TrySpreadSunLight( lightMap, simulateQueue, x - 1, y, z, sunLight,
+    TrySpreadLight( lightMap, simulateQueue, x - 1, y, z, sunLight,
         (x == 0 ? BlockTypes.BEDROCK : GetBlockFromMap(chunkMap, x - 1, y, z)));
-    TrySpreadSunLight(lightMap, simulateQueue, x, y - 1, z, sunLight,
+    TrySpreadLight(lightMap, simulateQueue, x, y - 1, z, sunLight,
         (y == 0 ? BlockTypes.BEDROCK : GetBlockFromMap(chunkMap, x, y - 1, z)));
-    TrySpreadSunLight(lightMap, simulateQueue, x, y + 1, z, sunLight,
+    TrySpreadLight(lightMap, simulateQueue, x, y + 1, z, sunLight,
         (y == 255 ? BlockTypes.BEDROCK : GetBlockFromMap(chunkMap, x, y + 1, z)));
-    TrySpreadSunLight(lightMap, simulateQueue, x, y, z + 1, sunLight,
+    TrySpreadLight(lightMap, simulateQueue, x, y, z + 1, sunLight,
         (z == 47 ? BlockTypes.BEDROCK : GetBlockFromMap(chunkMap, x, y, z + 1)));
-    TrySpreadSunLight(lightMap, simulateQueue, x, y, z - 1, sunLight,
+    TrySpreadLight(lightMap, simulateQueue, x, y, z - 1, sunLight,
         (z == 0 ? BlockTypes.BEDROCK : GetBlockFromMap(chunkMap, x, y, z - 1)));
-  }
-
-  private static void TrySpreadSunLight(byte[,,] lightMap, Queue<Vector3Int> simulateQueue, int x, int y, int z, byte sunLight, byte blockType){
-    switch (blockType){
-      case BlockTypes.WATER:
-      case BlockTypes.FOLIAGE:
-      case BlockTypes.POPPY:
-      case BlockTypes.AIR:
-      case BlockTypes.GLASS:
-        byte light = lightMap[x, y, z];
-        if (light < sunLight - 1){
-          lightMap[x, y, z] = (byte)(sunLight - 1);
-          simulateQueue.Enqueue(new Vector3Int(x, y, z));
-        }
-        break;
-      // case BlockTypes.LAVA:
-      //   for (int newY = y + 1; newY < 5; newY++){
-      //     if (lightMap[x, newY, z] < 12){
-      //       lightMap[x, newY, z] = 12;
-      //       simulateQueue.Enqueue(new Vector3Int(x, newY, z));
-      //     }
-      //   }
-      //   break;
-    }
   }
 
   private static int AdjustHeightWithNeighbours(ChunkData[,] chunkMap, int x, int z, int y){

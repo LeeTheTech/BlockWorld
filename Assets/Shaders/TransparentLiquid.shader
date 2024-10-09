@@ -62,7 +62,27 @@
             half4 pixel_shader(structureVS vs) : SV_Target
             {
                 half4 texColor = tex2D(_AnimatedBlockTextures, vs.uv);
-                texColor.a = 0.5;
+                texColor.a = 0.5; // Set alpha to 50% transparency
+
+                float sunLight = vs.color.g * 16; // Extract sunlight (green channel)
+                float blockLight = vs.color.b * 16; // Extract block light (blue channel)
+
+                // Define a weight for each light based on _GlobalLightIntensity
+                float blockLightWeight = 1.0 - _GlobalLightIntensity;
+                // Block light is stronger at night (when _GlobalLightIntensity is low)
+                float sunLightWeight = _GlobalLightIntensity;
+                // Sunlight is stronger during the day (when _GlobalLightIntensity is high)
+
+                // Blend the two lights based on the weights
+                float light = (blockLight * blockLightWeight) + (sunLight * sunLightWeight);
+
+                // Ensure there's always a minimum light contribution to avoid complete darkness at night
+                float minLightContribution = 0.3;
+                light = max(light, minLightContribution); // Ensure minimum light contribution
+
+                // Apply the blended light to the texture color
+                texColor.rgb *= light;
+                
                 return texColor;
             }
             ENDCG

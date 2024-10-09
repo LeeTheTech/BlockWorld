@@ -32,7 +32,11 @@ public class GameManager : MonoBehaviour{
     InitializeWorld(WorldInfoStorage.worldInfo);
     ui.Initialize();
     
+    Shader.SetGlobalColor("_SkyColorTop", new Color(0.7692239f, 0.7906416f, 0.8113208f, 1f));
+    Shader.SetGlobalColor("_SkyColorHorizon", new Color(0.3632075f, 0.6424405f, 1f, 1f));
+    Shader.SetGlobalColor("_SkyColorBottom", new Color(0.1632253f, 0.2146282f, 0.2641509f, 1f));
     Shader.SetGlobalFloat("_MinLightLevel", gameSettings.minimumLightLevel);
+    Shader.SetGlobalFloat("_GlobalLightIntensity", 1);
 #if !UNITY_EDITOR
 		showLoadingScreen = true;
 #endif

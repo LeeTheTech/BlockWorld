@@ -194,6 +194,15 @@ public static class BlockTypes{
     }
   }
   
+  public static bool IsLeafBlock(byte blockType){
+    switch (blockType){
+      case LEAVES_OAK:
+        return true;
+      default:
+        return false;
+    }
+  }
+  
   public static bool IsTransparentCutoutBlock(byte blockType){
     switch (blockType){
       case LEAVES_OAK:

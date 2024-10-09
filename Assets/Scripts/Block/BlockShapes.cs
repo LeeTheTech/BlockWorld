@@ -2,6 +2,7 @@ using System;
 using UnityEngine;
 
 public static class BlockShapes{
+  
   public enum BlockShape{
     CUBE,
     SLAB,
@@ -575,13 +576,13 @@ public static class BlockShapes{
         throw new ArgumentOutOfRangeException(nameof(LightFace), lightFace, "Invalid Light Face Direction!");
     }
   }
-  
+
   private static bool ShouldRenderFace(byte block, byte targetBlock){
+    if (BlockTypes.IsLeafBlock(block) && BlockTypes.IsLeafBlock(targetBlock)) return true;
     if (BlockTypes.IsTransparentBlock(block) && BlockTypes.IsTransparentCutoutBlock(targetBlock)) return false;
     if (BlockTypes.IsTransparentBlock(block) && BlockTypes.IsTransparentBlock(targetBlock)) return block != targetBlock;
     if (BlockTypes.IsTransparentCutoutBlock(block) && BlockTypes.IsTransparentCutoutBlock(targetBlock)) return false;
     if (BlockTypes.IsSlab(targetBlock)) return true;
-    //TODO fix issue between chunks
     if (BlockTypes.IsSolidLiquid(block) && BlockTypes.IsSolidLiquid(targetBlock)) return false;
     if (BlockTypes.IsSolidLiquid(targetBlock)) return true;
     if (BlockTypes.IsStair(block) || BlockTypes.IsStair(targetBlock)) return true;
